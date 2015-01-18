@@ -25,7 +25,7 @@
 
         $(".file_form .dropped").dropper({
             action: "/file.py",
-            maxSize: 1048576,
+            maxSize: 5242880, // 5 mb
             maxQueue: 1
         }).on("start.dropper", onStart)
         .on("complete.dropper", onComplete)
