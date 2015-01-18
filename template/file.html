@@ -1,0 +1,73 @@
+{% extends "main.html" %}
+{% block title %}
+便捷云网盘 —— 疯狂的小企鹅
+{% end %}
+{% block body %}
+<div id="wrap_content">
+    <div id="wrap_file">
+        <form method="POST" action='#' class="file_form">
+            <div class="dropped"></div>
+        </form>
+        <div class="file_process">
+            <div class="file_percent">
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    var $filequeue,
+    $filelist;
+
+    $(document).ready(function() {
+        $filequeue = $(".file_form .filelist.queue");
+        $filelist = $(".file_form .filelist.complete");
+
+        $(".file_form .dropped").dropper({
+            action: "/file.py",
+            maxSize: 1048576,
+            maxQueue: 1
+        }).on("start.dropper", onStart)
+        .on("complete.dropper", onComplete)
+        .on("fileStart.dropper", onFileStart)
+        .on("fileProgress.dropper", onFileProgress)
+        .on("fileComplete.dropper", onFileComplete)
+        .on("fileError.dropper", onFileError);
+
+        $(window).one("pronto.load", function() {
+            $(".file_form .dropped").dropper("destroy").off(".dropper");
+        });
+    });
+
+    function onStart(e, files) {
+        $('.file_form').hide();
+        $('.file_process').show();
+
+    }
+
+    function onComplete(e) {
+        console.log("Complete");
+        // All done!
+    }
+
+    function onFileStart(e, file) {
+        $('.file_percent').css('width', '10%');
+    }
+
+    function onFileProgress(e, file, percent) {
+        $('.file_percent').css({'width':percent + '%'});
+    }
+
+    function onFileComplete(e, file, response) {
+        console.log("File Complete");
+    }
+
+    function onFileError(e, file, error) {
+        $('.file_percent').hide().fadeIn(500);
+        $('.file_percent').css({'background-color': 'red',
+                                'width':'100%'});
+        $('.file_percent').html(error);
+    }
+</script>
+{% end %}
+
