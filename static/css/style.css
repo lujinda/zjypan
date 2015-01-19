@@ -57,6 +57,19 @@ a{
 #wrap_file .file_process:hover{
     box-shadow:4px 4px 4px rgba(0, 0, 0, 0.4);
 }
+.file_key{
+    color:red;
+}
+.file_key_mess{
+    float:left;
+    margin:20px;
+    line-height:100%;
+}
+.file_key_tip{
+    color:#666;
+    font-size:12px;
+    clear:both;
+}
 
 #footer{
     padding-top:20px;

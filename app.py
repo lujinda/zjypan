@@ -2,11 +2,11 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-18 12:59:15
+# Last modified   : 2015-01-18 21:51:06
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application
-from page import FileHandler, IndexHandler
+from page import FileUpHandler, IndexHandler, FileDownHandler
 from module import HeaderModule, FooterModule
 from os import path
 
@@ -15,7 +15,8 @@ class PanApplication(Application):
     def __init__(self):
         handlers = [
                 (r'/', IndexHandler),
-                (r'/file.py', FileHandler),
+                (r'/up.py', FileUpHandler),
+                (r'/down.py', FileDownHandler),
                 ]
 
         settings = {
