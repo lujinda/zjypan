@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-18 22:25:59
+# Last modified   : 2015-01-24 20:40:18
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
@@ -10,11 +10,13 @@ from public import error
 from .do import made_file_key, get_expired_time, get_upload_time
 from storage.save import save_to_disk, save_to_db
 
+from json_handler import JsonRequestHandler
+
 class FileDownHandler(RequestHandler):
     def get(self):
-        file_key = self.get_query_argument('file_key', '')
+        self.render('down.html')
             
-class FileUpHandler(RequestHandler):
+class FileUpHandler(JsonRequestHandler):
     def get(self):
         self.render('up.html')
 
@@ -24,7 +26,7 @@ class FileUpHandler(RequestHandler):
         for f in files:
             self.save_file(f)
 
-        self.write(self.return_json)
+        self.write_json(self.return_json)
 
     def write_error(self, status_code, **kwargs):
         try:
@@ -43,8 +45,9 @@ class FileUpHandler(RequestHandler):
         传入: f，格式{'filname':x, 'body':x}
     """
     def save_file(self, f):
+        file_size = len(f['body'])
         # 服务器也对文件大小做出判断
-        if len(f['body']) > 5243380 or len(f['body']) == 0:
+        if file_size > 5243380 or file_size == 0:
             self.return_json['error'] = error.FILE_VOLUME_ERROR
             return
 
@@ -60,5 +63,5 @@ class FileUpHandler(RequestHandler):
         save_to_db(file_key = file_key, file_name = f['filename'], file_path = file_path,
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_upload_time(), 
-                expired_time = get_expired_time())
+                expired_time = get_expired_time(), file_size = file_size)
 

@@ -8,6 +8,7 @@ a{
 #main{
     height:300px;
     background-image:url('../images/bg_upload.jpg');
+    overflow:hidden;
 }
 #wrap_content{
     width:900px;
@@ -36,8 +37,7 @@ a{
     margin:0px auto;
 }
 #wrap_file .file_process{
-    display:none;
-    width:100%;
+    display:none; width:100%;
     overflow:hidden;
     border: 2px solid #fff;
     height:140px;
@@ -79,4 +79,66 @@ a{
 }
 #footer span{
     font-size:14px;
+}
+.btn_management{
+    display:block;
+    width:120px;
+    text-align:center;
+    color:#666;
+    border-radius:10px;
+    padding:10px;
+    background-color:#fff;
+    box-shadow:4px 4px 4px rgba(0, 0, 0, 0.2);
+    margin:auto;
+    margin-top:20px;
+}
+.btn_management:hover{
+    box-shadow:4px 4px 4px rgba(0, 0, 0, 0.4);
+    font-weight:bold;
+}
+.btn_management:focus{
+    outline:none;
+}
+
+
+/*下面是关于文件文件管理界面的*/
+#input_key_wrap{
+    width:700px;
+    margin:40px auto;
+}
+.input_key_dir{
+    width:200px;
+    margin:auto;
+}
+.input_key{
+    height:30px;
+    display:block;
+    width:100%;
+    border:1px solid #ccc;
+    border-radius:10px 10px 10px 10px;
+    text-align:center;
+    padding:5px;
+}
+.input_key:focus{
+    outline: 0px none;
+    border-color:#66AFE9;
+    box-shadow:0px 1px 1px 4px rgba(0, 0, 0, 0.075) inset, 0px 4px 8px 4px rgba(102, 175, 233, 0.6);
+}
+.btn_submit_key{
+    font-size:15px;
+    font-weight:bold;
+    display:block;
+    box-shadow:3px 3px 6px rgba(0, 0, 0, 0.2);
+    margin:20px auto;
+    width:30%;
+    padding:6px 10px;
+    border-radius:10px;
+    color:#fff;
+    text-align:center;
+    outline:0px none;
+    background-color:#188BED;
+
+}
+.btn_submit_key:hover{
+    background-color:#1986E3;
 }

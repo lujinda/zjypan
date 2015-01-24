@@ -17,3 +17,21 @@ function show_succ_message(file_key){
                 '<div class="file_key_mess">您的文件代码是:<span class="file_key">{0}</span></div><div class="file_key_tip">文件代码由日期+星期+随机两位字母组成</div>', file_key));
 }
 
+$(document).ready(function(){
+    $('#input_key_wrap form').submit(function (event){
+        $.post("", 
+            {'file_key':$('.input_key_dir .input_key').val()},
+            function (data){
+                alert(data);
+            });
+
+        // 禁止默认事件的发现
+        event.preventDefault();
+        return false;
+    });
+    $('#input_key_wrap .btn_submit_key').click(function (event){
+        $('#input_key_wrap .btn_submit_key').submit();
+        event.preventDefault();
+    });
+});
+

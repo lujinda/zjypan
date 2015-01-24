@@ -2,11 +2,11 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-18 21:51:06
+# Last modified   : 2015-01-24 18:15:29
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application
-from page import FileUpHandler, IndexHandler, FileDownHandler
+from page import FileUpHandler, IndexHandler, FileDownHandler, ManageHandler
 from module import HeaderModule, FooterModule
 from os import path
 
@@ -17,6 +17,7 @@ class PanApplication(Application):
                 (r'/', IndexHandler),
                 (r'/up.py', FileUpHandler),
                 (r'/down.py', FileDownHandler),
+                (r'/manage.py', ManageHandler),
                 ]
 
         settings = {
