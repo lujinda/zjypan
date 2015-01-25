@@ -22,7 +22,7 @@ function del_file(){
 }
 function DateToString(seconds){
     d = new Date(seconds * 1000);
-    return d.toLocaleFormat("%Y-%m-%d %H:%M:%S")
+    return d.toLocaleString();
 }
 function show_err_message(error){
     $('.file_percent').css({'background-color': 'red',
@@ -52,7 +52,7 @@ $(document).ready(function(){
                 $('#manage_wrap #file_size').html(data['file_size']);
                 $('#manage_wrap #file_key').val(data['file_key']);
 
-                if (data['content_type'].startsWith('image')){
+                if (data['content_type'].split('/')[0] == 'image'){
                     $('#pci_summary').attr('src', data['file_url']);
                 }else{
                     $('#pci_summary').attr('src', '/static/images/filetype/default.png');

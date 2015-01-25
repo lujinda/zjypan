@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-25 15:01:49
+# Last modified   : 2015-01-25 16:45:57
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -48,7 +48,7 @@ class FileManage():
 
     def download(self):
         self.__request.set_header('Content-Type', 'application/octet-stream')
-        self.__request.set_header('Content-Disposition', 'attachment;filename=%s' % 
+        self.__request.set_header('Content-Disposition', 'attachment; filename="%s"' % 
                 self.__file['file_name'])
 
         # 如果文件已经在网盘上存在了，就重定向到网盘
