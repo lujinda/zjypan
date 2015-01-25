@@ -2,21 +2,19 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-24 18:15:29
+# Last modified   : 2015-01-25 14:25:00
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application
-from page import FileUpHandler, IndexHandler, FileDownHandler, ManageHandler
+from page import FileHandler, IndexHandler, ManageHandler
 from module import HeaderModule, FooterModule
 from os import path
-
 
 class PanApplication(Application):
     def __init__(self):
         handlers = [
                 (r'/', IndexHandler),
-                (r'/up.py', FileUpHandler),
-                (r'/down.py', FileDownHandler),
+                (r'/file.py', FileHandler),
                 (r'/manage.py', ManageHandler),
                 ]
 

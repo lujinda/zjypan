@@ -2,24 +2,33 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-24 20:40:18
+# Last modified   : 2015-01-25 15:10:50
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
 from public import error
-from .do import made_file_key, get_expired_time, get_upload_time
+from .do import made_file_key, get_expired_time, get_upload_time, FileManage
 from storage.save import save_to_disk, save_to_db
 
 from json_handler import JsonRequestHandler
 
-class FileDownHandler(RequestHandler):
-    def get(self):
-        self.render('down.html')
-            
-class FileUpHandler(JsonRequestHandler):
-    def get(self):
-        self.render('up.html')
 
+class FileHandler(JsonRequestHandler):
+    """下载的相关代码"""
+
+    def get(self):
+        file_key = self.get_argument('file_key', '')
+        try:
+            file_manage = FileManage(file_key, request = self)
+        except FileManage.FileException:
+            raise HTTPError(404)
+
+        file_manage.download()
+        
+        
+    ######################
+
+    """上传的相关代码"""
     def post(self):
         self.return_json= {'error': ''}
         files = self.request.files['file']
@@ -63,5 +72,15 @@ class FileUpHandler(JsonRequestHandler):
         save_to_db(file_key = file_key, file_name = f['filename'], file_path = file_path,
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_upload_time(), 
-                expired_time = get_expired_time(), file_size = file_size)
+                expired_time = get_expired_time(), file_size = file_size, file_url = '/file.py?file_key=' + file_key)
+
+    ######################
+    # 下面是删除文件相关的
+    def delete(self):
+        file_key = self.get_argument('file_key')
+        try:
+            file_manage = FileManage(file_key)
+            file_manage.delete()
+        except FileManage.FileException, e:
+            self.write({'error': e.message})
 

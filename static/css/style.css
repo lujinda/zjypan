@@ -142,3 +142,57 @@ a{
 .btn_submit_key:hover{
     background-color:#1986E3;
 }
+#manage_wrap{
+    width:700px;
+    overflow:hidden;
+    margin:20px auto;
+}
+#manage_wrap .pci_summary{
+    display:block;
+    width:130px;
+    margin:auto;
+    height:130px;
+    background-color:#fff;
+    border-radius:15px;
+    box-shadow:4px 4px 4px rgba(0, 0, 0, 0.4);
+
+}
+#manage_wrap .file_name{
+    text-decoration:underline;
+    text-align:center;
+    margin:15px auto;
+    font-size:18px;
+    color:#444;
+    font-weight:bold;
+}
+#manage_wrap .file_summary{
+    text-align:center;
+    color:#666;
+}
+#upload_time, #expired_time, #file_size{
+    margin:10px 0px;
+    margin-right:10px;
+    font-weight:bold;
+    font-size:15px;
+}
+#manage_wrap .file_operation{
+    width:200px;
+    overflow:hidden;
+    margin:20px auto;
+
+}
+#manage_wrap .btn_file_operation{
+    display:block;
+    text-align:center;
+    width:70px;
+    padding:10px;
+    background-color:#fff;
+    outline:0px none;
+    color:#fff;
+    font-weight:bold;
+    font-size:14px;
+    border-radius:15px;
+}
+#manage_wrap .btn_file_operation:hover{
+    color:#ff0;
+}

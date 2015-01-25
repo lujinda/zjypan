@@ -11,4 +11,21 @@
     </div>
     </form>
 </div>
+<div id="manage_wrap" style="display:none">
+    <img id="pci_summary" class="pci_summary" src=""></img>
+    <div id="file_name" class="file_name"> _</div>
+    <div class="file_summary">
+        <span>上传时间: <span id="upload_time">_</span></span>
+        <span>过期时间: <span id="expired_time">_</span></span>
+        <span>文件大小: <span id="file_size">_</span></span>
+    </div>
+    <div class="file_operation">
+        <form target='' method='GET'>
+        <input type="hidden" name="file_key" id="file_key" value="" />
+        <a id="btn_file_down" style="float:left;background:green;" class="btn_file_operation" href="javascript:down_file()">下 载</a>
+        <a style="float:right;background:red;" class="btn_file_operation" href="javascript:del_file()" id="btn_file_del">删 除</a>
+        </form>
+    </div>
+    <div style="clear:both"></div>
+</div>
 {% end %}

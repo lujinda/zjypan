@@ -24,7 +24,7 @@
         $filelist = $(".file_form .filelist.complete");
 
         $(".file_form .dropped").dropper({
-            action: "/up.py",
+            action: "/file.py",
             maxSize: 5242880, // 5 mb
             maxQueue: 1
         }).on("start.dropper", onStart)

@@ -6,6 +6,24 @@ String.format = function(src){
         return args[i];
     });
 };
+function down_file(){
+    $('.file_operation form').attr('action', '/file.py').submit();
+}
+function del_file(){
+    if (!confirm("确定要删除 " + $('#file_name').html())){
+        return;
+    }
+    $.ajax({type:'DELETE', url:'/file.py', 
+        data:{'file_key': $('#file_key').val()},
+        success:function(data){
+            window.location.reload();
+        }
+    });
+}
+function DateToString(seconds){
+    d = new Date(seconds * 1000);
+    return d.toLocaleFormat("%Y-%m-%d %H:%M:%S")
+}
 function show_err_message(error){
     $('.file_percent').css({'background-color': 'red',
         'width':'100%'});
@@ -22,7 +40,24 @@ $(document).ready(function(){
         $.post("", 
             {'file_key':$('.input_key_dir .input_key').val()},
             function (data){
-                alert(data);
+                var error = data['error'];
+                if (error){
+                    alert(error);
+                    return false;
+                }
+                $('#input_key_wrap').hide();
+                $('#manage_wrap #file_name').html(data['file_name']);
+                $('#manage_wrap #upload_time').html(DateToString(data['upload_time']));
+                $('#manage_wrap #expired_time').html(DateToString(data['expired_time']));
+                $('#manage_wrap #file_size').html(data['file_size']);
+                $('#manage_wrap #file_key').val(data['file_key']);
+
+                if (data['content_type'].startsWith('image')){
+                    $('#pci_summary').attr('src', data['file_url']);
+                }else{
+                    $('#pci_summary').attr('src', '/static/images/filetype/default.png');
+                }
+                $('#manage_wrap').fadeIn();
             });
 
         // 禁止默认事件的发现

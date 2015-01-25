@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-24 21:00:50
+# Last modified   : 2015-01-25 13:43:05
 # Filename        : page/manage.py
 # Description     : 
 
@@ -17,7 +17,6 @@ class ManageHandler(JsonRequestHandler):
 
     def post(self):
         file_key = self.get_argument('file_key', '')
-
         try:
             file_manage = FileManage(file_key)    
         except FileManage.FileException, e:
@@ -25,5 +24,10 @@ class ManageHandler(JsonRequestHandler):
             self.write_json(self.result_json)
             return 
 
-        file_manage.get_file_info()
+        file_info = file_manage.get_file_info()
+        # 有一些参数不允许被用户看到，就删除
+        for key in ['cdn_url', 'file_path', 'in_cdn', 'upload_ip']:
+            del file_info[key]
+
+        self.write_json(file_info)
 
