@@ -2,13 +2,16 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-25 16:45:57
+# Last modified   : 2015-01-27 14:28:48
 # Filename        : page/do.py
 # Description     : 
 import time
 import string
 import random
-from public.data import db
+import os
+from public.data import db, del_local_file
+from tornado.web import HTTPError
+from cdn import CDN
 
 class FException(Exception):
     pass
@@ -24,6 +27,7 @@ class FileManage():
             return
         # 如果这个文件是存在的话，每一次对它的访问，都会增加日期
         self._add_expired_time()
+        self._cdn = CDN()
 
     def _add_expired_time(self):
         old_expired_time = self.__file['expired_time']
@@ -44,17 +48,23 @@ class FileManage():
         return file_obj
      
     def delete(self):
+        del_local_file(self.__file['file_path'])
+        if self.__file['in_cdn']:
+            self._cdn.del_file.delay(self.__file['file_key'], self.__file['file_name'])
+
         db.files.remove({'file_key':self.__file_key})
 
     def download(self):
+        # 如果文件已经在网盘上存在了，就重定向到网盘
+        if self.__file['in_cdn']:
+            cdn_url = self._cdn.get_cdn_url(self.__file['file_key'],
+                    self.__file['file_name'])
+            self.__request.redirect(cdn_url)
+            return
+
         self.__request.set_header('Content-Type', 'application/octet-stream')
         self.__request.set_header('Content-Disposition', 'attachment; filename="%s"' % 
                 self.__file['file_name'])
-
-        # 如果文件已经在网盘上存在了，就重定向到网盘
-        if self.__file['in_cdn']:
-            self.__request.redirect(self.__file['cdn_url'])
-            return
 
         try:
             fd = open(self.__file['file_path'], 'rb')
@@ -63,19 +73,15 @@ class FileManage():
                 if not data:
                     break
                 self.__request.write(data)
-        except:
-            raise HTTPError(404)
-        finally:
             fd.close()
+        except:
+            self.__request.set_status(404)
+        finally:
             self.__request.finish()
         
 
-
-
     def get_file_info(self):
         self.__file['file_size'] = switch_unit(self.__file['file_size'])
-
-
         return self.__file
 
     def raise_error(self, err_mess):

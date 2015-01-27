@@ -2,11 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-24 20:04:09
+# Last modified   : 2015-01-27 13:08:03
 # Filename        : storage/save.py
 # Description     : 
 import os
 from public.data import db
+from cdn import CDN
 
 def save_to_disk(file_key, file_name, file_body):
     file_path = '/var/tfile/%s/%s' % (file_key, file_name)
@@ -29,4 +30,11 @@ def save_to_db(**kwargs):
     kwargs['cdn_url'] = ''
 
     db.files.insert(kwargs)
+
+    save_to_cdn(kwargs['file_key'], kwargs['file_name'], kwargs['file_path'])
+
+# 用于即时同步上传
+def save_to_cdn(file_key, file_name, file_path):
+    cdn = CDN()
+    cdn.put_file.delay(file_key, file_name, file_path)
 

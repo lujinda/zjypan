@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-25 16:09:50
+# Last modified   : 2015-01-27 13:19:02
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
@@ -73,6 +73,7 @@ class FileHandler(JsonRequestHandler):
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_upload_time(), 
                 expired_time = get_expired_time(), file_size = file_size, file_url = '/file.py?file_key=' + file_key)
+
 
     ######################
     # 下面是删除文件相关的

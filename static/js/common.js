@@ -37,7 +37,7 @@ function show_succ_message(file_key){
 
 $(document).ready(function(){
     $('#input_key_wrap form').submit(function (event){
-        $.post("", 
+        $.post("/manage.py", 
             {'file_key':$('.input_key_dir .input_key').val()},
             function (data){
                 var error = data['error'];
@@ -55,7 +55,7 @@ $(document).ready(function(){
                 if (data['content_type'].split('/')[0] == 'image'){
                     $('#pci_summary').attr('src', data['file_url']);
                 }else{
-                    $('#pci_summary').attr('src', '/static/images/filetype/default.png');
+                    $('#pci_summary').attr('src', 'http://7u2ph0.com1.z0.glb.clouddn.com/images/filetype/default.png');
                 }
                 $('#manage_wrap').fadeIn();
             });
@@ -65,7 +65,7 @@ $(document).ready(function(){
         return false;
     });
     $('#input_key_wrap .btn_submit_key').click(function (event){
-        $('#input_key_wrap .btn_submit_key').submit();
+        $('#input_key_wrap form').submit();
         event.preventDefault();
     });
 });
