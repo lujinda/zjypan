@@ -2,49 +2,47 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-27 14:29:44
+# Last modified   : 2015-02-01 16:56:23
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
 from celery.contrib.methods import task_method
 import time
-from qiniu import put_file
-from qiniu import Auth
-from qiniu import BucketManager
+from cattle import Cattle
 from public.data import db, del_local_file
+from functools import partial
 import os
 
 BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
+
 
 celery = Celery('CDN', broker = BROKER_URL)
 
 class CDN():
     def __init__(self):
-        self._auth = Auth('BbDU4MoFrx2YaF6tqBFmnKHFuDlq1EO-mm2ldlBm', 'WWdwgm4oRmOh_L9yKbyWplcUFaIGAZXk8e_UOtDs')
         self._bucket_name = 'zjypan-0'
         self._domain = '7u2qd9.com1.z0.glb.clouddn.com'
-        self._token = self._auth.upload_token(self._bucket_name)
-        self._bucket = BucketManager(self._auth)
-
-    def get_cdn_url(self, file_key, file_name):
-        base_url = 'http://%s/%s' %(self._domain, '%s/%s' % (file_key, file_name))
-        private_url = self._auth.private_download_url(base_url, expires = 3600)
-        return private_url
+        self._cattle = Cattle('BbDU4MoFrx2YaF6tqBFmnKHFuDlq1EO-mm2ldlBm', 'WWdwgm4oRmOh_L9yKbyWplcUFaIGAZXk8e_UOtDs')
 
     @celery.task(filter=task_method)
     def sync(self):
         print 'ok'
-        time.sleep(30)
         print 'end'
+
+    def get_cdn_url(self, file_key, file_name):
+        base_url = 'http://%s/%s' %(self._domain, '%s/%s' % (file_key, file_name))
+        private_url = self._cattle.private_url(base_url)
+        return private_url
 
     @celery.task(filter=task_method)
     def put_file(self, file_key, file_name, file_path):
-        ret, info = put_file(self._token, 
-                "%s/%s" % (file_key, file_name), file_path, mime_type = 'application/octet-stream')
-        if info.status_code != 200:
+        ret, error = self._cattle.put_file(self._bucket_name,
+                file_path, "%s/%s" % (file_key, file_name),
+                mime_type = 'application/octet-stream')
+        if error:
             return
 
-        # 当上传成功后，把信息修改一下
+         #当上传成功后，把信息修改一下
         db.files.update({'file_key': file_key}, {"$set": {'in_cdn': True}})
         
         # 然后把本地文件删除一下
@@ -56,5 +54,6 @@ class CDN():
             file_name = file_name.encode('utf-8')
             file_key = file_key.encode('utf-8')
 
-        ret, info = self._bucket.delete(self._bucket_name, '%s/%s' % (file_key, file_name))
+        ret, error = self._cattle.rm(self._bucket_name,
+                '%s/%s' % (file_key, file_name))
 

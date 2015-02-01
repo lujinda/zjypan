@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-27 14:28:48
+# Last modified   : 2015-02-01 14:28:09
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -95,11 +95,10 @@ def get_expired_time(days = 7):
     return long(time.time() + 24 * 60 * 60 * days)
 
 
-
 def made_file_key():
     localtime = time.localtime()
     while True:
-        file_key = "%2d%s%s%s"%(localtime.tm_mday , localtime.tm_wday + 1 , \
+        file_key = "%02d%s%s%s"%(localtime.tm_mday , localtime.tm_wday + 1 , \
                 random.choice(string.ascii_letters) , random.choice(string.ascii_letters))
         if not db.files.find_one({'file_key': file_key}):
             break

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-27 12:29:42
+# Last modified   : 2015-01-28 16:00:24
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler
