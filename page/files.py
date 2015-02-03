@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 15:22:52
+# Last modified   : 2015-02-03 19:06:12
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
@@ -30,8 +30,7 @@ class FileHandler(JsonRequestHandler):
     """上传的相关代码"""
     @verify_code
     def post(self):
-        self.return_json = {'error': ''}
-        # 返回的结果都会在这存放
+        self.return_json = {'error': ''} # 返回的结果都会在这存放
         self.acl.add_visits()
 
         files = self.request.files['file']
@@ -52,11 +51,11 @@ class FileHandler(JsonRequestHandler):
             'error':err_message,
             })
 
-    """
+    def save_file(self, f):
+        """
         作用：对用户上传的文件做出判断，并将相关信息保存到数据库中
         传入: f，格式{'filname':x, 'body':x}
-    """
-    def save_file(self, f):
+        """
         file_size = len(f['body'])
         # 服务器也对文件大小做出判断
         if file_size > 5243380 or file_size == 0:

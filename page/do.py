@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 15:28:42
+# Last modified   : 2015-02-03 19:27:32
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -13,10 +13,16 @@ from public.data import db, del_local_file
 from tornado.web import HTTPError
 from cdn import CDN
 
+EXPIRED_DAY = 7
+ADD_EXPIRED_DAY = 3
+
 class FException(Exception):
     pass
 
 class FileManage():
+    """
+        这是文件管理器
+    """
     FileException = FException
     def __init__(self, file_key, request = ''):
         self.__file_key = file_key
@@ -30,8 +36,11 @@ class FileManage():
         self._cdn = CDN()
 
     def _add_expired_time(self):
+        """
+        每次初始化FileManage时，都会把到期时间加ADD_EXPIRED_DAY天
+        """
         old_expired_time = self.__file['expired_time']
-        new_expired_time = get_expired_time(3)
+        new_expired_time = get_expired_time(ADD_EXPIRED_DAY)
 
         # 如果原先的过期时间比新的过期时间早的话，才更新过期时间，要不然就不更新
         if old_expired_time > new_expired_time:
@@ -42,12 +51,18 @@ class FileManage():
                 {"$set": {'expired_time': new_expired_time}})
 
     def get_file(self):
+        """
+        返回一个与当前file_key匹配的document
+        """
         file_obj = db.files.find_one({'file_key': self.__file_key})
         if file_obj:
             del file_obj['_id']
         return file_obj
      
     def delete(self):
+        """
+        删除文件document, 本地文件，云上的文件
+        """
         del_local_file(self.__file['file_path'])
         if self.__file['in_cdn']:
             self._cdn.del_file.delay(self.__file['file_key'], self.__file['file_name'])

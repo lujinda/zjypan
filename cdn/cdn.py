@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 18:55:52
+# Last modified   : 2015-02-03 19:59:58
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -11,6 +11,7 @@ import time
 from lib.cattle import Cattle
 from public.data import db, del_local_file
 from functools import partial
+import urllib
 import os
 
 BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
@@ -30,6 +31,11 @@ class CDN():
         print 'end'
 
     def get_cdn_url(self, file_key, file_name):
+        if isinstance(file_name, unicode):
+            # 在获取七牛私有下载地址前，要对key做url转义
+            file_name = urllib.quote(file_name.encode('utf-8'))
+            file_key = file_key.encode('utf-8')
+
         base_url = 'http://%s/%s' %(self._domain, '%s/%s' % (file_key, file_name))
         private_url = self._cattle.private_url(base_url)
         return private_url
@@ -38,11 +44,17 @@ class CDN():
     def put_file(self, file_key, file_name, file_path):
         if isinstance(file_name, unicode):
             file_name = file_name.encode('utf-8')
+            file_key = file_key.encode('utf-8')
 
         ret, error = self._cattle.put_file(self._bucket_name,
                 file_path, "%s/%s" % (file_key, file_name),
                 mime_type = 'application/octet-stream')
         if error:
+            return
+
+        # 上传完后，再判断一下是否在上传的过程中被删除了。
+        if not os.path.exists(file_path):
+            self.del_file(file_key, file_name)
             return
 
          #当上传成功后，把信息修改一下
