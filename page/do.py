@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-01 14:28:09
+# Last modified   : 2015-02-03 15:28:42
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -122,4 +122,14 @@ def switch_unit(size):
     unit_func = {'B': b_mode, 'KB': k_mode, 'MB': m_mode}
     unit = unit_list[int(math.log10(size)) /  3]
     return "%.2f%s" % (unit_func[unit](), unit)
+
+
+def verify_code(method):
+    def wrap(self, *args, **kwargs):
+        if self.need_code():
+            self.redirect('/verify.py?v=' + self.request.uri)
+        else:
+            result = method(self, *args, **kwargs)
+        
+    return wrap
 

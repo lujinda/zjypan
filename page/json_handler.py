@@ -2,14 +2,19 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 11:49:19
+# Last modified   : 2015-02-03 17:40:10
 # Filename        : page/json_handler.py
 # Description     : 
 
 from tornado.web import RequestHandler
+from uuid import uuid4
+from acl import ACL
 import json
 
 class JsonRequestHandler(RequestHandler):
+    def initialize(self):
+        self.acl = ACL(self.client_ip)
+
     def write_json(self, data):
         json_data = json.dumps(data)
         self.set_header('Content-Type', 'application/json; charset=UTF-8')
@@ -18,4 +23,16 @@ class JsonRequestHandler(RequestHandler):
     @property
     def client_ip(self):
         return self.request.remote_ip
+
+    @property
+    def token(self):
+        token = self.get_secure_cookie('token') or ''
+        if not token.strip():
+            token = uuid4().hex
+            self.set_secure_cookie('token', token)
+
+        return token.strip()
+
+    def need_code(self):
+        return self.acl.need_code()
 

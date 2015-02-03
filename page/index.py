@@ -2,12 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-26 12:01:17
+# Last modified   : 2015-02-03 15:19:05
 # Filename        : page/index.py
 # Description     : 
-from tornado.web import RequestHandler
+from .json_handler import JsonRequestHandler
+from .do import verify_code
 
-class IndexHandler(RequestHandler):
+class IndexHandler(JsonRequestHandler):
+    @verify_code
     def get(self):
         self.render('up.html')
 

@@ -2,20 +2,20 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 11:50:47
+# Last modified   : 2015-02-03 15:22:52
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
 from public import error
-from .do import made_file_key, get_expired_time, get_upload_time, FileManage
+from .do import made_file_key, get_expired_time, get_upload_time, FileManage, verify_code
 from storage.save import save_to_disk, save_to_db
 
 from json_handler import JsonRequestHandler
 
 
 class FileHandler(JsonRequestHandler):
-    """下载的相关代码"""
 
+    """下载的相关代码"""
     def get(self):
         file_key = self.get_argument('file_key', '')
         try:
@@ -28,16 +28,17 @@ class FileHandler(JsonRequestHandler):
     ######################
 
     """上传的相关代码"""
+    @verify_code
     def post(self):
+        self.return_json = {'error': ''}
         # 返回的结果都会在这存放
-        self.return_json= {'error': ''}
+        self.acl.add_visits()
+
         files = self.request.files['file']
-        print self.client_ip
         for f in files:
             self.save_file(f)
 
         self.write_json(self.return_json)
-
 
     def write_error(self, status_code, **kwargs):
         try:

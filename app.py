@@ -2,11 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-28 16:00:24
+# Last modified   : 2015-02-03 16:04:14
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler
-from page import FileHandler, IndexHandler, ManageHandler
+from code import CodeHandler
+from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule
 from os import path
 
@@ -25,6 +26,8 @@ class PanApplication(Application):
                 (r'/', IndexHandler),
                 (r'/file.py', FileHandler),
                 (r'/manage.py', ManageHandler),
+                (r'/verify.py', VerifyHandler),
+                (r'/code.py', CodeHandler),
                 ]
 
         settings = {
@@ -34,6 +37,8 @@ class PanApplication(Application):
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule},
                 'debug': True,
+                'gzip': True,
+                'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
                 }
 
         Application.__init__(self, handlers, **settings)

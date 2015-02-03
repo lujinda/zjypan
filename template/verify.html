@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <title>身份验证</title>
+        <script src="{{static_url("js/jquery.js")}}"></script>
+        <style>
+            body{
+                font-family:tahoma,arial,Hiragino Sans GB;
+                background-color:#000;
+                font-weight:bold;
+                padding:50px;
+            }
+            #code_wrap{
+                width:200px;
+                margin:100px auto;
+            }
+            #code_wrap input{
+                width:90px;
+                height:30px;
+                border-radius:10px;
+                font-size:22px;
+                text-align:center;
+                font-weight:bold;
+                margin:auto;
+                display:block;
+            }
+            #code_wrap img{
+                border-radius:10px;
+                margin:10px auto;
+                width:100px;
+                height:40px;
+                display:block;
+            }
+        </style>
+    </head>
+    <body>
+    <h2 style="color:#fff;text-align:center;">您最近的上传频繁太快，我们需要对您做一个验证，防止机器上传。但是您可以照常 <a style="color:#fff" href="/manage.py" >管理已上传文件</a></h2>
+    <div id="code_wrap">
+        <form method="POST" action="">
+            <img id="code_img" src="/code.py?token={{token}}" />
+            <input name="code" />
+            <input id="token" name="token" type="hidden" value="{{token}}" />
+        </form>
+    </div>
+    </body>
+    <script>
+        function update_code_img(){
+            // 防止浏览器缓存
+            var url = '/code.py?token=' + $('#token').val() + '&t=' + (new Date().valueOf());
+            $('#code_img').attr('src', url);
+        }
+
+        $('#code_img').click(function(){
+            update_code_img();
+        }
+        );
+        window.setInterval(update_code_img, 50000);
+
+    </script>
+
+</html>

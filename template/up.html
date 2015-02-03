@@ -18,7 +18,6 @@
 <script>
     var $filequeue,
     $filelist;
-
     $(document).ready(function() {
         $filequeue = $(".file_form .filelist.queue");
         $filelist = $(".file_form .filelist.complete");
@@ -51,7 +50,7 @@
     }
 
     function onFileStart(e, file) {
-        $('.file_percent').css('width', '10%');
+        $('.file_percent').css('width', '0%');
     }
 
     function onFileProgress(e, file, percent) {

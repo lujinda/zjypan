@@ -33,7 +33,7 @@ a{
 }
 #wrap_file{
     width:400px;
-    padding-top:70px;
+    padding-top:40px;
     margin:0px auto;
 }
 #wrap_file .file_process{
@@ -195,4 +195,26 @@ a{
 }
 #manage_wrap .btn_file_operation:hover{
     color:#ff0;
+}
+#code_wrap{
+    visibility: hidden;
+    margin-bottom:10px;
+}
+#code_wrap input{
+    width:80px;
+    height:25px;
+    background-color: transparent;
+    color:#fff;
+    font-weight:bold;
+    font-size:18px;
+    text-align:center;
+    border:2px solid #fff;
+    border-radius:10px;
+}
+#code_wrap img{
+    margin-right:10px;
+    border-radius:10px;
+    float:left;
+    height:30px;
+    width:80px;
 }
