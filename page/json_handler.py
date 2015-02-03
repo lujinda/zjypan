@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-24 20:59:07
+# Last modified   : 2015-02-03 11:49:19
 # Filename        : page/json_handler.py
 # Description     : 
 
@@ -14,4 +14,8 @@ class JsonRequestHandler(RequestHandler):
         json_data = json.dumps(data)
         self.set_header('Content-Type', 'application/json; charset=UTF-8')
         self.write(json_data)
+
+    @property
+    def client_ip(self):
+        return self.request.remote_ip
 

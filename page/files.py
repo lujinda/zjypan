@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-27 13:19:02
+# Last modified   : 2015-02-03 11:50:47
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
@@ -25,17 +25,19 @@ class FileHandler(JsonRequestHandler):
 
         file_manage.download()
         
-        
     ######################
 
     """上传的相关代码"""
     def post(self):
+        # 返回的结果都会在这存放
         self.return_json= {'error': ''}
         files = self.request.files['file']
+        print self.client_ip
         for f in files:
             self.save_file(f)
 
         self.write_json(self.return_json)
+
 
     def write_error(self, status_code, **kwargs):
         try:

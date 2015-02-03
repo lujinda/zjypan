@@ -2,13 +2,13 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-01 16:56:23
+# Last modified   : 2015-02-03 11:51:40
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
 from celery.contrib.methods import task_method
 import time
-from cattle import Cattle
+from lib.cattle import Cattle
 from public.data import db, del_local_file
 from functools import partial
 import os
