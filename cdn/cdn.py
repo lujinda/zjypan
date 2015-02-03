@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 11:51:40
+# Last modified   : 2015-02-03 18:55:52
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -36,6 +36,9 @@ class CDN():
 
     @celery.task(filter=task_method)
     def put_file(self, file_key, file_name, file_path):
+        if isinstance(file_name, unicode):
+            file_name = file_name.encode('utf-8')
+
         ret, error = self._cattle.put_file(self._bucket_name,
                 file_path, "%s/%s" % (file_key, file_name),
                 mime_type = 'application/octet-stream')
