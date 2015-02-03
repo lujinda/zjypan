@@ -38,12 +38,13 @@
     <div id="code_wrap">
         <form method="POST" action="">
             <img id="code_img" src="/code.py?token={{token}}" />
-            <input name="code" />
+            <input id="code" name="code" />
             <input id="token" name="token" type="hidden" value="{{token}}" />
         </form>
     </div>
     </body>
     <script>
+        $('#code').focus();
         function update_code_img(){
             // 防止浏览器缓存
             var url = '/code.py?token=' + $('#token').val() + '&t=' + (new Date().valueOf());
