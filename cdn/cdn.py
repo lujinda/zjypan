@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 19:59:58
+# Last modified   : 2015-02-07 12:09:56
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -14,7 +14,7 @@ from functools import partial
 import urllib
 import os
 
-BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
+BROKER_URL = 'redis://127.0.0.1:6379/15'
 
 
 celery = Celery('CDN', broker = BROKER_URL)

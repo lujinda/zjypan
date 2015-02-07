@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 19:27:32
+# Last modified   : 2015-02-06 19:55:43
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -12,6 +12,7 @@ import os
 from public.data import db, del_local_file
 from tornado.web import HTTPError
 from cdn import CDN
+import functools
 
 EXPIRED_DAY = 7
 ADD_EXPIRED_DAY = 3
@@ -138,13 +139,4 @@ def switch_unit(size):
     unit = unit_list[int(math.log10(size)) /  3]
     return "%.2f%s" % (unit_func[unit](), unit)
 
-
-def verify_code(method):
-    def wrap(self, *args, **kwargs):
-        if self.need_code():
-            self.redirect('/verify.py?v=' + self.request.uri)
-        else:
-            result = method(self, *args, **kwargs)
-        
-    return wrap
 

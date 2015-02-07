@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 16:04:14
+# Last modified   : 2015-02-06 20:21:10
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler
@@ -10,6 +10,8 @@ from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule
 from os import path
+
+from public.data import log_db
 
 class QiniuFileHandler(StaticFileHandler):
     @classmethod
@@ -33,7 +35,6 @@ class PanApplication(Application):
         settings = {
                 'template_path': path.join(path.dirname(__file__), 'template'),
                 'static_path': path.join(path.dirname(__file__), 'static'),
-#                'static_handler_class': QiniuFileHandler,
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule},
                 'debug': True,
@@ -41,5 +42,7 @@ class PanApplication(Application):
                 'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
                 }
 
+        self.log_db = log_db
         Application.__init__(self, handlers, **settings)
+
 

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-27 13:08:03
+# Last modified   : 2015-02-03 20:28:55
 # Filename        : storage/save.py
 # Description     : 
 import os
@@ -21,11 +21,11 @@ def save_to_disk(file_key, file_name, file_body):
 
     return '', file_path
 
-"""
+def save_to_db(**kwargs):
+    """
     作用：一般用于用户文件上传时，把相关信息写到数据库中，待celery将文件上传到云
         必须要保证传入的数据无错
-"""
-def save_to_db(**kwargs):
+    """
     kwargs['in_cdn'] = False
     kwargs['cdn_url'] = ''
 

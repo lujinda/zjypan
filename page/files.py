@@ -2,12 +2,13 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 19:06:12
+# Last modified   : 2015-02-06 19:57:36
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import RequestHandler, asynchronous, HTTPError
 from public import error
-from .do import made_file_key, get_expired_time, get_upload_time, FileManage, verify_code
+from .do import made_file_key, get_expired_time, get_upload_time, FileManage
+from lib.wrap import verify_code
 from storage.save import save_to_disk, save_to_db
 
 from json_handler import JsonRequestHandler

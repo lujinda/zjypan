@@ -2,24 +2,26 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 17:30:57
+# Last modified   : 2015-02-07 12:12:47
 # Filename        : public/data.py
 # Description     : 
 
 import pymongo
+import motor
 import redis
 import os
 
 db = pymongo.Connection().zjypan
+log_db = motor.MotorClient().log
 
 class RedisDb():
     def __init__(self, prefix):
         self._prefix = prefix
         self._db = redis.Redis()
 
-    def set(self, name, value, *args, **kwargs):
-        return self._db.set(self._prefix + name,
-                value, *args, **kwargs)
+    def set(self, name, value, ex = None):
+        return self._db.setex(self._prefix + name,
+                value, ex)
     
     def get(self, name, default = None):
         return self._db.get(self._prefix + name) or default

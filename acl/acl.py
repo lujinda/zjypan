@@ -2,14 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 18:40:08
+# Last modified   : 2015-02-07 12:12:19
 # Filename        : acl/acl.py
 # Description     : 
 from public.data import redis_db
 
 class ACL():
     TIME_INTERVAL = 5 * 60 # 时间间隔
-    VISITS = 2 # 记数器限制
+    VISITS = 5 # 记数器限制
     def __init__(self, client_ip):
         self._db  = redis_db
         self._client_ip = client_ip

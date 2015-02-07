@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 17:40:10
+# Last modified   : 2015-02-06 19:54:54
 # Filename        : page/json_handler.py
 # Description     : 
 
@@ -35,4 +35,13 @@ class JsonRequestHandler(RequestHandler):
 
     def need_code(self):
         return self.acl.need_code()
+
+    @property
+    def access_log(self):
+        return {'type': 'access',
+                'status_code': self.get_status(),
+                'method': self.request.method,
+                'client_ip': self.client_ip,
+                'path': self.request.uri,
+                'cost': self.request.request_time() * 1000}
 

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-25 13:43:05
+# Last modified   : 2015-02-06 19:58:05
 # Filename        : page/manage.py
 # Description     : 
 
