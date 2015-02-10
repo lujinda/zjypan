@@ -35,38 +35,8 @@ function show_succ_message(file_key){
                 '<div class="file_key_mess">您的文件代码是:<span class="file_key">{0}</span></div><div class="file_key_tip">文件代码由日期+星期+随机两位字母组成</div>', file_key));
 }
 
-$(document).ready(function(){
-    $('#input_key_wrap form').submit(function (event){
-        $.post("/manage.py", 
-            {'file_key':$('.input_key_dir .input_key').val()},
-            function (data){
-                var error = data['error'];
-                if (error){
-                    alert(error);
-                    return false;
-                }
-                $('#input_key_wrap').hide();
-                $('#manage_wrap #file_name').html(data['file_name']);
-                $('#manage_wrap #upload_time').html(DateToString(data['upload_time']));
-                $('#manage_wrap #expired_time').html(DateToString(data['expired_time']));
-                $('#manage_wrap #file_size').html(data['file_size']);
-                $('#manage_wrap #file_key').val(data['file_key']);
-
-                if (data['content_type'].split('/')[0] == 'image'){
-                    $('#pci_summary').attr('src', data['file_url']);
-                }else{
-                    $('#pci_summary').attr('src', 'http://7u2ph0.com1.z0.glb.clouddn.com/images/filetype/default.png');
-                }
-                $('#manage_wrap').fadeIn();
-            });
-
-        // 禁止默认事件的发现
-        event.preventDefault();
-        return false;
-    });
-    $('#input_key_wrap .btn_submit_key').click(function (event){
-        $('#input_key_wrap form').submit();
-        event.preventDefault();
-    });
-});
-
+function update_code_img(){
+    // 防止浏览器缓存
+    var url = '/code.py?token=' + $('#token').val() + '&t=' + (new Date().valueOf());
+    $('#code_img').attr('src', url);
+}

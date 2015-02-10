@@ -1,0 +1,48 @@
+body{
+    font-family: "Microsoft Yahei",Tahoma,Arial !important;
+    width: 450px;
+    margin: 10% auto;
+    background-color: #DDD;
+}
+#login_wrap{
+    width: 450px;
+    padding:10px;
+    font-size:14px;
+    border-radius: 20px;
+    margin:100px auto;
+    margin-bottom:20px;
+    background-color:#fff;
+}
+#login_wrap input{
+    width:200px;
+    border-radius:5px;
+    border:1px solid #ccc;
+    height:25px;
+    padding:4px;
+}
+#login_wrap span{
+    width:3em;
+    display:inline-block;
+    text-align:right;
+    margin-right:5px;
+}
+li{
+    width:300px;
+    list-style-type:none;
+    margin:10px auto;
+}
+#login_wrap #login_btn{
+    display:inline-block;
+    padding:10px 5px;
+    outline:0px none;
+    width:80px;
+    background-color:green;
+    text-align:center;
+    margin:auto;
+    font-weight:bold;
+    color:#fff;
+    border-radius: 15px;
+}
+a{
+    text-decoration:none;
+}

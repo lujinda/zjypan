@@ -1,0 +1,37 @@
+<!Doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content='text/html;charset=utf-8' />
+        <link rel="stylesheet" href="{{static_url("admin/css/login.css")}}" />
+        <script src="{{static_url("js/jquery.js")}}"></script>
+        <script src="{{ static_url("js/common.js") }}"></script>
+        <script src="{{ static_url("admin/js/login.js") }}"></script>
+        <title>登录后台</title>
+    </head>
+    <body>
+        <form action="/login.py" method="POST" id="login_form">
+            <div id="login_wrap">
+                <li id="tip" style="font-weight:bold;color:red;">您的登录记录行为将被记录）</li>
+                <input type='hidden' id="token" name="token" value="{{token}}" />
+                <li>
+                <span>用户名</span>
+                <input id="username" type='text' name="username" />
+                </li>
+                <li>
+                <span>密码</span>
+                <input id='password' type='password' name="password" />
+                </li>
+                <li>
+                <span>验证码</span>
+                <input id="code" style="width:50px;text-align:center" type='text' name="code" />
+                <img id="code_img" src="/code.py?token={{token}}" onclick="update_code_img()"/>
+                </li>
+                <li>
+                <a href=''  id="login_btn">登 录</a>
+                </li>
+            </div>
+        </form>
+        <div style="text-align:center;font-size:12px;">
+            <span>&copy; 疯狂的小企鹅</span></div>
+    </body>
+</html>

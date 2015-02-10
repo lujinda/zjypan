@@ -1,0 +1,40 @@
+<!Doctype html>
+<html class="js cssanimations">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="renderer" content="webkit">
+        <!--[if lte IE 9]>
+            <p class="browsehappy">你正在使用<strong>过时</strong>的浏览器， 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+            以获得更好的体验！</p>
+        <![endif]-->
+        <link rel="stylesheet" href="{{static_url('admin/assets/css/amazeui.min.css')}}"/>
+        <link rel="stylesheet" href="{{static_url('admin/assets/css/admin.css')}}"/>
+        <link rel="stylesheet" href="{{static_url('admin/css/style.css')}}"/>
+        <script src="{{static_url("js/jquery.js")}}"></script>
+    </head>
+    <title>后台</title>
+    <body>
+        <div id="header">
+            {% block header %}
+            {% module admin_header('admin/header.html') %}
+            {% end %}
+        </div>
+        <div id="main" class="am-cf admin-main">
+            {% block left %}
+            {% module admin_left('admin/left.html') %}
+            {% end %}
+            <div id="r_main" class='admin-content'>
+            {% block body %}{% end %}
+            </div>
+        </div>
+        <div id="footer">
+            {% block footer %}
+            {% module admin_footer('admin/footer.html') %}
+            {% end %}
+        </div>
+    </body>
+    <script src="{{static_url('admin/assets/js/app.js')}}"></script>
+    <script src="{{static_url('admin/assets/js/amazeui.min.js')}}"></script>
+</html>
+

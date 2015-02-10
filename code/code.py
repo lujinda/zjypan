@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 17:29:06
+# Last modified   : 2015-02-10 15:50:43
 # Filename        : code/code.py
 # Description     : 
 from tornado.web import RequestHandler
@@ -12,6 +12,7 @@ class CodeHandler(RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'image/jpeg')
         token = self.get_query_argument('token', '')
+        assert token != ''
         image_bin = get_image_bin(token)
         self.write(image_bin)
 

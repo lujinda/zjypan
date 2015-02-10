@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-17 17:22:45
+# Last modified   : 2015-02-10 14:22:48
 # Filename        : module/__init__.py
 # Description     : 
 from tornado.web import UIModule
@@ -12,6 +12,18 @@ class HeaderModule(UIModule):
         return self.render_string(render_file)
 
 class FooterModule(UIModule):
+    def render(self, render_file):
+        return self.render_string(render_file)
+
+class AdminHeaderModule(UIModule):
+    def render(self, render_file):
+        return self.render_string(render_file)
+
+class AdminFooterModule(UIModule):
+    def render(self, render_file):
+        return self.render_string(render_file)
+
+class AdminLeftModule(UIModule):
     def render(self, render_file):
         return self.render_string(render_file)
 

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-07 12:12:47
+# Last modified   : 2015-02-09 13:00:36
 # Filename        : public/data.py
 # Description     : 
 
@@ -11,17 +11,24 @@ import motor
 import redis
 import os
 
-db = pymongo.Connection().zjypan
-log_db = motor.MotorClient().log
+motor_client = motor.MotorClient()
+mongo_client = pymongo.Connection()
+db = mongo_client.zjypan
+user_db = db
+log_db = motor_client.log
 
 class RedisDb():
     def __init__(self, prefix):
         self._prefix = prefix
         self._db = redis.Redis()
+        self.setex = self.set
 
     def set(self, name, value, ex = None):
-        return self._db.setex(self._prefix + name,
+        if ex:
+            return self._db.setex(self._prefix + name,
                 value, ex)
+        else:
+            return self._db.set(self._prefix + name, value)
     
     def get(self, name, default = None):
         return self._db.get(self._prefix + name) or default

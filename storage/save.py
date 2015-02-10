@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 20:28:55
+# Last modified   : 2015-02-07 20:38:41
 # Filename        : storage/save.py
 # Description     : 
 import os
@@ -31,7 +31,6 @@ def save_to_db(**kwargs):
 
     db.files.insert(kwargs)
 
-    save_to_cdn(kwargs['file_key'], kwargs['file_name'], kwargs['file_path'])
 
 # 用于即时同步上传
 def save_to_cdn(file_key, file_name, file_path):

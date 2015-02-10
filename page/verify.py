@@ -2,13 +2,13 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-03 17:31:40
+# Last modified   : 2015-02-08 15:32:32
 # Filename        : page/verify.py
 # Description     : 
-from json_handler import JsonRequestHandler
+from public.handler import MyRequestHandler
 from code.do import get_code
 
-class VerifyHandler(JsonRequestHandler):
+class VerifyHandler(MyRequestHandler):
     def get(self):
         v = self.get_query_argument('v', '/')
         if not self.need_code():

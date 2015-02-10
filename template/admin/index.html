@@ -1,0 +1,33 @@
+{% extends "main.html" %}
+{% block body %}
+<div class="am-panel am-panel-default">
+  <div class="am-panel-hd" id="#p_sysinfo_title">
+    <h3 class="am-panel-title" data-am-collapse="{parent: '#p_sysinfo_title', target: '#p_sysinfo'}">
+        系统信息
+    </h3>
+  </div>
+  <div id="p_sysinfo" class="am-panel-bd am-collapse am-in">
+      <p>系统平台: {{server_info['os']}}</p>
+      <p>python版本: {{server_info['python']}}</p>
+      <p>tornado版本: {{server_info['tornado_version']}}</p>
+      <p>系统时间: {{server_info['server_time']}}</p>
+  </div>
+  <table class="am-table">
+      <thead>
+          <tr>
+              <th width="15%">动作</th>
+              <th width="50%">UA</th>
+              <th>ip</th>
+              <th>时间</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              
+          </tr>
+      </tbody>
+  </table>
+  <div class="am-panel-footer">最近十项操作记录</div>
+</div>
+
+{% end %}

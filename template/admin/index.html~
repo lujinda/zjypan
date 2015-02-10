@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+{% block body %}
+<div class="am-panel am-panel-default">
+  <div class="am-panel-hd">
+    <h3 class="am-panel-title">面板标题</h3>
+  </div>
+  <div class="am-panel-bd">
+    <p>这里是面板其他内容。</p>
+  </div>
+  <table class="am-table">
+    ...
+  </table>
+  <div class="am-panel-footer">...</div>
+</div>
+
+{% end %}

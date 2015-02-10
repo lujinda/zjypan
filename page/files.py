@@ -2,21 +2,22 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-06 19:57:36
+# Last modified   : 2015-02-08 15:31:21
 # Filename        : page/files.py
 # Description     : 
-from tornado.web import RequestHandler, asynchronous, HTTPError
+from tornado.web import HTTPError
 from public import error
 from .do import made_file_key, get_expired_time, get_upload_time, FileManage
-from lib.wrap import verify_code
+from lib.wrap import verify_code, access_log_save
 from storage.save import save_to_disk, save_to_db
 
-from json_handler import JsonRequestHandler
+from public.handler import MyRequestHandler
 
 
-class FileHandler(JsonRequestHandler):
+class FileHandler(MyRequestHandler):
 
     """下载的相关代码"""
+    @access_log_save
     def get(self):
         file_key = self.get_argument('file_key', '')
         try:
@@ -29,6 +30,7 @@ class FileHandler(JsonRequestHandler):
     ######################
 
     """上传的相关代码"""
+    @access_log_save
     @verify_code
     def post(self):
         self.return_json = {'error': ''} # 返回的结果都会在这存放
@@ -76,14 +78,17 @@ class FileHandler(JsonRequestHandler):
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_upload_time(), 
                 expired_time = get_expired_time(), file_size = file_size, file_url = '/file.py?file_key=' + file_key)
+        file_manage = FileManage(file_key, request = self)
+        file_manage.upload()
 
 
     ######################
     # 下面是删除文件相关的
+    @access_log_save
     def delete(self):
         file_key = self.get_argument('file_key')
         try:
-            file_manage = FileManage(file_key)
+            file_manage = FileManage(file_key, self)
             file_manage.delete()
         except FileManage.FileException, e:
             self.write({'error': e.message})
