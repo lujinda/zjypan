@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-10 20:58:10
+# Last modified   : 2015-02-11 13:06:34
 # Filename        : admin/base.py
 # Description     : 
 
@@ -28,11 +28,16 @@ class BaseHandler(MyRequestHandler):
         raise # 留空
 
     def check_user_pass(self, username, password):
-        user_info = self.application.user_db.admin.find_one({'username': username,
+        user_info = self.application.user_db.users.find_one({'username': username,
             'password': enc_password(password)}) or {}
         return user_info.get('uid', None)
 
 class AdminHandler(BaseHandler):
+    def create_default(self):
+        self.application.user_db.users.update({}, 
+                {"$setOnInsert":{'username': 'tuxpy', 'password': enc_password('tuxpy'), 'uid': 0}}, True)
+
     def get_current_user(self):
+        self.create_default()
         return self.session.get('uid') == 0
 

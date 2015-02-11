@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-10 20:58:51
+# Last modified   : 2015-02-11 14:06:23
 # Filename        : admin/login.py
 # Description     : 
 
@@ -12,7 +12,7 @@ from lib.wrap import auth_log_save
 
 class LoginHandler(BaseHandler):
     def get(self):
-        self.render('admin/login.html', token = self.token)
+        self.render('login.html', token = self.token)
 
     @auth_log_save
     def post(self):
@@ -35,12 +35,12 @@ class LoginHandler(BaseHandler):
             self.write({'error': '用户名与密码不匹配'})
             return '认证失败'
 
-        # 为了以后打算，如果要开启账号认证制度，home_page就是用户的主页
-        next_url = self.get_query_argument('next_url', self.home_page)
 
         self.session['uid'] = uid
         self.session['username'] = username
         self.session.save()
+        # 为了以后打算，如果要开启账号认证制度，home_page就是用户的主页
+        next_url = self.get_query_argument('next_url', self.home_page)
         self.write({'error':'', 'url': next_url})
         return '登录成功'
 

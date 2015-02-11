@@ -17,12 +17,12 @@
     <body>
         <div id="header">
             {% block header %}
-            {% module admin_header('admin/header.html') %}
+            {% module admin_header('header.html') %}
             {% end %}
         </div>
         <div id="main" class="am-cf admin-main">
             {% block left %}
-            {% module admin_left('admin/left.html') %}
+            {% module admin_left('left.html') %}
             {% end %}
             <div id="r_main" class='admin-content'>
             {% block body %}{% end %}
@@ -30,7 +30,7 @@
         </div>
         <div id="footer">
             {% block footer %}
-            {% module admin_footer('admin/footer.html') %}
+            {% module admin_footer('footer.html') %}
             {% end %}
         </div>
     </body>

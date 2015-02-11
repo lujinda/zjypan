@@ -2,10 +2,10 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-10 20:39:41
+# Last modified   : 2015-02-11 14:12:55
 # Filename        : app.py
 # Description     : 
-from tornado.web import Application, StaticFileHandler
+from tornado.web import Application, StaticFileHandler, RedirectHandler
 from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule, AdminHeaderModule, AdminFooterModule, AdminLeftModule
@@ -33,11 +33,6 @@ class PanApplication(Application):
                 (r'/manage.py', ManageHandler),
                 (r'/verify.py', VerifyHandler),
                 (r'/code.py', CodeHandler),
-                (r'/login.py', LoginHandler),
-                (r'/tuxpy/?', AdminIndexHandler),
-                (r'/tuxpy/index.py', AdminIndexHandler),
-                (r'/tuxpy/logout.py', LogoutHandler),
-#                (r'/api/'),
                 ]
 
         settings = {
@@ -47,7 +42,32 @@ class PanApplication(Application):
                # 'static_handler_class': QiniuFileHandler,
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule,
-                                'admin_header': AdminHeaderModule,
+                                },
+                'debug': True,
+                'gzip': False,
+                'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
+                }
+
+
+        self.log_db = log_db
+        Application.__init__(self, handlers, **settings)
+
+class PanAdminApplication(Application):
+    def __init__(self):
+        handlers = [
+                (r'/', RedirectHandler, {'url': '/tuxpy'}),
+                (r'/code.py', CodeHandler),
+                (r'/login.py', LoginHandler),
+                (r'/tuxpy/?', AdminIndexHandler),
+                (r'/tuxpy/index.py', AdminIndexHandler),
+                (r'/tuxpy/logout.py', LogoutHandler),
+                ]
+
+        settings = {
+                'template_path': path.join(path.dirname(__file__), 'template/admin'),
+                # 静态文件，像js这些，共享性较大，所以不改
+                'static_path': path.join(path.dirname(__file__), 'static'),
+                'ui_modules': { 'admin_header': AdminHeaderModule,
                                 'admin_footer': AdminFooterModule,
                                 'admin_left': AdminLeftModule},
                 'debug': True,
