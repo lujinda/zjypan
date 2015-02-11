@@ -2,17 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 14:12:55
+# Last modified   : 2015-02-11 18:59:41
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
 from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
-from module import HeaderModule, FooterModule, AdminHeaderModule, AdminFooterModule, AdminLeftModule
-from admin import LoginHandler, LogoutHandler
-from admin import AdminIndexHandler
+from module import HeaderModule, FooterModule
 from os import path
-from lib.session import SessionManager
 
 from public.data import log_db, user_db, redis_db
 
@@ -24,6 +21,14 @@ class QiniuFileHandler(StaticFileHandler):
         if not static_path:
             raise Exception
         return urlparse.urljoin(static_path, path)
+
+from admin import LoginHandler, LogoutHandler
+from admin import AdminIndexHandler
+from module import AdminHeaderModule, AdminFooterModule, AdminLeftModule
+from lib.session import SessionManager
+from admin.api import ApiOperationHandler
+from admin import AdminSettingsHandler
+
 
 class PanApplication(Application):
     def __init__(self):
@@ -61,6 +66,8 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/?', AdminIndexHandler),
                 (r'/tuxpy/index.py', AdminIndexHandler),
                 (r'/tuxpy/logout.py', LogoutHandler),
+                (r'/tuxpy/settings/(.+)?', AdminSettingsHandler),
+                (r'/api/operation', ApiOperationHandler)
                 ]
 
         settings = {

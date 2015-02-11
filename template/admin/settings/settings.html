@@ -1,0 +1,23 @@
+{% extends "../main.html" %}
+{% block body %}
+<ul class="am-nav am-nav-tabs">
+    <li id="set_global"><a href="./global">全局设置</a></li>
+  <li id="set_account"><a href="./account">账号设置</a></li>
+</ul>
+<div id="settings_wrap">
+    {% block setting_wrap %}
+    {% end %}
+</div>
+<script>
+    var path_parts = document.location.pathname.split('/');
+    var now_element = document.getElementById('set_' + path_parts[path_parts.length - 1]) || document.getElementById('set_global'); // 如果没有找到，就是在settings/目录下，未指定情况下，以set_global作为默认的。
+    now_element.className = 'am-active';
+    function switch_box(obj){
+        if (obj.checked){
+            $('#settings_stop_info').attr('disabled', false);
+        }else{
+            $('#settings_stop_info').attr('disabled', true);
+        }
+    }
+</script>
+{% end %}

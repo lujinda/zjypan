@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="{{static_url('admin/assets/css/admin.css')}}"/>
         <link rel="stylesheet" href="{{static_url('admin/css/style.css')}}"/>
         <script src="{{static_url("js/jquery.js")}}"></script>
+        <script src="{{static_url('js/common.js')}}"></script>
+        <script src="{{static_url('admin/js/admin.js')}}"></script>
     </head>
     <title>后台</title>
     <body>
@@ -32,6 +34,9 @@
             {% block footer %}
             {% module admin_footer('footer.html') %}
             {% end %}
+        </div>
+        <div id='goToTop'>
+            <a title="回到顶部"></a>
         </div>
     </body>
     <script src="{{static_url('admin/assets/js/app.js')}}"></script>

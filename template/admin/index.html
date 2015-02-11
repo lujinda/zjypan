@@ -21,13 +21,21 @@
               <th>时间</th>
           </tr>
       </thead>
-      <tbody>
-          <tr>
-              
-          </tr>
+      <tbody id="operation_list" style="font-size:15px">
       </tbody>
   </table>
   <div class="am-panel-footer">最近十项操作记录</div>
-</div>
 
+  <input type="button" id="btn_operation_list_load" class="am-btn am-btn-default am-btn-block" value="加载更多" data-am-loading="{loadingText: '努力加载中...'}" />
+</div>
+<script>
+    $(document).ready(function(){
+        $('#btn_operation_list_load').click(function () {
+            var $btn = $(this)
+            $btn.button('loading');
+            load_more_operation($btn);
+      });
+        $('#btn_operation_list_load').click();
+    });
+</script>
 {% end %}

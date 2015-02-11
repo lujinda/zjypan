@@ -1,0 +1,7 @@
+{% extends "../main.html" %}
+<ul class="am-nav am-nav-tabs">
+  <li class="am-active"><a href="#">首页</a></li>
+  <li><a href="#">开始使用</a></li>
+  <li><a href="#">按需定制</a></li>
+</ul>
+

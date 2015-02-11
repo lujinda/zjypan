@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-08 15:31:21
+# Last modified   : 2015-02-11 19:31:23
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import HTTPError
@@ -34,7 +34,7 @@ class FileHandler(MyRequestHandler):
     @verify_code
     def post(self):
         self.return_json = {'error': ''} # 返回的结果都会在这存放
-        self.acl.add_visits()
+        self.acl.add_up_register()
 
         files = self.request.files['file']
         for f in files:

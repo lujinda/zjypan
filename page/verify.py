@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-08 15:32:32
+# Last modified   : 2015-02-11 19:31:41
 # Filename        : page/verify.py
 # Description     : 
 from public.handler import MyRequestHandler
@@ -18,7 +18,7 @@ class VerifyHandler(MyRequestHandler):
         self.render('verify.html', token = self.token)
 
     def del_code(self):
-        self.acl.del_visits()
+        self.acl.del_up_register()
 
     def post(self):
         code = self.get_argument('code', '')

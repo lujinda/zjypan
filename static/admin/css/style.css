@@ -7,3 +7,25 @@
     width:auto;
     overflow:hidden;
 }
+#goToTop{
+    position:fixed;
+    display:none;
+    bottom:10%;
+    right:10%;
+    z-index:100;
+    width:28px;
+    height:64px;
+}
+#goToTop a{
+    display:block;
+    width:100%;
+    background-image:url(../images/goToTop.png);
+    background-position:left top;
+    height:100%;
+}
+#goToTop a:hover{
+    background-position:right top;
+}
+#settings_wrap{
+    padding-top:10px;
+}
