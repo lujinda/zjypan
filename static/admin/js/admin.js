@@ -29,6 +29,50 @@ function append_operation_list(operation_list){
     }
 }
 
+function _post_settings(obj){
+    if (obj == 'global'){
+        url = '/tuxpy/settings/global';
+        data = {'up_time_interval': $('#settings_up_time_interval').val(),
+        'up_num': $('#settings_up_num').val(), 
+        'stop': $('#settings_stop').attr('checked') ? 'on': 'off',
+        'stop_info': $('settings_stop_info').val()};
+    }
+
+    data['mail_code'] = $('#mail_code').val();
+
+    $.ajax({url: url,
+        type:'POST',
+        data:data,
+        success:function (data){
+            if (data['error']){
+                $('#top_error_mess p').html(data['mess']);
+                $('#top_error_mess').show().fadeOut(4000);
+            }else{
+                $('#top_success_mess p').html(data['mess']);
+                $('#top_success_mess').show().fadeOut(2000);
+            }
+        },
+        error:function (){
+            $('#top_error_mess p').html('保存失败').fadeIn(300);
+        },
+        
+    });
+}
+
+function btn_settings_save(obj){
+    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
+    $('#send_mail_code_wrap #mail_code').val('');
+    $('#send_mail_code_wrap').modal({
+        relatedTarget: this,
+    onConfirm: function(e) {
+        _post_settings(obj);
+    },
+    onCancel: function(e) {
+        return false;
+    }
+    });
+}
+
 $(document).ready(function(){
     $(window).scroll(function(){
         if ($(this).scrollTop() > $(window).height() / 3){

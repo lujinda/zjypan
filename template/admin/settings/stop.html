@@ -5,9 +5,9 @@
 <div class="am-panel-bd">
     <div class="am-input-group">
         <span class="am-input-group-label">
-            <input {{settings.get('stop', False) and 'checked'}} onchange="switch_box(this)" type="checkbox"> 服务器维护
+            <input {{settings.get('stop', False) and 'checked'}} onchange="switch_box(this)" id="settings_stop" type="checkbox"> 服务器维护
         </span>
-        <input {{settings.get('top' , False) or 'disabled'}} type="text" id="settings_stop_info" class="am-form-field">
+        <input {{settings.get('stop_info' , False) or 'disabled'}} type="text" id="settings_stop_info" class="am-form-field">
     </div>
 </div>
 <div class="am-panel-footer">当服务器需要暂停一段时间的可以用</div>

@@ -29,3 +29,13 @@
 #settings_wrap{
     padding-top:10px;
 }
+#top_success_mess, #top_error_mess{
+    width:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:10000;
+    display:none;
+    text-align:center;
+    margin:0px;
+}

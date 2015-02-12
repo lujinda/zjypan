@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 14:06:23
+# Last modified   : 2015-02-12 12:09:35
 # Filename        : admin/login.py
 # Description     : 
 
@@ -40,7 +40,7 @@ class LoginHandler(BaseHandler):
         self.session['username'] = username
         self.session.save()
         # 为了以后打算，如果要开启账号认证制度，home_page就是用户的主页
-        next_url = self.get_query_argument('next_url', self.home_page)
-        self.write({'error':'', 'url': next_url})
+        callback_url = self.get_query_argument('callback', self.home_page)
+        self.write({'error':'', 'url': callback_url})
         return '登录成功'
 

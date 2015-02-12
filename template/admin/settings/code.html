@@ -9,7 +9,7 @@
                 <span class="am-input-group-label">
                     记数器持续时间
                 </span>
-                <input type="number" class="am-form-field"   placeholder="60 - 86400" min="60" max="86400" value="{{settings.get('up_time_interval', 300)}}" required />
+                <input type="number" id="settings_up_time_interval" name="settings_up_time_interval" class="am-form-field"   placeholder="60 - 86400" min="60" max="86400" value="{{settings.get('up_time_interval', 300)}}" required />
                 <span class="am-input-group-label">
                     秒
                 </span>
@@ -20,7 +20,7 @@
                 <span class="am-input-group-label">
                     激活记数器条件
                 </span>
-                <input type="number" class="am-form-field" value="{{settings.get('up_num', 5)}}" placeholder="1 - 60" min="1" max="60" required />
+                <input type="number" id="settings_up_num" name="settings_up_num" class="am-form-field" value="{{settings.get('up_num', 5)}}" placeholder="1 - 60" min="1" max="60" required />
                 <span class="am-input-group-label">
                     次上传
                 </span>

@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 15:54:58
-# Filename        : api/base.py
+# Last modified   : 2015-02-12 14:32:57
+# Filename        : admin/api/base.py
 # Description     : 
 from functools import wraps
 from tornado.web import HTTPError
@@ -16,7 +16,11 @@ class ApiAdminHandler(AdminHandler):
 
     def write_error(self, status_code, **kwargs):
         self.set_status(status_code)
-        self.result_json['error'] = kwargs['exc_info'][1].log_message
+        try:
+            self.result_json['error'] = kwargs['exc_info'][1].log_message
+        except:
+            self.result_json['error'] = 'unknown'
+
         self.result_json['status_code'] = status_code
         self.write(self.result_json)
 

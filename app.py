@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 18:59:41
+# Last modified   : 2015-02-12 13:58:23
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -26,7 +26,7 @@ from admin import LoginHandler, LogoutHandler
 from admin import AdminIndexHandler
 from module import AdminHeaderModule, AdminFooterModule, AdminLeftModule
 from lib.session import SessionManager
-from admin.api import ApiOperationHandler
+from admin.api import ApiOperationHandler, ApiMailCodeHandler
 from admin import AdminSettingsHandler
 
 
@@ -67,6 +67,7 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/index.py', AdminIndexHandler),
                 (r'/tuxpy/logout.py', LogoutHandler),
                 (r'/tuxpy/settings/(.+)?', AdminSettingsHandler),
+                (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler)
                 ]
 

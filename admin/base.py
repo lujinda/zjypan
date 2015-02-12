@@ -2,14 +2,16 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 15:00:49
-# Filename        : base.py
+# Last modified   : 2015-02-12 15:07:26
+# Filename        : admin/base.py
 # Description     : 
 
 from public.handler import MyRequestHandler
 from lib.session import Session
 from lib.enc_password import enc_password
+from urllib import urlencode
 from functools import wraps
+from tornado.web import HTTPError
 
 class BaseHandler(MyRequestHandler):
     def initialize(self):
@@ -48,6 +50,7 @@ class AdminHandler(BaseHandler):
         """
         返回当前用户是否是有效的,如果不是，则表示用户认证出错了，管理员id必须是0
         """
+        self.create_default()
         return self.session.get('uid') == 0
 
 def valid_authenticated(method):
@@ -55,7 +58,12 @@ def valid_authenticated(method):
     @wraps(method)
     def wrap(self, *args, **kwargs):
         if not self.valid_user():
-            self.redirect(self.get_login_url())
+            if self.requests.method not in ('GET', 'HEAD'):
+                raise HTTPError(403)
+                return
+            callback_url = self.request.uri
+            self.redirect(self.get_login_url() + '?' + urlencode({'callback':
+                callback_url}))
         else:
             method(self, *args, **kwargs)
 

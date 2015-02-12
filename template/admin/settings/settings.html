@@ -4,6 +4,19 @@
     <li id="set_global"><a href="./global">全局设置</a></li>
   <li id="set_account"><a href="./account">账号设置</a></li>
 </ul>
+<div class="am-modal am-modal-prompt" tabindex="-1" id="send_mail_code_wrap">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">邮箱验证</div>
+        <div class="am-modal-bd">
+            验证码已发往作者邮箱，请输入验证码
+            <input type="text" id="mail_code" class="am-modal-prompt-input">
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+        </div>
+    </div>
+</div>
 <div id="settings_wrap">
     {% block setting_wrap %}
     {% end %}
@@ -19,5 +32,6 @@
             $('#settings_stop_info').attr('disabled', true);
         }
     }
+
 </script>
 {% end %}
