@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 15:07:26
+# Last modified   : 2015-02-13 14:35:04
 # Filename        : admin/base.py
 # Description     : 
 
@@ -30,7 +30,16 @@ class BaseHandler(MyRequestHandler):
 
         raise # 留空
 
+    def change_user_pass(self, username, password):
+        # 会根据session中的id值来确定用户的uid
+        uid = self.session.get('uid', None)
+        assert uid != None
+        self.application.user_db.users.update({'uid': uid}, 
+                {'$set': {'username': username,
+                    'password': enc_password(password)}})
+
     def check_user_pass(self, username, password):
+        print enc_password(password)
         user_info = self.application.user_db.users.find_one({'username': username,
             'password': enc_password(password)}) or {}
         return user_info.get('uid', None)
@@ -41,10 +50,17 @@ class BaseHandler(MyRequestHandler):
         """
         return self.session.get('username')
 
+    def prepare(self):
+        """
+        重构它是为了使管理员后台不受“维护”影响
+        """
+        pass
+
 class AdminHandler(BaseHandler):
     def create_default(self):
         self.application.user_db.users.update({}, 
                 {"$setOnInsert":{'username': 'tuxpy', 'password': enc_password('tuxpy'), 'uid': 0}}, True)
+
 
     def valid_user(self):
         """
@@ -53,12 +69,13 @@ class AdminHandler(BaseHandler):
         self.create_default()
         return self.session.get('uid') == 0
 
+
 def valid_authenticated(method):
     """判断用户是否有效，如果无效则重定向到login_url"""
     @wraps(method)
     def wrap(self, *args, **kwargs):
         if not self.valid_user():
-            if self.requests.method not in ('GET', 'HEAD'):
+            if self.request.method not in ('GET', 'HEAD'):
                 raise HTTPError(403)
                 return
             callback_url = self.request.uri

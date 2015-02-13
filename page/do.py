@@ -2,22 +2,21 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-10 19:37:38
-# Filename        : client/page/do.py
+# Last modified   : 2015-02-13 18:40:09
+# Filename        : page/do.py
 # Description     : 
 import time
 import string
 import random
 import os
 from public.data import db, del_local_file
+from public.do import get_settings
 from tornado.web import HTTPError
 from storage.save import save_to_cdn
 from cdn import CDN
 import functools
 from lib.wrap import file_log_save
 
-EXPIRED_DAY = 7
-ADD_EXPIRED_DAY = 3
 
 class FException(Exception):
     pass
@@ -34,6 +33,10 @@ class FileManage():
         if (not self.__file):
             self.raise_error('文件已不存在')
             return
+        if self.__file['expired_time'] < long(time.time()):
+            self.raise_error('文件已过期')
+            return
+
         # 如果这个文件是存在的话，每一次对它的访问，都会增加日期
         self._add_expired_time()
         self._cdn = CDN()
@@ -43,7 +46,7 @@ class FileManage():
         每次初始化FileManage时，都会把到期时间加ADD_EXPIRED_DAY天
         """
         old_expired_time = self.__file['expired_time']
-        new_expired_time = get_expired_time(ADD_EXPIRED_DAY)
+        new_expired_time = get_expired_time(False)
 
         # 如果原先的过期时间比新的过期时间早的话，才更新过期时间，要不然就不更新
         if old_expired_time > new_expired_time:
@@ -125,7 +128,10 @@ class FileManage():
 def get_upload_time():
     return long(time.time())
 
-def get_expired_time(days = 7):
+def get_expired_time(new_create = True):
+    file_settings = get_settings('file')
+    days = new_create and file_settings.get('expired_day', 7) or file_settings.get('add_expired_day', 3)
+
     return long(time.time() + 24 * 60 * 60 * days)
 
 

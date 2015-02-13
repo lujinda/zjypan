@@ -39,3 +39,11 @@
     text-align:center;
     margin:0px;
 }
+#account_settings{
+    width:60%;
+    min-width:200px;
+    margin:auto;
+}
+#account_settings div{
+    margin:20px;
+}

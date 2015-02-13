@@ -30,12 +30,25 @@ function append_operation_list(operation_list){
 }
 
 function _post_settings(obj){
+    url = '/tuxpy/settings/' + obj;
     if (obj == 'global'){
-        url = '/tuxpy/settings/global';
         data = {'up_time_interval': $('#settings_up_time_interval').val(),
         'up_num': $('#settings_up_num').val(), 
         'stop': $('#settings_stop').attr('checked') ? 'on': 'off',
-        'stop_info': $('settings_stop_info').val()};
+        'stop_info': $('#settings_stop_info').val()};
+    }
+
+    if (obj == 'account'){
+        data = {'username': $('#settings_username').val(),
+            'password': $('#settings_password').val(),
+            'old_password': $('#settings_password_o').val(),
+        };
+    }
+
+    if (obj == 'file'){
+        data = {'expired_day': $('#settings_expired_day').val(),
+                'add_expired_day': $('#settings_add_expired_day').val(),
+        };
     }
 
     data['mail_code'] = $('#mail_code').val();
@@ -53,13 +66,14 @@ function _post_settings(obj){
             }
         },
         error:function (){
-            $('#top_error_mess p').html('保存失败').fadeIn(300);
+            $('#top_error_mess p').html('保存失败');
+            $('#top_error_mess').show().fadeOut(3000);
         },
         
     });
 }
 
-function btn_settings_save(obj){
+function settings_save(obj){
     $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
     $('#send_mail_code_wrap #mail_code').val('');
     $('#send_mail_code_wrap').modal({
@@ -71,6 +85,15 @@ function btn_settings_save(obj){
         return false;
     }
     });
+}
+
+function check_settings_account_input(){
+    $('#btn_settings_save').attr('disabled', true);
+    if ($('#settings_username').val().trim() == '' || $('#settings_password_o').val().trim() == '' || $('#settings_password').val().trim() == '')
+        return false;
+    if ($('#settings_password').val().trim() == $('#settings_password_a').val().trim()){
+        $('#btn_settings_save').attr('disabled', false);
+    }
 }
 
 $(document).ready(function(){

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 20:48:31
+# Last modified   : 2015-02-12 17:38:47
 # Filename        : lib/acl.py
 # Description     : 
 from public.data import redis_db
@@ -12,9 +12,17 @@ class ACL():
     def __init__(self, client_ip):
         self._db  = redis_db
         self._client_ip = client_ip
-        settings_global = get_settings('global')
-        self.UP_TIME_INTERVAL = settings_global.get('up_time_interval', 5 * 60) # 时间间隔
-        self.UP_NUM = settings_global.get('up_num', 5) # 记数器限制
+        self.settings_global = get_settings('global')
+        self.UP_TIME_INTERVAL = self.settings_global.get('up_time_interval', 5 * 60) # 时间间隔
+        self.UP_NUM = self.settings_global.get('up_num', 5) # 记数器限制
+
+    def need_stop(self):
+        """
+        返回(状态，信息)
+        """
+        return (self.settings_global.get('stop', False),
+                self.settings_global.get('stop_info', '系统维护中'))
+            
 
     def need_code(self):
         """

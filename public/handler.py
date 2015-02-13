@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 19:24:57
+# Last modified   : 2015-02-12 17:42:44
 # Filename        : public/handler.py
 # Description     : 
 
@@ -39,6 +39,12 @@ class MyRequestHandler(RequestHandler):
 
     def need_code(self):
         return self.acl.need_code()
+
+    def prepare(self):
+        stop, stop_info = self.acl.need_stop()
+        if stop:
+            self.render('stop.html', stop_info = stop_info)
+            self._finished = True
 
     @property
     def access_log(self):

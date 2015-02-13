@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-11 18:31:46
+# Last modified   : 2015-02-13 17:55:49
 # Filename        : public/data.py
 # Description     : 
 
@@ -18,9 +18,9 @@ user_db = db
 log_db = motor_client.log
 
 class RedisDb():
-    def __init__(self, prefix):
+    def __init__(self, prefix, db = 0):
         self._prefix = prefix
-        self._db = redis.Redis()
+        self._db = redis.Redis(db = db)
         self.setex = self.set
 
     def set(self, name, value, ex = None):
@@ -37,14 +37,22 @@ class RedisDb():
         return int(self._db.incr(self._prefix + name,
                 amount))
 
+
     def exists(self, name):
         return self._db.exists(self._prefix + name)
 
     def delete(self, name):
         return self._db.delete(self._prefix + name)
 
+    def hset(self, name, key, value):
+        return self._db.hset(self._prefix + name, key, value)
+
+    def hgetall(self, name):
+        return self._db.hgetall(self._prefix + name)
+    
 
 redis_db = RedisDb('zjypan_')
+session_db = RedisDb('zjypan_', db=1)
 
 def del_local_file(file_path):
     dir_name = os.path.dirname(file_path)

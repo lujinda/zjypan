@@ -1,10 +1,9 @@
 {% extends 'settings.html' %}
-<input type="text" class="am-form-field">
 {% block setting_wrap %}
 <div id="global_settings">
-{% include "code.html" %}
-{% include "stop.html" %}
-<button type="button" onclick="btn_settings_save('global')" class="am-btn am-btn-default am-round">保存</button>
+{% include "global/code.html" %}
+{% include "global/stop.html" %}
+<button type="button" id="btn_settings_save" onclick="settings_save('global')" class="am-btn am-btn-default am-round">保存</button>
 </div>
 {% end %}
 

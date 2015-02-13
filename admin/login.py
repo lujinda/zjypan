@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 12:09:35
+# Last modified   : 2015-02-12 16:43:43
 # Filename        : admin/login.py
 # Description     : 
 
@@ -25,7 +25,7 @@ class LoginHandler(BaseHandler):
         password = self.get_argument('password')
 
         assert token and code and username and password
-        if code.lower() != (get_code(token).lower() or '').lower():
+        if code.lower() != (get_code(token) or '').lower():
             self.write({'error': '验证码不正常，请核对'})
             return 
         

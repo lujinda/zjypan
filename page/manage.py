@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-08 15:32:54
+# Last modified   : 2015-02-12 17:49:17
 # Filename        : page/manage.py
 # Description     : 
 
@@ -28,3 +28,4 @@ class ManageHandler(MyRequestHandler):
             return 
 
         file_manage.show()
+

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-10 20:44:01
+# Last modified   : 2015-02-13 16:42:41
 # Filename        : lib/wrap.py
 # Description     : 
 import functools
@@ -35,7 +35,7 @@ def access_log_save(method):
     return wrap
 
 
-operation_map = {'download': '下载', 'get_file_info': '查看', 'delete': '删除', 'upload': '上传'}
+operation_map = {'download': '下载', 'show': '查看', 'delete': '删除', 'upload': '上传'}
 
 def file_log_save(func):
     @functools.wraps(func)

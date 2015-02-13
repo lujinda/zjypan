@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 13:58:23
+# Last modified   : 2015-02-13 17:03:01
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -11,7 +11,7 @@ from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule
 from os import path
 
-from public.data import log_db, user_db, redis_db
+from public.data import log_db, user_db, session_db
 
 class QiniuFileHandler(StaticFileHandler):
     @classmethod
@@ -87,7 +87,7 @@ class PanAdminApplication(Application):
         session_settings = {
                 'session_secret': '0aa48e39-51cf-44c7-b0f2-7b2e1d8277a2',
                 'session_timeout': 60 * 500,
-                'store_db': redis_db,
+                'store_db': session_db,
                 }
 
         self.log_db = log_db

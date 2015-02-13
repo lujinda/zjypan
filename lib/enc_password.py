@@ -2,11 +2,11 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-08 14:33:14
+# Last modified   : 2015-02-12 16:43:26
 # Filename        : lib/enc_password.py
 # Description     : 
 from uuid import uuid4
-from md5 import md5
+from hashlib import md5
 from public.data import redis_db
 
 def enc_password(password):

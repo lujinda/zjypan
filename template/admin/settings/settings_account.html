@@ -1,2 +1,8 @@
 {% extends 'settings.html' %}
+{% block setting_wrap %}
+<div id="account_settings">
+    {% include "account/user.html" %}
+<button type="button" disabled id="btn_settings_save" onclick="settings_save('account')" class="am-btn am-btn-default am-round">保存</button>
+</div>
+{% end %}
 
