@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 17:55:49
+# Last modified   : 2015-02-14 19:42:29
 # Filename        : public/data.py
 # Description     : 
 
@@ -16,6 +16,7 @@ mongo_client = pymongo.Connection()
 db = mongo_client.zjypan
 user_db = db
 log_db = motor_client.log
+log_db_sync = mongo_client.log
 
 class RedisDb():
     def __init__(self, prefix, db = 0):

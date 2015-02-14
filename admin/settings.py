@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 18:06:54
+# Last modified   : 2015-02-14 17:03:41
 # Filename        : admin/settings.py
 # Description     : 
 from .base import AdminHandler, valid_authenticated
@@ -26,9 +26,11 @@ class AdminSettingsHandler(AdminHandler):
         输出格式{'mess': 提示信息,'error': 有值表示失败，无值表示成功}
         """
         assert set_obj
+        mail_code_verify = get_settings('global').get('verify', True)  # 是否需要 Email验证
+
         mail_code = self.get_argument('mail_code', '').strip()
 
-        if mail_code != self.session['mail_code'] or mail_code == '':
+        if mail_code_verify and (mail_code != self.session['mail_code'] or mail_code == '' ):
             self.write(dict(mess='保存失败，验证码出错', error=1))
             return
 
@@ -44,10 +46,12 @@ class AdminSettingsHandler(AdminHandler):
         up_num = int(self.get_argument('up_num'))
         stop = self.get_argument('stop') == 'on'
         stop_info = self.get_argument('stop_info', '')
+        verify = self.get_argument('verify') == 'on'
 
         assert 60 <= up_time_interval <= 86400 and 1 <= up_num <= 60
         save_settings('global', up_time_interval = up_time_interval,
-                up_num = up_num, stop = stop, stop_info = stop_info)
+                up_num = up_num, stop = stop, stop_info = stop_info,
+                verify = verify)
 
         self.write(dict(mess='全局设置已保存～', error=''))
         return '保存全局设置'

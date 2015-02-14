@@ -2,14 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 18:40:09
+# Last modified   : 2015-02-14 21:02:09
 # Filename        : page/do.py
 # Description     : 
 import time
 import string
 import random
 import os
-from public.data import db, del_local_file
+from public.data import db, del_local_file, redis_db
 from public.do import get_settings
 from tornado.web import HTTPError
 from storage.save import save_to_cdn
@@ -120,6 +120,7 @@ class FileManage():
     @file_log_save
     def upload(self):
         save_to_cdn(self.__file['file_key'], self.__file['file_name'], self.__file['file_path'])
+        add_up_total_num()
 
     def raise_error(self, err_mess):
         raise self.FileException(err_mess)
@@ -163,4 +164,16 @@ def switch_unit(size):
     unit = unit_list[int(math.log10(size)) /  3]
     return "%.2f%s" % (unit_func[unit](), unit)
 
+def get_save_total_num():
+    """
+    获取当前有多少文件存在服务器上
+    """
+    return db.files.count()
 
+
+def add_up_total_num():
+    redis_db.incr('up_total_num', 1)
+
+def get_up_total_num():
+    return redis_db.get('up_total_num', 0)
+    

@@ -2,11 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 14:36:36
+# Last modified   : 2015-02-14 17:16:45
 # Filename        : admin/api/mailcode.py
 # Description     : 
 from .base import ApiAdminHandler, api_admin_authenticated
 from uuid import uuid4
+from public.do import get_settings
 from lib.mail import send_mail
 
 class ApiMailCodeHandler(ApiAdminHandler):
@@ -31,6 +32,11 @@ class ApiMailCodeHandler(ApiAdminHandler):
 
     @api_admin_authenticated
     def get(self):
+        settings = get_settings('global')
+        if not settings['verify']:
+            self.write('not need code')
+            return
+
         if self.session.get('mail_code'): # 如果验证码已经发了，就不要去理了
             return
         try:

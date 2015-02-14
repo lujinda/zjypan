@@ -3,6 +3,11 @@
 <div id="global_settings">
 {% include "global/code.html" %}
 {% include "global/stop.html" %}
+<div class="am-panel-bd">
+        <span class="am-input-group-label">
+            <input {{settings.get('verify', False) and 'checked'}}  id="settings_verify" type="checkbox"> 设置保存需要邮箱验证
+        </span>
+</div>
 <button type="button" id="btn_settings_save" onclick="settings_save('global')" class="am-btn am-btn-default am-round">保存</button>
 </div>
 {% end %}

@@ -17,6 +17,32 @@
     </head>
     <title>后台</title>
     <body>
+        <div class="am-modal am-modal-confirm" tabindex="-1" id="confirm_msg_wrap">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd">请注意哦</div>
+                <div class="am-modal-bd">
+                    你确定要执行吗？
+                </div>
+                <div class="am-modal-footer">
+                    <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                    <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+                </div>
+            </div>
+        </div>
+        <div class="am-modal am-modal-prompt"  tabindex="-1" id="send_mail_code_wrap">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd">邮箱验证</div>
+                <div class="am-modal-bd">
+                    验证码已发往作者邮箱，请输入验证码<br>
+                    注：验证码在没使用前，只会发送一次。
+                    <input type="text" id="mail_code" class="am-modal-prompt-input">
+                </div>
+                <div class="am-modal-footer">
+                    <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                    <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+                </div>
+            </div>
+        </div>
         <div id="header">
             {% block header %}
             {% module admin_header('header.html') %}
@@ -27,7 +53,7 @@
             {% module admin_left('left.html') %}
             {% end %}
             <div id="r_main" class='admin-content'>
-            {% block body %}{% end %}
+                {% block body %}{% end %}
             </div>
         </div>
         <div id="footer">
@@ -41,5 +67,7 @@
     </body>
     <script src="{{static_url('admin/assets/js/app.js')}}"></script>
     <script src="{{static_url('admin/assets/js/amazeui.min.js')}}"></script>
+    {% block footer_js %}
+    {% end %}
 </html>
 

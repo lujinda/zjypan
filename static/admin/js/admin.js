@@ -35,7 +35,9 @@ function _post_settings(obj){
         data = {'up_time_interval': $('#settings_up_time_interval').val(),
         'up_num': $('#settings_up_num').val(), 
         'stop': $('#settings_stop').attr('checked') ? 'on': 'off',
-        'stop_info': $('#settings_stop_info').val()};
+        'stop_info': $('#settings_stop_info').val(),
+        'verify': $('#settings_verify').attr('checked') ? 'on': 'off',
+        };
     }
 
     if (obj == 'account'){
@@ -58,11 +60,9 @@ function _post_settings(obj){
         data:data,
         success:function (data){
             if (data['error']){
-                $('#top_error_mess p').html(data['mess']);
-                $('#top_error_mess').show().fadeOut(4000);
+                show_error(data['mess']);
             }else{
-                $('#top_success_mess p').html(data['mess']);
-                $('#top_success_mess').show().fadeOut(2000);
+                show_success(data['mess']);
             }
         },
         error:function (){
@@ -73,20 +73,39 @@ function _post_settings(obj){
     });
 }
 
-function settings_save(obj){
-    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
-    $('#send_mail_code_wrap #mail_code').val('');
-    $('#send_mail_code_wrap').modal({
-        relatedTarget: this,
-    onConfirm: function(e) {
-        _post_settings(obj);
-    },
-    onCancel: function(e) {
-        return false;
-    }
-    });
+function show_error(data){
+    $('#top_error_mess p').html(data);
+    $('#top_error_mess').show().fadeOut(4000);
+}
+function show_success(data){
+    $('#top_success_mess p').html(data);
+    $('#top_success_mess').show().fadeOut(2000);
 }
 
+
+function settings_save(obj){
+    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
+    $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
+        type:'GET',success:function (data){
+            if (data){
+                _post_settings(obj);
+            }else{
+                $('#send_mail_code_wrap #mail_code').val('');
+                $('#send_mail_code_wrap').modal({
+                    relatedTarget: this,
+                    closeViaDimmer:false,
+                    onConfirm: function(e) {
+                        _post_settings(obj);
+                    },
+                    onCancel: function(e) {
+                        return false;
+                    }
+                });
+
+            }
+        }});
+
+}
 function check_settings_account_input(){
     $('#btn_settings_save').attr('disabled', true);
     if ($('#settings_username').val().trim() == '' || $('#settings_password_o').val().trim() == '' || $('#settings_password').val().trim() == '')
@@ -94,6 +113,41 @@ function check_settings_account_input(){
     if ($('#settings_password').val().trim() == $('#settings_password_a').val().trim()){
         $('#btn_settings_save').attr('disabled', false);
     }
+}
+
+function request_api(url, method, data, success, error){ // 用来处理api访问 
+    data = data || {};
+    method = method || 'GET';
+    $.ajax({
+        url: url, 
+        type: method,
+        data: data,
+        success:function(data){
+            if (data['error'] != ''){
+                show_error(data['error']);
+            }else if (success){
+                success(data['result']);
+            }else{
+                show_success('操作成功');
+            };
+        },
+        error:function(){
+            show_error('操作失败');
+        },
+    });
+    
+}
+
+function clear_operation(){
+    $('#confirm_msg_wrap').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+            request_api('/api/operation', 'DELETE');
+        },
+        onCancel: function() {
+            return false;
+        }
+    });
 }
 
 $(document).ready(function(){
@@ -109,3 +163,4 @@ $(document).ready(function(){
         $('html, body').animate({scrollTop:0}, 'slow');
     });
 });
+
