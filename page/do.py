@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 21:02:09
+# Last modified   : 2015-02-15 22:29:43
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -72,7 +72,7 @@ class FileManage():
         """
         del_local_file(self.__file['file_path'])
         if self.__file['in_cdn']:
-            self._cdn.del_file.delay(self.__file['file_key'], self.__file['file_name'])
+            self._cdn.del_file(self.__file['file_key'], self.__file['file_name'])
 
         db.files.remove({'file_key':self._file_key})
 

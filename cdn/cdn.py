@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-07 12:09:56
+# Last modified   : 2015-02-15 22:29:02
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -14,7 +14,7 @@ from functools import partial
 import urllib
 import os
 
-BROKER_URL = 'redis://127.0.0.1:6379/15'
+BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
 
 
 celery = Celery('CDN', broker = BROKER_URL)
@@ -41,7 +41,7 @@ class CDN():
         return private_url
 
     @celery.task(filter=task_method)
-    def put_file(self, file_key, file_name, file_path):
+    def __put_file(self, file_key, file_name, file_path):
         if isinstance(file_name, unicode):
             file_name = file_name.encode('utf-8')
             file_key = file_key.encode('utf-8')
@@ -63,12 +63,19 @@ class CDN():
         # 然后把本地文件删除一下
         del_local_file(file_path)       
 
+
     @celery.task(filter=task_method)
-    def del_file(self, file_key, file_name):
+    def __del_file(self, file_key, file_name):
         if isinstance(file_name, unicode):
             file_name = file_name.encode('utf-8')
             file_key = file_key.encode('utf-8')
 
         ret, error = self._cattle.rm(self._bucket_name,
                 '%s/%s' % (file_key, file_name))
+
+    def put_file(self, *args, **kwargs):
+        self.__put_file.delay(*args, **kwargs)
+
+    def del_file(self, *args, **kwargs):
+        self.__del_file.delay(*args, **kwargs)
 

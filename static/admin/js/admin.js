@@ -150,6 +150,10 @@ function clear_operation(){
     });
 }
 
+function flush_cache(){
+    request_api('/api/cache', 'DELETE');
+}
+
 $(document).ready(function(){
     $(window).scroll(function(){
         if ($(this).scrollTop() > $(window).height() / 3){

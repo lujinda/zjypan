@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 19:18:57
+# Last modified   : 2015-02-15 18:54:23
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -11,7 +11,7 @@ from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule
 from os import path
 
-from public.data import log_db, user_db, session_db
+from public.data import log_db, db, session_db
 
 class QiniuFileHandler(StaticFileHandler):
     @classmethod
@@ -27,6 +27,7 @@ from admin import AdminIndexHandler
 from module import AdminHeaderModule, AdminFooterModule, AdminLeftModule
 from lib.session import SessionManager
 from admin.api import ApiOperationHandler, ApiMailCodeHandler, ApiResourcesHandler
+from admin.api import ApiCacheHandler
 from admin import AdminSettingsHandler
 from admin import AdminResourcesHandler
 
@@ -72,6 +73,7 @@ class PanAdminApplication(Application):
                 (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler),
                 (r'/api/resources', ApiResourcesHandler),
+                (r'/api/cache', ApiCacheHandler),
                 ]
 
         settings = {
@@ -94,7 +96,7 @@ class PanAdminApplication(Application):
                 }
 
         self.log_db = log_db
-        self.user_db = user_db
+        self.user_db = db
         Application.__init__(self, handlers, **settings)
         self.session_manager = SessionManager(**session_settings)
 

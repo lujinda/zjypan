@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 19:42:29
+# Last modified   : 2015-02-15 19:01:21
 # Filename        : public/data.py
 # Description     : 
 
@@ -14,7 +14,6 @@ import os
 motor_client = motor.MotorClient()
 mongo_client = pymongo.Connection()
 db = mongo_client.zjypan
-user_db = db
 log_db = motor_client.log
 log_db_sync = mongo_client.log
 
@@ -50,10 +49,17 @@ class RedisDb():
 
     def hgetall(self, name):
         return self._db.hgetall(self._prefix + name)
-    
+
+    def keys(self, name='*'):
+        return self._db.keys(self._prefix + name)
+
+    def expire(self, name, expire):
+        return self._db.expire(self._prefix + name, expire)
+
 
 redis_db = RedisDb('zjypan_')
-session_db = RedisDb('zjypan_', db=1)
+session_db = redis_db
+cache_db = RedisDb('zjypan_cache')
 
 def del_local_file(file_path):
     dir_name = os.path.dirname(file_path)

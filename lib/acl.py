@@ -2,11 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 17:38:47
+# Last modified   : 2015-02-15 19:03:15
 # Filename        : lib/acl.py
 # Description     : 
 from public.data import redis_db
 from public.do import get_settings
+from lib import cache
 
 class ACL():
     def __init__(self, client_ip):
@@ -16,10 +17,13 @@ class ACL():
         self.UP_TIME_INTERVAL = self.settings_global.get('up_time_interval', 5 * 60) # 时间间隔
         self.UP_NUM = self.settings_global.get('up_num', 5) # 记数器限制
 
+
+    @cache.cache(key = 'need_top')
     def need_stop(self):
         """
         返回(状态，信息)
         """
+        print 'no cache'
         return (self.settings_global.get('stop', False),
                 self.settings_global.get('stop_info', '系统维护中'))
             

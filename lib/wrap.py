@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 16:42:41
+# Last modified   : 2015-02-15 17:55:12
 # Filename        : lib/wrap.py
 # Description     : 
 import functools

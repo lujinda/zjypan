@@ -2,13 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 17:42:44
+# Last modified   : 2015-02-15 15:33:40
 # Filename        : public/handler.py
 # Description     : 
 
 from tornado.web import RequestHandler
 from uuid import uuid4
 from lib.acl import ACL
+from copy import deepcopy
 import json
 
 class MyRequestHandler(RequestHandler):
@@ -41,6 +42,9 @@ class MyRequestHandler(RequestHandler):
         return self.acl.need_code()
 
     def prepare(self):
+        """
+        判断是否服务器进入维护状态了
+        """
         stop, stop_info = self.acl.need_stop()
         if stop:
             self.render('stop.html', stop_info = stop_info)
@@ -55,6 +59,13 @@ class MyRequestHandler(RequestHandler):
                 'path': self.request.uri,
                 'cost': self.request.request_time() * 1000,
                 'UA': self.UA}
+
+    def flush(self, *args, **kwargs):
+        """
+        重构flush，为了获取缓存区数据
+        """
+        self._buffer = deepcopy(self._write_buffer)
+        super(MyRequestHandler, self).flush(*args, **kwargs)
 
     @property
     def log_db(self):

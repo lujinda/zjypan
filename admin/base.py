@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 14:35:04
+# Last modified   : 2015-02-15 14:53:27
 # Filename        : admin/base.py
 # Description     : 
 
@@ -30,6 +30,9 @@ class BaseHandler(MyRequestHandler):
 
         raise # 留空
 
+    def set_secure_cookie(self, *args, **kwargs):
+        super(BaseHandler, self).set_secure_cookie(httponly=True, secure=True,*args, **kwargs)
+
     def change_user_pass(self, username, password):
         # 会根据session中的id值来确定用户的uid
         uid = self.session.get('uid', None)
@@ -39,7 +42,6 @@ class BaseHandler(MyRequestHandler):
                     'password': enc_password(password)}})
 
     def check_user_pass(self, username, password):
-        print enc_password(password)
         user_info = self.application.user_db.users.find_one({'username': username,
             'password': enc_password(password)}) or {}
         return user_info.get('uid', None)
