@@ -4,6 +4,7 @@
 }
 #r_main{
     padding:10px;
+    padding-bottom: 50px;
     width:auto;
     overflow:hidden;
 }

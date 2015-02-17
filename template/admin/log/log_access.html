@@ -1,0 +1,42 @@
+{% extends "log.html" %}
+{% block title %}
+用户访问日志
+{% end %}
+{% block log_filter %}
+<div style="margin:15px">
+    <select id="log_status_code_list" data-am-selected>
+        <option value="all">所有</option>
+        {%for status_code in status_code_list %}
+        <option value="{{status_code['_id']}}">{{status_code['_id']}} ({{status_code['count']}})</option>
+        {% end %}
+</select>
+</div>
+{% end %}
+
+{% block log_table %}
+<table class="am-table am-table-striped am-table-hover">
+    <thead>
+        <tr>
+            <th>时间</th>
+            <th>状态</th>
+            <th>ip</th>
+            <th>路径</th>
+            <th>方法</th>
+            <th>耗时(ms)</th>
+            <th>User-Agent</th>
+        </tr>
+    </thead>
+    <tbody id="log_list_tbody">
+
+    </tbody>
+</table>
+<script>
+    function log_filter(){
+        log_api_url = String.format('{0}?start={1}&stop={2}&status_code={3}', log_api_url.split('?')[0],
+        $('#log_start').html(), $('#log_stop').html(), $('#log_status_code_list').val() == 'all' ? '0':$('#log_status_code_list').val());
+
+        init_log_list_tbody();
+        $('#btn_load_more_log').click();
+    }
+</script>
+{% end %}

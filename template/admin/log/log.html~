@@ -1,0 +1,5 @@
+{% extends "../main.html" %}
+{% block body %}
+{% block log_table %}
+{% end %}
+{% end %}

@@ -2,10 +2,10 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 22:02:49
+# Last modified   : 2015-02-16 20:09:39
 # Filename        : public/do.py
 # Description     : 
-from public.data import db
+from public.data import db, log_db_sync
 
 def get_settings(obj):
     return db.settings[obj].find_one() or {}

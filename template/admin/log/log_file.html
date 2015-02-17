@@ -1,0 +1,39 @@
+{% extends "log.html" %}
+{% block title %}
+用户文件日志
+{% end %}
+{% block log_filter %}
+<div style="margin:15px">
+    <select id="log_operation_list" data-am-selected>
+        <option value="all">所有</option>
+        {%for operation in operation_list %}
+        <option value="{{operation['_id']}}">{{operation['_id']}} ({{operation['count']}})</option>
+        {% end %}
+</select>
+</div>
+{% end %}
+
+{% block log_table %}
+<table class="am-table am-table-striped am-table-hover">
+    <thead>
+        <tr>
+            <th>文件键</th>
+            <th>操作</th>
+            <th>时间</th>
+            <th>ip</th>
+        </tr>
+    </thead>
+    <tbody id="log_list_tbody">
+
+    </tbody>
+</table>
+<script>
+function log_filter(){
+    log_api_url = String.format('{0}?start={1}&stop={2}&operation={3}', log_api_url.split('?')[0],
+            $('#log_start').html(), $('#log_stop').html(), $('#log_operation_list').val() == 'all' ? '':$('#log_operation_list').val());
+
+    init_log_list_tbody();
+    $('#btn_load_more_log').click();
+}
+</script>
+{% end %}

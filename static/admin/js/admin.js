@@ -1,5 +1,5 @@
 var offset = 0;
-
+var log_api_url = '';
 function load_more_operation($btn){
     var limit = 10;
     $.ajax({type:'GET',
@@ -154,6 +154,43 @@ function flush_cache(){
     request_api('/api/cache', 'DELETE');
 }
 
+
+function load_more_log($btn, log_key_list_map, log_type){
+    var log_key_list = log_key_list_map[log_type.split('?')[0]];
+    var limit = 20;
+    $.ajax({url: log_api_url, 
+        data:{'limit': limit, 'offset': offset},
+    success:function(data){
+        if (data['result'].length > 0){
+            offset += limit;
+            append_log_list(log_key_list, data['result'])
+            $btn.button('reset');
+        }else{
+            $btn.button('loading').val('全部加载完成');
+    }}});
+}
+
+function init_log_list_tbody(){
+    $('#log_list_tbody').empty();
+    offset = 0;
+}
+
+function append_log_list(log_key_list, log_list){
+    for (i in log_list){
+        var e_tr = $('<tr></tr>');
+        log = log_list[i];
+        for (var j=0; j < log_key_list.length; j++){
+            log_key = log_key_list[j];
+            log_value = log[log_key];
+            if (log_key == 'time'){
+                log_value = DateToString(log_value);
+            }
+            e_tr.append('<td>' + log_value + '</td>');
+        }
+        $('#log_list_tbody').append(e_tr);
+    }
+}
+
 $(document).ready(function(){
     $(window).scroll(function(){
         if ($(this).scrollTop() > $(window).height() / 3){
@@ -167,4 +204,5 @@ $(document).ready(function(){
         $('html, body').animate({scrollTop:0}, 'slow');
     });
 });
+
 

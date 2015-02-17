@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 15:33:40
+# Last modified   : 2015-02-16 21:06:52
 # Filename        : public/handler.py
 # Description     : 
 
@@ -11,6 +11,7 @@ from uuid import uuid4
 from lib.acl import ACL
 from copy import deepcopy
 import json
+import time
 
 class MyRequestHandler(RequestHandler):
     def initialize(self):
@@ -57,7 +58,8 @@ class MyRequestHandler(RequestHandler):
                 'method': self.request.method,
                 'client_ip': self.client_ip,
                 'path': self.request.uri,
-                'cost': self.request.request_time() * 1000,
+                'time': long(time.time()),
+                'cost': round(self.request.request_time() * 1000, 2),
                 'UA': self.UA}
 
     def flush(self, *args, **kwargs):
@@ -70,4 +72,17 @@ class MyRequestHandler(RequestHandler):
     @property
     def log_db(self):
         return self.application.log_db
+
+from lib.wrap import access_log_save
+from tornado.web import HTTPError
+
+class DefaultHandler(MyRequestHandler):
+    """处理404"""
+    def prepare(self):
+        self.set_status(404)
+        self.finish()
+
+    @access_log_save
+    def on_finish(self):
+        raise HTTPError(404)
 

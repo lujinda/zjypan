@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 18:54:23
+# Last modified   : 2015-02-16 21:05:35
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -10,6 +10,7 @@ from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
 from module import HeaderModule, FooterModule
 from os import path
+from public.handler import DefaultHandler
 
 from public.data import log_db, db, session_db
 
@@ -28,8 +29,10 @@ from module import AdminHeaderModule, AdminFooterModule, AdminLeftModule
 from lib.session import SessionManager
 from admin.api import ApiOperationHandler, ApiMailCodeHandler, ApiResourcesHandler
 from admin.api import ApiCacheHandler
+from admin.api import ApiLogHandler
 from admin import AdminSettingsHandler
 from admin import AdminResourcesHandler
+from admin import LogHandler
 
 
 class PanApplication(Application):
@@ -53,6 +56,7 @@ class PanApplication(Application):
                 'debug': True,
                 'gzip': False,
                 'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
+                'default_handler_class': DefaultHandler,
                 }
 
 
@@ -68,12 +72,14 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/?', AdminIndexHandler),
                 (r'/tuxpy/index.py', AdminIndexHandler),
                 (r'/tuxpy/logout.py', LogoutHandler),
+                (r'/tuxpy/log/(.+?)', LogHandler),
                 (r'/tuxpy/settings/(.+)?', AdminSettingsHandler),
                 (r'/tuxpy/resources.py', AdminResourcesHandler),
                 (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler),
                 (r'/api/resources', ApiResourcesHandler),
                 (r'/api/cache', ApiCacheHandler),
+                (r'/api/log/(.+?)', ApiLogHandler),
                 ]
 
         settings = {

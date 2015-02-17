@@ -1,0 +1,72 @@
+{% extends "../main.html" %}
+{% block body %}
+<div id="log_filter">
+    <h3>日志过滤</h3>
+    {% block log_filter %}
+    {% end %}
+    <div class="am-alert am-alert-danger" id="my-alert" style="display: none">
+        <p>开始日期应小于结束日期！</p>
+    </div>
+    <div class="am-g">
+        <div class="am-u-sm-6">
+            <button type="button" class="am-btn am-btn-default am-margin-right" id="my-start"><span class="am-icon-calendar"></span> 开始日期</button><span id="log_start"></span>
+        </div>
+        <div class="am-u-sm-6">
+            <button type="button" class="am-btn am-btn-default am-margin-right" id="my-end"><span class="am-icon-calendar"></span> 结束日期</button><span id="log_stop"></span>
+        </div>
+    </div>
+    <button type="button" onclick="log_filter()" class="am-btn am-btn-default am-round" style="margin:15px;">过滤日志</button>
+</div>
+<div id="log_talbe">
+    {% block log_table %}
+    {% end %}
+  <input type="button" id="btn_load_more_log" class="am-btn am-btn-default am-btn-block" value="加载更多" data-am-loading="{loadingText: '努力加载中...'}" />
+</div>
+{% end %}
+{% block footer_js %}
+<script>
+    $(document).ready(function (){
+        log_key_list_map = {'file': ['file_key', 'operation', 'time', 'ip'],
+        'access': ['time', 'status_code', 'client_ip', 'path', 'method', 'cost', 'UA']};
+        path_parts = document.location.pathname.split('/');
+        log_type = path_parts[path_parts.length - 1];
+        log_api_url = '/api/log/' + log_type;
+        $('#btn_load_more_log').click(function(){
+            var $btn = $(this);
+            $btn.button('loading');
+            load_more_log($btn,log_key_list_map, log_type);
+        });
+        $('#btn_load_more_log').click();
+
+    });
+    $(function() {
+        var startDate = new Date();
+        var endDate = new Date();
+        var $alert = $('#my-alert');
+        $('#my-start').datepicker().
+        on('changeDate.datepicker.amui', function(event) {
+            if (event.date.valueOf() > endDate.valueOf()) {
+                $alert.find('p').text('开始日期应小于结束日期！').end().show();
+                } else {
+                $alert.hide();
+                startDate = new Date(event.date);
+                $('#log_start').text($('#my-start').data('date'));
+            }
+            $(this).datepicker('close');
+        });
+
+        $('#my-end').datepicker().
+        on('changeDate.datepicker.amui', function(event) {
+            if (event.date.valueOf() < startDate.valueOf()) {
+                $alert.find('p').text('结束日期应大于开始日期！').end().show();
+                } else {
+                $alert.hide();
+                endDate = new Date(event.date);
+                $('#log_stop').text($('#my-end').data('date'));
+            }
+            $(this).datepicker('close');
+        });
+    });
+</script>
+{% end %}
+

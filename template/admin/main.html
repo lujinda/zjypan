@@ -14,8 +14,12 @@
         <script src="{{static_url("js/jquery.js")}}"></script>
         <script src="{{static_url('js/common.js')}}"></script>
         <script src="{{static_url('admin/js/admin.js')}}"></script>
+    <title>
+        {% block title %}
+        后台
+        {% end %}
+    </title>
     </head>
-    <title>后台</title>
     <body>
         <div class="am-modal am-modal-confirm" tabindex="-1" id="confirm_msg_wrap">
             <div class="am-modal-dialog">
