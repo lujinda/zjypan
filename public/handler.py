@@ -2,11 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-16 21:06:52
+# Last modified   : 2015-02-17 20:42:12
 # Filename        : public/handler.py
 # Description     : 
 
 from tornado.web import RequestHandler
+from tornado.websocket import WebSocketHandler
 from uuid import uuid4
 from lib.acl import ACL
 from copy import deepcopy
@@ -73,7 +74,7 @@ class MyRequestHandler(RequestHandler):
     def log_db(self):
         return self.application.log_db
 
-from lib.wrap import access_log_save
+from lib.wrap import access_log_save, auth_log_save
 from tornado.web import HTTPError
 
 class DefaultHandler(MyRequestHandler):
@@ -86,3 +87,32 @@ class DefaultHandler(MyRequestHandler):
     def on_finish(self):
         raise HTTPError(404)
 
+class MonitorHandler(WebSocketHandler):
+    """
+    用来处理websocket
+    """
+    @auth_log_save
+    def open(self):
+        self.application.monitors_manager.register(self.callback)
+        return '查看实时监控'
+
+    def on_close(self):
+        self.application.monitors_manager.unregister(self.callback)
+
+    def on_message(self, message):
+        pass
+
+    def callback(self, message):
+        self.write_message(message)
+
+    @property
+    def client_ip(self):
+        return self.request.remote_ip
+
+    @property
+    def UA(self):
+        return self.request.headers.get('User-Agent', '')
+
+    @property
+    def log_db(self):
+        return self.application.log_db

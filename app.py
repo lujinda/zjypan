@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-16 21:05:35
+# Last modified   : 2015-02-17 20:40:01
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -32,18 +32,23 @@ from admin.api import ApiCacheHandler
 from admin.api import ApiLogHandler
 from admin import AdminSettingsHandler
 from admin import AdminResourcesHandler
-from admin import LogHandler
+from admin import LogHandler, LogMonitorHandler # 只是用来查看，流量会被打到其他地方
+
+from public.handler import MonitorHandler
 
 
 class PanApplication(Application):
-    def __init__(self):
+    def __init__(self, monitors_manager= None):
         handlers = [
                 (r'/', IndexHandler),
                 (r'/file.py', FileHandler),
                 (r'/manage.py', ManageHandler),
                 (r'/verify.py', VerifyHandler),
                 (r'/code.py', CodeHandler),
+                (r'/monitor.py', MonitorHandler),
                 ]
+
+        self.monitors_manager = monitors_manager or []
 
         settings = {
                 'template_path': path.join(path.dirname(__file__), 'template'),
@@ -75,6 +80,7 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/log/(.+?)', LogHandler),
                 (r'/tuxpy/settings/(.+)?', AdminSettingsHandler),
                 (r'/tuxpy/resources.py', AdminResourcesHandler),
+                (r'/tuxpy/monitor.py', LogMonitorHandler),
                 (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler),
                 (r'/api/resources', ApiResourcesHandler),

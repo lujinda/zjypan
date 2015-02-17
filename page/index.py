@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 18:28:05
+# Last modified   : 2015-02-17 17:30:53
 # Filename        : page/index.py
 # Description     : 
 from public.handler import MyRequestHandler
@@ -14,6 +14,5 @@ class IndexHandler(MyRequestHandler):
     @verify_code
     @cache.page()
     def get(self):
-        print 'no cache'
         self.render('up.html')
 

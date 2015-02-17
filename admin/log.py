@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-16 20:29:43
+# Last modified   : 2015-02-17 20:38:00
 # Filename        : admin/log.py
 # Description     : 
 from .base import AdminHandler, valid_authenticated
@@ -20,4 +20,10 @@ class LogHandler(AdminHandler):
 
     def render_access(self):
         self.render('log/log_access.html', status_code_list = access_log_group())
+
+class LogMonitorHandler(AdminHandler):
+    @valid_authenticated
+    def get(self):
+        self.render('log/log_monitor.html')
+
 

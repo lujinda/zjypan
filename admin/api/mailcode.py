@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 17:16:45
+# Last modified   : 2015-02-17 20:18:18
 # Filename        : admin/api/mailcode.py
 # Description     : 
 from .base import ApiAdminHandler, api_admin_authenticated
@@ -33,7 +33,7 @@ class ApiMailCodeHandler(ApiAdminHandler):
     @api_admin_authenticated
     def get(self):
         settings = get_settings('global')
-        if not settings['verify']:
+        if not settings.get('verify', True):
             self.write('not need code')
             return
 
