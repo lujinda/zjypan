@@ -1,1 +1,27 @@
-<a target="_self" href='/'>首 页</a>
+<span id="top_post_index">
+    最新通知: <span></span>
+</span>
+<a href="javascript:show_all_post()">显示所有通知</a>
+<div id="post_box_index" class="post_box">
+    <div class="post_box_title">
+    </div>
+    <div class="post_box_content">
+    </div>
+    <div class="post_box_footer">
+    </div>
+</div>
+    <a target="_self" href='/'>首 页</a>
+
+<script>
+    $(document).ready(function(){
+        show_post_list();
+        $('#top_post_index').mouseover(function(){
+            $('#post_box_index').fadeIn(250);
+            $('html').click(function(){
+                $('#post_box_index').fadeOut(250);
+                $('html').unbind('click');
+            });
+        });
+    });
+</script>
+

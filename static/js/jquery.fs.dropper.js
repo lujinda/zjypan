@@ -308,25 +308,12 @@
 		}
 	}
 
-	/**
-	 * @method private
-	 * @name _uploadFile
-	 * @description Uploads file
-	 * @param data [object] "Instance data"
-	 * @param file [object] "Target file"
-	 * @param formData [object] "Target form"
-	 */
-	function _uploadFile(data, file, formData) {
-		if (file.size >= data.maxSize) {
-			file.error = true;
-			data.$dropper.trigger("fileError.dropper", [ file, "文件过大，禁止上传" ]);
-
-			_checkQueue(data);
-		} else {
+    function __start_upload(data, file, formData, md5){
 			file.started = true;
 			file.transfer = $.ajax({
-				url: data.action,
+				url: data.action + '?md5=' + md5,
                 type: "POST",
+                dataType: 'json',
                 data: formData,
 				contentType:false,
 				processData: false,
@@ -365,6 +352,63 @@
 					_checkQueue(data);
 				}
 			});
+    }
+
+	/**
+	 * @method private
+	 * @name _uploadFile
+	 * @description Uploads file
+	 * @param data [object] "Instance data"
+	 * @param file [object] "Target file"
+	 * @param formData [object] "Target form"
+	 */
+	function _uploadFile(data, file, formData) {
+		if (file.size >= data.maxSize) {
+			file.error = true;
+			data.$dropper.trigger("fileError.dropper", [ file, "文件过大，禁止上传" ]);
+
+			_checkQueue(data);
+		} else {
+            var file_reader = new FileReader();
+            var blob_slice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice;
+            
+            var chunk_size = 2097152;
+            var chunks = Math.ceil(file.file.size / chunk_size);
+            var current_chunk = 0;
+
+            var spark = new SparkMD5();
+
+            file_reader.onload = function(e){
+                spark.appendBinary(e.target.result);
+                current_chunk++;
+
+                if (current_chunk < chunks){
+                    var start = current_chunk * chunk_size, end = start + chunk_size >= file.size ? file.size : start + chunk_size;
+                    file_reader.readAsBinaryString(blob_slice.call(file.file, start, end));
+                }else{
+                    // 在这里已经计算出md5了，发送md5值
+                    var md5 = spark.end();
+                    $.ajax({
+                        url: '/speed_file.py',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {'md5': md5, 'filename': file['name']},
+                        success: function (response){
+                            file.complete = true;
+                            data.$dropper.trigger("fileComplete.dropper", [ file, response ]);
+                            _checkQueue(data);
+                        },
+                        error:function (){
+                            // 检验码出了问题，马上让浏览器提交文件
+                            __start_upload(data, file, formData, md5);
+                        },
+                    });
+                }
+            };
+            var start = current_chunk * chunk_size, end = start + chunk_size >= file.size ? file.size : start + chunk_size;
+            file_reader.readAsBinaryString(blob_slice.call(file.file, start, end));
+            return;
+
 		}
 	}
 

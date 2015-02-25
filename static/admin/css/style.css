@@ -30,7 +30,7 @@
 #settings_wrap{
     padding-top:10px;
 }
-#top_success_mess, #top_error_mess{
+#top_success_mess, #top_error_mess, #top_warning_mess{
     width:100%;
     position:fixed;
     top:0;
@@ -47,4 +47,29 @@
 }
 #account_settings div{
     margin:20px;
+}
+#log_monitor_wrap{
+    background-color: #000;
+    color:#fff;
+    font-size:16px;
+    min-height:100px;
+    padding:10px;
+    margin-bottom:20px;
+}
+#log_monitor_wrap li{
+    padding:4px 16px;
+    list-style-type:none;
+}
+.error_log{
+    color:red;
+}
+#post_table{
+    width:100%;
+}
+#post_table td{
+    padding:10px;
+}
+#list_post_operation a{
+    margin:10px 5px;
+    line-height:200%;
 }

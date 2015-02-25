@@ -2,15 +2,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <!--[if lt IE 9]>
-        <script src="{{ static_url('js/IE9.js') }}">IE7_PNG_SUFFIX=".png";</script >
-        <![endif]--> 
         <link rel="stylesheet" href="{{ static_url("css/style.css") }}" />
         <link rel="stylesheet" href="{{ static_url("css/jquery.fs.dropper.css")}}" />
         <script src="{{static_url("js/jquery.js")}}"></script>
-        <script src="{{static_url("js/jquery.fs.dropper.js")}}"></script>
         <script src="{{ static_url("js/common.js") }}"></script>
         <script src="{{ static_url("js/pan.js") }}"></script>
+        {% block header_js %}
+        {% end %}
+        <meta name="renderer" content="webkit">
         <title>{% block title %}{% end %}</title>
     </head>
     <body>
@@ -23,10 +22,11 @@
             {% block body %}{% end %}
         </div>
         <div id="footer">
+            {% block old_footer %}
+            {% end %}
             {% block footer%}
             {% module footer('footer.html') %}
             {% end %}
-
         </div>
         
     </body>

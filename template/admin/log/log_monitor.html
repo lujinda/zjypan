@@ -1,10 +1,14 @@
-<html>
-    <head>
-        <title>Burt's Books – Book Detail</title>
-        <script src='{{static_url("js/jquery.js")}}'></script>
-            <script src='{{static_url("js/inventory.js")}}' type="application/javascript"></script>
-    </head>
-
-    <body>
-    </body>
-</html>
+{% extends "../main.html" %}
+{% block title %}
+实时监控
+{% end %}
+{% block body %}
+<div id="log_monitor_wrap">
+</div>
+<div>
+    <button id="flush_log_monitor" onclick="$('#log_monitor_wrap').empty()" type="button" class="am-btn am-btn-default am-round">清屏</button>
+</div>
+{% end %}
+{% block footer_js %}
+<script src='{{static_url("admin/js/monitor.js")}}' type="application/javascript"></script>
+{% end %}

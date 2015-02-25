@@ -2,14 +2,13 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-17 20:38:00
+# Last modified   : 2015-02-22 19:26:27
 # Filename        : admin/log.py
 # Description     : 
-from .base import AdminHandler, valid_authenticated
+from .base import AdminHandler
 from public.log import operation_log_group, access_log_group
 
 class LogHandler(AdminHandler):
-    @valid_authenticated
     def get(self, log_type):
         assert log_type in ('access', 'file')
         render_func = getattr(self, 'render_' + log_type)
@@ -22,7 +21,6 @@ class LogHandler(AdminHandler):
         self.render('log/log_access.html', status_code_list = access_log_group())
 
 class LogMonitorHandler(AdminHandler):
-    @valid_authenticated
     def get(self):
         self.render('log/log_monitor.html')
 

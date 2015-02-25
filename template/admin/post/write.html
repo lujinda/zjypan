@@ -1,0 +1,58 @@
+{% extends "../main.html" %}
+{% block title %}
+新写通知
+{% end %}
+{% block body %}
+<form id="post_form" name="post_form" method='POST'>
+    <table id="post_table">
+        <tr>
+            <td>
+                <div class="am-input-group">
+                    <span class="am-input-group-label">
+                        <input id="post_important" value="yes" name='post_important' type="checkbox" {{post.get('post_important', False) and 'checked'}}/> 紧急
+                    </span>
+                    <input type="text" name="post_title" id="post_title" value="{{post.get('post_title', '')}}" class="am-form-field">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea name="post_content" id="post_content">{{post.get('post_content', '')}}</textarea>
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" style="display:none" name="post_uuid" value="{{post.get('post_uuid', '')}}"/>
+    <button type="submit" onclick="check_post(event)" id="btn_submit_post" class="am-btn am-btn-default am-round">发布</button>
+
+</form>
+{% end %}
+{% block header_js %}
+
+<link rel="stylesheet" href="{{ static_url('editor/themes/default/default.css') }}" />
+<link rel="stylesheet" href="{{ static_url('editor/plugins/code/prettify.css') }}" />
+<script charset="utf-8" src="{{ static_url('editor/kindeditor.js') }}"></script>
+<script charset="utf-8" src="{{ static_url('editor/lang/zh_CN.js') }}"></script>
+<script charset="utf-8" src="{{ static_url('editor/plugins/code/prettify.js') }}"></script>
+<script>
+        KindEditor.ready(function(K) {
+            var d = {
+                cssPath : '{{ static_url("editor/plugins/code/prettify.css") }}',
+                uploadJson : '/tuxpy/upload.py',
+                allowFileManager : false,
+                afterCreate : function() {
+                    var self = this;
+                    K.ctrl(document, 13, function() {
+                        self.sync();
+                        K('form[name=post_form]')[0].submit();
+                    });
+                    K.ctrl(self.edit.doc, 13, function() {
+                        self.sync();
+                        K('form[name=post_form]')[0].submit();
+                    });
+            }}
+            var editor1 = K.create('textarea[name="post_content"]', d);
+            prettyPrint();
+    });
+
+</script>
+{% end %}

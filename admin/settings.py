@@ -2,15 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 17:03:41
+# Last modified   : 2015-02-22 19:28:28
 # Filename        : admin/settings.py
 # Description     : 
-from .base import AdminHandler, valid_authenticated
+from .base import AdminHandler
 from public.do import get_settings, save_settings
 from lib.wrap import auth_log_save
 
 class AdminSettingsHandler(AdminHandler):
-    @valid_authenticated
     def get(self, set_obj = None):
         set_obj = set_obj or 'global'
         assert set_obj in ['global', 'file', 'account'] # account其实是修改用户名密码，里面的数据库会是空的。
@@ -19,7 +18,6 @@ class AdminSettingsHandler(AdminHandler):
         self.render('settings/settings_{set_obj}.html'.format(
             set_obj = set_obj), settings = settings)
 
-    @valid_authenticated
     @auth_log_save
     def post(self, set_obj = None):
         """

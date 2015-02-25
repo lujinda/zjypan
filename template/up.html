@@ -1,4 +1,11 @@
 {% extends "main.html" %}
+{% block header_js %}
+    <!--[if lte IE 9]>
+    <meta http-equiv="refresh" content="0; url=/old" />
+    <![endif]--> 
+    <script src="{{static_url("js/jquery.fs.dropper.js")}}"></script>
+    <script src="{{static_url("js/spark-md5.min.js")}}"></script>
+{% end %}
 {% block title %}
 便捷云网盘 —— 疯狂的小企鹅
 {% end %}
@@ -16,59 +23,10 @@
     <a class="btn_management" href="/manage.py">管理已上传文件</a>
 </div>
 <script>
-    var $filequeue,
-    $filelist;
     $(document).ready(function() {
-        $filequeue = $(".file_form .filelist.queue");
-        $filelist = $(".file_form .filelist.complete");
-
-        $(".file_form .dropped").dropper({
-            action: "/file.py",
-            maxSize: 5242880, // 5 mb
-            maxQueue: 1
-        }).on("start.dropper", onStart)
-        .on("complete.dropper", onComplete)
-        .on("fileStart.dropper", onFileStart)
-        .on("fileProgress.dropper", onFileProgress)
-        .on("fileComplete.dropper", onFileComplete)
-        .on("fileError.dropper", onFileError);
-
-        $(window).one("pronto.load", function() {
-            $(".file_form .dropped").dropper("destroy").off(".dropper");
-        });
+        start_file_upload();
     });
 
-    function onStart(e, files) {
-        $('.file_form').hide();
-        $('.file_process').show();
-
-    }
-
-    function onComplete(e) {
-        console.log("Complete");
-        // All done!
-    }
-
-    function onFileStart(e, file) {
-        $('.file_percent').css('width', '0%');
-    }
-
-    function onFileProgress(e, file, percent) {
-        $('.file_percent').css({'width':percent + '%'});
-    }
-
-    function onFileComplete(e, file, response) {
-        if (response['error']){
-            show_err_message(response['error']);
-        }else{
-            show_succ_message(response['file_key']);
-        }
-    }
-
-    function onFileError(e, file, error) {
-        $('.file_percent').hide().fadeIn(500);
-        show_err_message(error);
-    }
 </script>
 {% end %}
 

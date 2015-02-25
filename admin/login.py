@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-12 16:43:43
+# Last modified   : 2015-02-22 19:27:17
 # Filename        : admin/login.py
 # Description     : 
 
@@ -43,4 +43,10 @@ class LoginHandler(BaseHandler):
         callback_url = self.get_query_argument('callback', self.home_page)
         self.write({'error':'', 'url': callback_url})
         return '登录成功'
+
+    def prepare(self):
+        """
+        重勾它，因为BaseHandler的这个方法都做了用户认证，而登录的这个不需要的
+        """
+        pass
 

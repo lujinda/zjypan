@@ -2,16 +2,15 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 22:29:43
-# Filename        : page/do.py
+# Last modified   : 2015-02-25 15:29:05
+# Filename        : /home/ljd/py/zjypan/page/do.py
 # Description     : 
 import time
 import string
 import random
 import os
 from public.data import db, del_local_file, redis_db
-from public.do import get_settings
-from tornado.web import HTTPError
+from public.do import get_settings, made_uuid
 from storage.save import save_to_cdn
 from cdn import CDN
 import functools
@@ -21,29 +20,32 @@ from lib.wrap import file_log_save
 class FException(Exception):
     pass
 
-class FileManage():
+class FileManager():
     """
         这是文件管理器
     """
     FileException = FException
-    def __init__(self, file_key, request = ''):
-        self._file_key = file_key
+    def __init__(self, file_key = None, request = '', file_obj = None):
+        assert file_key or file_obj # 两者必要有一
+        self._file_key = file_key or file_obj['file_key']
         self._request = request
-        self.__file = self.get_file()
+        self.__file = file_obj or self.get_file()
+        self._cdn = CDN()
         if (not self.__file):
             self.raise_error('文件已不存在')
             return
+
         if self.__file['expired_time'] < long(time.time()):
+            self.expired()
             self.raise_error('文件已过期')
             return
 
         # 如果这个文件是存在的话，每一次对它的访问，都会增加日期
         self._add_expired_time()
-        self._cdn = CDN()
 
     def _add_expired_time(self):
         """
-        每次初始化FileManage时，都会把到期时间加ADD_EXPIRED_DAY天
+        每次初始化FileManager时，都会把到期时间加ADD_EXPIRED_DAY天
         """
         old_expired_time = self.__file['expired_time']
         new_expired_time = get_expired_time(False)
@@ -60,21 +62,31 @@ class FileManage():
         """
         返回一个与当前file_key匹配的document
         """
-        file_obj = db.files.find_one({'file_key': self._file_key})
-        if file_obj:
-            del file_obj['_id']
-        return file_obj
-     
-    @file_log_save
-    def delete(self):
+        return get_file(file_key = self._file_key)
+
+    def __delete(self):
         """
-        删除文件document, 本地文件，云上的文件
+        过期删除和主动删除都调用它
         """
         del_local_file(self.__file['file_path'])
         if self.__file['in_cdn']:
             self._cdn.del_file(self.__file['file_key'], self.__file['file_name'])
 
         db.files.remove({'file_key':self._file_key})
+     
+    @file_log_save
+    def delete(self):
+        """
+        删除文件document, 本地文件，云上的文件
+        """
+        self.__delete()
+
+    @file_log_save
+    def expired(self):
+        """
+        过期删除调用，同delete,只是日志记录不同而已
+        """
+        self.__delete()
 
     @file_log_save
     def download(self):
@@ -109,9 +121,14 @@ class FileManage():
 
     @file_log_save
     def show(self):
+        if self.__file['expired_time'] < long(time.time()):
+            self.raise_error('文件已过期')
+            return
+
         file_info = self.get_file_info()
+
         # 有一些参数不允许被用户看到，就删除
-        for key in ['cdn_url', 'file_path', 'in_cdn', 'upload_ip']:
+        for key in ['file_path', 'in_cdn', 'upload_ip']:
             del file_info[key]
 
         self._request.write_json(file_info)
@@ -122,9 +139,23 @@ class FileManage():
         save_to_cdn(self.__file['file_key'], self.__file['file_name'], self.__file['file_path'])
         add_up_total_num()
 
+    @file_log_save
+    def speed_upload(self, s_file_key, s_file_name):
+        self._cdn.cp(s_file_key, s_file_name, self.__file['file_key'], self.__file['file_name'])
+
     def raise_error(self, err_mess):
         raise self.FileException(err_mess)
 
+
+def get_file(file_key = None, file_md5 = None):
+    assert file_key or file_md5
+    if file_key:
+        condition = {'file_key': file_key}
+    if file_md5:
+        condition = {'file_md5': file_md5}
+
+    file_obj = db.files.find_one(condition, {'_id': 0})
+    return file_obj
 
 def get_upload_time():
     return long(time.time())
@@ -177,3 +208,25 @@ def add_up_total_num():
 def get_up_total_num():
     return redis_db.get('up_total_num', 0)
     
+def write_post(**kwargs):
+    """
+    用于更新或写新通知
+    """
+    post_uuid = kwargs.get('post_uuid')
+    if not post_uuid:
+        kwargs['post_time'] = long(time.time())
+        post_uuid = made_uuid()
+        kwargs['post_uuid'] = post_uuid
+
+    db.page.post.update({'post_uuid': post_uuid}, 
+            {'$set': kwargs}, True)
+
+def get_post_list(skip = 0, limit = 0):
+    return db.page.post.find({}, {'_id': 0, 'post_content': 0}).skip(skip).limit(limit)
+
+def get_post(post_uuid):
+    return db.page.post.find_one({'post_uuid': post_uuid}) or {}
+
+def del_post(post_uuid):
+    return db.page.post.remove({'post_uuid': post_uuid})
+

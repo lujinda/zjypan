@@ -73,13 +73,18 @@ function _post_settings(obj){
     });
 }
 
-function show_error(data){
-    $('#top_error_mess p').html(data);
+function show_error(mess){
+    $('#top_error_mess p').html(mess);
     $('#top_error_mess').show().fadeOut(4000);
 }
-function show_success(data){
-    $('#top_success_mess p').html(data);
+function show_success(mess){
+    $('#top_success_mess p').html(mess);
     $('#top_success_mess').show().fadeOut(2000);
+}
+
+function show_warning(mess){
+    $('#top_warning_mess p').html(mess);
+    $('#top_warning_mess').show().fadeOut(2000);
 }
 
 
@@ -206,3 +211,147 @@ $(document).ready(function(){
 });
 
 
+
+function settings_save(obj){
+    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
+    $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
+        type:'GET',success:function (data){
+            if (data){
+                _post_settings(obj);
+            }else{
+                $('#send_mail_code_wrap #mail_code').val('');
+                $('#send_mail_code_wrap').modal({
+                    relatedTarget: this,
+                    closeViaDimmer:false,
+                    onConfirm: function(e) {
+                        _post_settings(obj);
+                    },
+                    onCancel: function(e) {
+                        return false;
+                    }
+                });
+
+            }
+        }});
+
+}
+function check_settings_account_input(){
+    $('#btn_settings_save').attr('disabled', true);
+    if ($('#settings_username').val().trim() == '' || $('#settings_password_o').val().trim() == '' || $('#settings_password').val().trim() == '')
+        return false;
+    if ($('#settings_password').val().trim() == $('#settings_password_a').val().trim()){
+        $('#btn_settings_save').attr('disabled', false);
+    }
+}
+
+function request_api(url, method, data, success, error){ // 用来处理api访问 
+    data = data || {};
+    method = method || 'GET';
+    $.ajax({
+        url: url, 
+        type: method,
+        data: data,
+        success:function(data){
+            if (data['error'] != ''){
+                show_error(data['error']);
+            }else if (success){
+                success(data['result']);
+            }else{
+                show_success('操作成功');
+            };
+        },
+        error:function(){
+            show_error('操作失败');
+        },
+    });
+    
+}
+
+function clear_operation(){
+    $('#confirm_msg_wrap').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+            request_api('/api/operation', 'DELETE');
+        },
+        onCancel: function() {
+            return false;
+        }
+    });
+}
+
+function flush_cache(){
+    request_api('/api/cache', 'DELETE');
+}
+
+
+function load_more_log($btn, log_key_list_map, log_type){
+    var log_key_list = log_key_list_map[log_type.split('?')[0]];
+    var limit = 20;
+    $.ajax({url: log_api_url, 
+        data:{'limit': limit, 'offset': offset},
+    success:function(data){
+        if (data['result'].length > 0){
+            offset += limit;
+            append_log_list(log_key_list, data['result'])
+            $btn.button('reset');
+        }else{
+            $btn.button('loading').val('全部加载完成');
+    }}});
+}
+
+function init_log_list_tbody(){
+    $('#log_list_tbody').empty();
+    offset = 0;
+}
+
+function append_log_list(log_key_list, log_list){
+    for (i in log_list){
+        var e_tr = $('<tr></tr>');
+        log = log_list[i];
+        for (var j=0; j < log_key_list.length; j++){
+            log_key = log_key_list[j];
+            log_value = log[log_key];
+            if (log_key == 'time'){
+                log_value = DateToString(log_value);
+            }
+            e_tr.append('<td>' + log_value + '</td>');
+        }
+        $('#log_list_tbody').append(e_tr);
+    }
+}
+
+$(document).ready(function(){
+    $(window).scroll(function(){
+        if ($(this).scrollTop() > $(window).height() / 3){
+            $('#goToTop').fadeIn(1000);
+        }else{
+            $('#goToTop').fadeOut(1000);
+        }
+
+    });
+    $('#goToTop a').click(function (event){
+        $('html, body').animate({scrollTop:0}, 'slow');
+    });
+});
+function check_post(event){
+    if ($('#post_title').val().trim() == ''){
+        show_error('标题不能为空哦');
+        event.preventDefault();
+        return false;
+    }
+}
+
+function check_all(s){
+    $('.post_checkbox').attr('checked', s);
+}
+function do_post(operation){
+    if ($('.post_checkbox:checked').length  == 0){
+        alert('啥都没选中！');
+        return;
+    }
+    if (operation == 'del'){
+        if (! confirm('确定要删除吗'))
+            return;
+    }
+    $('#list_post_form').attr('action', '?action=' + operation).submit();
+}

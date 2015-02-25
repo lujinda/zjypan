@@ -12,7 +12,7 @@
     </form>
 </div>
 <div id="manage_wrap" style="display:none">
-    <img id="pci_summary" class="pci_summary" src=""></img>
+    <img id="pci_summary" src="{{static_url('images/filetype/default.png')}}" class="pci_summary" src=""></img>
     <div id="file_name" class="file_name"> _</div>
     <div class="file_summary">
         <span>上传时间: <span id="upload_time">_</span></span>
@@ -32,8 +32,11 @@
     $('.input_key').focus();
 $(document).ready(function(){
     $('#input_key_wrap form').submit(function (event){
-        $.post("/manage.py", 
-            {'file_key':$('.input_key_dir .input_key').val()},
+        $.ajax({url: "/manage.py", 
+            dataType:'json',
+            type:'POST',
+            data:{'file_key':$('.input_key_dir .input_key').val()},
+            success:
             function (data){
                 var error = data['error'];
                 if (error){
@@ -49,11 +52,9 @@ $(document).ready(function(){
 
                 if (data['content_type'].split('/')[0] == 'image'){
                     $('#pci_summary').attr('src', data['file_url']);
-                }else{
-                    $('#pci_summary').attr('src', 'http://7u2ph0.com1.z0.glb.clouddn.com/images/filetype/default.png');
                 }
                 $('#manage_wrap').fadeIn();
-            });
+        },});
 
         // 禁止默认事件的发现
         event.preventDefault();

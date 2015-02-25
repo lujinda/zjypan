@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-01 17:04:12
-# Filename        : cattle/cattle.py
+# Last modified   : 2015-02-25 15:32:57
+# Filename        : /home/ljd/py/zjypan/lib/cattle/cattle.py
 # Description     : API地址：http://docs.qiniutek.com/v3/api/io/#upload
 
 from .token import UploadToken, AccessToken, DownloadToken
@@ -11,7 +11,7 @@ from os import path
 
 RS_HOST = 'http://rs.qiniu.com'
 RSF_HOST = 'http://rsf.qbox.me'
-UP_HOST = 'http://upload.qiniu.com'
+UP_HOST = 'http://upload.qiniu.com' 
 from requests import post, get
 from base64 import urlsafe_b64encode
 from mimetypes import guess_type

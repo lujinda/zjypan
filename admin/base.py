@@ -2,16 +2,32 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 14:53:27
+# Last modified   : 2015-02-25 16:43:55
 # Filename        : admin/base.py
 # Description     : 
 
 from public.handler import MyRequestHandler
 from lib.session import Session
-from lib.enc_password import enc_password
+from lib.enc import enc_password
 from urllib import urlencode
 from functools import wraps
 from tornado.web import HTTPError
+def valid_authenticated(method):
+    """判断用户是否有效，如果无效则重定向到login_url"""
+    @wraps(method)
+    def wrap(self, *args, **kwargs):
+        if not self.valid_user():
+            if self.request.method not in ('GET', 'HEAD'):
+                raise HTTPError(403)
+                return
+            callback_url = self.request.uri
+            self.redirect(self.get_login_url() + '?' + urlencode({'callback':
+                callback_url}))
+        else:
+            method(self, *args, **kwargs)
+
+    return wrap
+
 
 class BaseHandler(MyRequestHandler):
     def initialize(self):
@@ -52,6 +68,7 @@ class BaseHandler(MyRequestHandler):
         """
         return self.session.get('username')
 
+    @valid_authenticated
     def prepare(self):
         """
         重构它是为了使管理员后台不受“维护”影响
@@ -71,20 +88,4 @@ class AdminHandler(BaseHandler):
         self.create_default()
         return self.session.get('uid') == 0
 
-
-def valid_authenticated(method):
-    """判断用户是否有效，如果无效则重定向到login_url"""
-    @wraps(method)
-    def wrap(self, *args, **kwargs):
-        if not self.valid_user():
-            if self.request.method not in ('GET', 'HEAD'):
-                raise HTTPError(403)
-                return
-            callback_url = self.request.uri
-            self.redirect(self.get_login_url() + '?' + urlencode({'callback':
-                callback_url}))
-        else:
-            method(self, *args, **kwargs)
-
-    return wrap
 

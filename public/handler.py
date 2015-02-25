@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-17 20:42:12
+# Last modified   : 2015-02-24 13:12:02
 # Filename        : public/handler.py
 # Description     : 
 
@@ -13,6 +13,7 @@ from lib.acl import ACL
 from copy import deepcopy
 import json
 import time
+from lib.wrap import access_log_save, auth_log_save
 
 class MyRequestHandler(RequestHandler):
     def initialize(self):
@@ -20,7 +21,7 @@ class MyRequestHandler(RequestHandler):
 
     def write_json(self, data):
         json_data = json.dumps(data)
-        self.set_header('Content-Type', 'application/json; charset=UTF-8')
+        self.set_header('Content-Type', 'text/html; charset=UTF-8') # 为了兼容各种浏览器。面向管理员的不调write_json方法
         self.write(json_data)
 
     @property
@@ -42,7 +43,7 @@ class MyRequestHandler(RequestHandler):
 
     def need_code(self):
         return self.acl.need_code()
-
+    
     def prepare(self):
         """
         判断是否服务器进入维护状态了
@@ -50,7 +51,10 @@ class MyRequestHandler(RequestHandler):
         stop, stop_info = self.acl.need_stop()
         if stop:
             self.render('stop.html', stop_info = stop_info)
-            self._finished = True
+            self.save_access_log() # 在同步的情况下，也把访问日志插入
+
+    def save_access_log(self):
+        return self.log_db.access.insert(self.access_log)
 
     @property
     def access_log(self):
@@ -74,7 +78,35 @@ class MyRequestHandler(RequestHandler):
     def log_db(self):
         return self.application.log_db
 
-from lib.wrap import access_log_save, auth_log_save
+    @property
+    def referer(self):
+        return self.request.headers.get('Referer', '')
+
+class ApiHandler(MyRequestHandler):
+    def prepare(self):
+        self.result_json = {'error': '',
+                'status_code': 200, 'result': []}
+
+    def write_error(self, status_code, **kwargs):
+        self.set_status(status_code)
+        try:
+            self.result_json['error'] = kwargs['exc_info'][1].log_message
+        except:
+            self.result_json['error'] = 'unknown'
+
+        self.result_json['status_code'] = status_code
+        self.write(self.result_json)
+
+    def _send_result(self, data, error):
+        if error:
+            raise HTTPError(500, error)
+        elif data:
+            self.result_json['result'].append(data)
+        else:
+            self.write(self.result_json)
+            self.finish()
+
+
 from tornado.web import HTTPError
 
 class DefaultHandler(MyRequestHandler):

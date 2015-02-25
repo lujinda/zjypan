@@ -1,0 +1,108 @@
+{% extends "main.html" %}
+{% block header_js %}
+<!--[if lte IE 9]>
+<script type="text/javascript">
+    var unsupport = true;
+    </script>
+<![endif]-->
+
+    <script type="text/javascript">     
+        if(typeof unsupport == "undefined"){
+            location.href = "/";  
+        }      
+    </script>
+    <script src="{{static_url("js/jquery.form.js")}}"></script>
+    <style>
+        .file-input{
+            height:100%;
+            float:left;
+            right:160px;
+            cursor:pointer;
+            position:relative;
+        }
+        .input_wrap{
+            position:absolute;
+            z-index:9999;
+            width:70px;
+            height:100%;
+            overflow:hidden;
+            top:0px;
+            opacity: 0; filter:Alpha(opacity=0);
+        }
+    </style>
+{% end %}
+{% block title %}
+便捷云网盘 —— 疯狂的小企鹅
+{% end %}
+{% block body %}
+<div id="wrap_content">
+    <div id="wrap_file">
+        <form method="POST" action="/file.py" enctype="multipart/form-data" class="file_form">
+            <div class="dropped dropper" style="position: relative">
+                <div class="dropper-dropzone"> 请点击上传文件
+                </div>
+            </div>
+        </form>
+        <div class="file_process">
+            <div class="file_percent">
+            </div>
+        </div>
+    </div>
+    <a class="btn_management" href="/manage.py">管理已上传文件</a>
+</div>
+<script>
+    $(function (){
+        for (var i=0;i < 8 ;i++){
+            $('.dropper-dropzone').append(String.format("<div class='input_wrap' style='right:{0}px'><input name='file' class='file-input' type='file' /></div>", -5 + i * 55));
+        }
+        $('.file-input').change(function(){
+            $('.file_form').ajaxSubmit({
+                dataType:'json',
+                beforeSend: function(){
+                    $('.file_percent').css('width', '100%');
+                    $('.file_form').hide();
+                    $('.input_wrap').hide();
+                    $('.file_process').show();
+                    $('.file_process .file_percent').html('<div style="width:100%;font-size:18px;color:red;text-align:center;font-weight:bold;margin-top:0px">上传中...<span style="font-size:14px;color:#aaa;">老式浏览器不会显示进度</span></div>');
+                },
+                success: function(response){
+                    if (response['error']){
+                        show_err_message(response['error']);
+                        }else{
+                        show_succ_message(response['file_key']);
+                    }
+                },
+                error: function(xhr){
+                    $('.file_percent').hide().fadeIn(500);
+                    show_err_message('上传失败');
+                },
+            });
+        });
+
+    });
+</script>
+{% end %}
+
+{% block old_footer %}
+<div id="update_browser">
+    <div id="browser_list">
+        <a target="_blank" href="http://www.firefox.com.cn/download/" class="browser_a">
+            <p><img src="{{static_url('images/browser/firefox.png')}}" /></p>
+            Firefox
+        </a>
+        <a target="_blank" href="http://down.tech.sina.com.cn/content/40975.html" class="browser_a">
+            <p><img src="{{static_url('images/browser/chrome.png')}}" /></p>
+            Chrome
+        </a>
+        <a target="_blank" href="http://www.opera.com/zh-cn" class="browser_a">
+            <p><img src="{{static_url('images/browser/opera.png')}}" /></p>
+            Opera
+        </a>
+        <a target="_blank" href="http://www.apple.com/cn/safari/" class="browser_a">
+            <p><img src="{{static_url('images/browser/safari.png')}}" /></p>
+            Safari
+        </a>
+    </div>
+    <span>您的浏览器有点老了，使用体验不佳，快升级，体验一拖即上传的快感吧。</h2>
+</div>
+{% end %}

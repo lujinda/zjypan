@@ -1,6 +1,7 @@
 body{
     margin:0px;
     font-family: arial,helvetica,sans-serif;
+    background-color:#fff;
 }
 a{
     text-decoration:none;
@@ -20,16 +21,27 @@ a{
     background-image: url(../images/header_bg.gif);
     height:26px;
     text-align:right;
+    line-height:26px;
     border-bottom:1px solid #bbb;
+    text-indent:1em;
+    font-size:14px;
 }
 #header a{
     color:#999;
-    font-size:14px;
-    line-height:26px;
     margin:0px 20px;
 }
 #header a:hover{
     border-bottom:2px solid #999;
+}
+#header #top_post_index{
+    float:left;
+    text-align:left;
+    color:#3869AA;
+    font-weight:bold;
+}
+#top_post_index span{
+    color:#444;
+    font-weight:normal;
 }
 #wrap_file{
     width:400px;
@@ -77,8 +89,11 @@ a{
     color:#ccc;
     text-align:center;
 }
-#footer span{
+#footer .footer_copy{
     font-size:14px;
+}
+.footer_copy a{
+    color:#888;
 }
 .btn_management{
     display:block;
@@ -217,4 +232,66 @@ a{
     float:left;
     height:30px;
     width:80px;
+}
+#update_browser{
+    width:100%;
+}
+#update_browser span{
+    color: #444;
+    font-size:24px;
+    font-weight:bold;
+    padding:5px;
+}
+#browser_list a{
+    color: #444;
+}
+#browser_list img{
+    border:0px;
+}
+#update_browser .browser_a{
+    display:inline-block;
+    width:200px;
+    height:200px;
+}
+
+#update_browser .browser_a:hover{
+    background-color:#eee;
+}
+#post_box_index{
+    z-index:9999;
+    top:35px;
+    left:50px;
+    margin:0px;
+    position:absolute;
+}
+.post_box{
+    background-color:#fff;
+    width:200px;
+    text-align:left;
+    border-radius:10px;
+    padding:6px;
+    margin:30px;
+    box-shadow:3px 3px 3px rgba(0, 0, 0, 0.2);
+    color:#444;
+    font-size:14px;
+    float:left;
+    display:none;
+}
+.post_box .post_box_title{
+    line-height:120%;
+    color:#09c;
+    border-bottom:1px solid #ccc;
+    margin-bottom:5px;
+}
+.post_box .post_box_content{
+    text-index: 2em;
+    line-height:160%;
+}
+.post_box .post_box_footer{
+    text-align:right;
+    color:#666;
+}
+#post_box_list{
+    width:60%;
+    margin:auto;
 }

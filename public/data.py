@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 19:01:21
+# Last modified   : 2015-02-24 13:25:33
 # Filename        : public/data.py
 # Description     : 
 
@@ -14,6 +14,7 @@ import os
 motor_client = motor.MotorClient()
 mongo_client = pymongo.Connection()
 db = mongo_client.zjypan
+db_async = motor_client.zjypan
 log_db = motor_client.log
 log_db_sync = mongo_client.log
 
@@ -59,7 +60,7 @@ class RedisDb():
 
 redis_db = RedisDb('zjypan_')
 session_db = redis_db
-cache_db = RedisDb('zjypan_cache')
+cache_db = RedisDb('zjypan_cache_')
 
 def del_local_file(file_path):
     dir_name = os.path.dirname(file_path)

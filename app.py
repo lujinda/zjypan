@@ -2,15 +2,17 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-17 20:40:01
-# Filename        : app.py
+# Last modified   : 2015-02-25 14:39:01
+# Filename        : /home/ljd/py/zjypan/app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
 from code import CodeHandler
-from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler
+from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler, SpeedFileHandler # 用于处理秒传请求
+from page.old import OldIndexHandler
 from module import HeaderModule, FooterModule
 from os import path
 from public.handler import DefaultHandler
+from page.api import ApiPostHandler
 
 from public.data import log_db, db, session_db
 
@@ -33,6 +35,7 @@ from admin.api import ApiLogHandler
 from admin import AdminSettingsHandler
 from admin import AdminResourcesHandler
 from admin import LogHandler, LogMonitorHandler # 只是用来查看，流量会被打到其他地方
+from admin.post import AdminListPostHandler, AdminWritePostHandler
 
 from public.handler import MonitorHandler
 
@@ -46,6 +49,9 @@ class PanApplication(Application):
                 (r'/verify.py', VerifyHandler),
                 (r'/code.py', CodeHandler),
                 (r'/monitor.py', MonitorHandler),
+                (r'/speed_file.py', SpeedFileHandler),
+                (r'/old/?', OldIndexHandler), # 针对老的浏览器
+                (r'/api/post', ApiPostHandler), # 列出特定公告
                 ]
 
         self.monitors_manager = monitors_manager or []
@@ -81,6 +87,8 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/settings/(.+)?', AdminSettingsHandler),
                 (r'/tuxpy/resources.py', AdminResourcesHandler),
                 (r'/tuxpy/monitor.py', LogMonitorHandler),
+                (r'/tuxpy/post/list', AdminListPostHandler),
+                (r'/tuxpy/post/write', AdminWritePostHandler),
                 (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler),
                 (r'/api/resources', ApiResourcesHandler),
@@ -111,4 +119,17 @@ class PanAdminApplication(Application):
         self.user_db = db
         Application.__init__(self, handlers, **settings)
         self.session_manager = SessionManager(**session_settings)
+
+from task import Expired
+
+class TaskApplication(Application):
+    """
+    用来跑任务的，比如说文件过期处理和文件与cdn同步等任务。
+    """
+    def __init__(self):
+        handlers = [('/task/expired', Expired),]
+        settings = {'debug': True,}
+
+        self.log_db = log_db
+        Application.__init__(self, handlers, **settings)
 

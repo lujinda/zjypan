@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 19:03:15
+# Last modified   : 2015-04-26 14:42:58
 # Filename        : lib/acl.py
 # Description     : 
 from public.data import redis_db
@@ -23,7 +23,6 @@ class ACL():
         """
         返回(状态，信息)
         """
-        print 'no cache'
         return (self.settings_global.get('stop', False),
                 self.settings_global.get('stop_info', '系统维护中'))
             
@@ -35,6 +34,9 @@ class ACL():
         """
         num = int(redis_db.get(self._client_ip, 0))
         return num >= self.UP_NUM
+
+    def ip_allow(self, allow_ip = '127.0.0.1'):
+        return self._client_ip == allow_ip
 
     def add_up_register(self):
         """

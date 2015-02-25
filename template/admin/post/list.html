@@ -1,0 +1,36 @@
+{%extends '../main.html'%}
+{% block title %}
+所有通知
+{% end %}
+{% block body %}
+
+<form id="list_post_form" method="POST">
+<div id="list_post_wrap">
+    <table class="am-table am-table-striped am-table-hover">
+        <thead>
+            <tr>
+                <th>选中</th>
+                <th width="55%">标题</th>
+                <th>发布时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in post_list %}
+            <tr>
+                <td><input name="checked_post" value={{post['post_uuid']}} type='checkbox' class="post_checkbox" /></td>
+                <td><a style="display:block" href="write?post_uuid={{post['post_uuid']}}">{{post['post_important'] and '[急]' or ' '}}{{post['post_title']}}</a></td>
+                <td>{{swith_time(post['post_time'])}}</td>
+            </tr>
+            {% end %}
+        </tbody>
+    </table>
+    <div id="list_post_operation">
+        <a href="javascript:check_all(true)">全选</a>
+        <a href="javascript:check_all(false)">全不选</a>
+        <a href="javascript:do_post('del')">删除</a>
+    </div>
+</div>
+</form>
+    <a type="button" class="am-btn am-btn-primary" href="write">发布通知</a>
+
+{% end %}
