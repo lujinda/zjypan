@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 18:44:03
+# Last modified   : 2015-02-26 21:45:23
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -14,11 +14,13 @@ from functools import partial
 from lib.enc import get_file_md5
 import urllib
 import os
+from .conf import get_rand_cdn_conf
+
 
 BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
 
-
 celery = Celery('CDN', broker = BROKER_URL)
+cdn_conf = get_rand_cdn_conf()
 
 def made_cdn_key(file_key, file_name, quote = False):
     """
@@ -38,9 +40,11 @@ def made_cdn_key(file_key, file_name, quote = False):
 
 class CDN():
     def __init__(self):
-        self._bucket_name = 'zjypan-0'
-        self._domain = '7u2qd9.com1.z0.glb.clouddn.com'
-        self._cattle = Cattle('BbDU4MoFrx2YaF6tqBFmnKHFuDlq1EO-mm2ldlBm', 'WWdwgm4oRmOh_L9yKbyWplcUFaIGAZXk8e_UOtDs')
+        self._bucket_name = cdn_conf.bucket
+        self._domain = cdn_conf.domain
+        self._cattle = Cattle(cdn_conf.ak, cdn_conf.sk)
+        self._share_bucket = cdn_conf.share_bucket
+        self._share_domain = cdn_conf.share_domain
 
     @celery.task(filter=task_method)
     def sync(self):
@@ -52,6 +56,13 @@ class CDN():
                 made_cdn_key(s_file_key, s_file_name), made_cdn_key(d_file_key, d_file_name))
         assert not error
 
+    def share(self, file_key, file_name, share_id):
+        share_cdn_key = made_cdn_key(share_id, file_name)
+        ret, error = self._cattle.cp(self._bucket_name,
+                made_cdn_key(file_key, file_name), self._share_bucket, share_cdn_key);
+        assert not error
+
+        return 'http://%s/%s' % (self._share_domain, share_cdn_key)  # 返回资源下载地址
 
     def get_cdn_url(self, file_key, file_name):
         base_url = 'http://%s/%s' %(self._domain, made_cdn_key(file_key, file_name, True))

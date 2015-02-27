@@ -1,0 +1,10 @@
+body{
+    margin:0px auto;
+    font-family: arial,helvetica,sans-serif;
+    background-color:#fff;
+    width:900px;
+}
+a{
+    text-decoration:none;
+    outline:0px none;
+}

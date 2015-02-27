@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-24 13:13:10
+# Last modified   : 2015-02-27 13:39:17
 # Filename        : admin/api/base.py
 # Description     : 
 from functools import wraps
@@ -16,7 +16,7 @@ class ApiAdminHandler(ApiHandler, AdminHandler):
 def api_admin_authenticated(method):
     @wraps(method)
     def wrap(self, *args, **kwargs):
-        if not self.valid_user():
+        if (not self.valid_user()) and self.UA != 'lujinda app': #  headers中带了相关信息也行
             raise HTTPError(403)
         result = method(self, *args, **kwargs)
 

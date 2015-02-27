@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 15:06:39
-# Filename        : /home/ljd/py/zjypan/storage/save.py
+# Last modified   : 2015-02-26 21:50:06
+# Filename        : storage/save.py
 # Description     : 
 import os
 from public.data import db
@@ -27,6 +27,7 @@ def save_to_db(**kwargs):
         必须要保证传入的数据无错
     """
     kwargs['in_cdn'] = kwargs.get('in_cdn') or False
+    kwargs['share_id'] = ''
 
     db.files.insert(kwargs)
 

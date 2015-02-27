@@ -2,13 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-13 17:48:56
+# Last modified   : 2015-02-26 15:03:39
 # Filename        : t.py
 # Description     : 
 
-from public.data import settings_db
-import json
+from cdn.conf import get_rand_cdn_conf
 
-print settings_db.hset('global', 'stop', True)
-(settings_db.hgetall('global'))
+c = get_rand_cdn_conf()
+print c.sk
 

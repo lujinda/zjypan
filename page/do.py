@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 15:29:05
-# Filename        : /home/ljd/py/zjypan/page/do.py
+# Last modified   : 2015-02-26 22:03:01
+# Filename        : page/do.py
 # Description     : 
 import time
 import string
@@ -15,6 +15,7 @@ from storage.save import save_to_cdn
 from cdn import CDN
 import functools
 from lib.wrap import file_log_save
+from uuid import uuid4
 
 
 class FException(Exception):
@@ -143,9 +144,27 @@ class FileManager():
     def speed_upload(self, s_file_key, s_file_name):
         self._cdn.cp(s_file_key, s_file_name, self.__file['file_key'], self.__file['file_name'])
 
+    @file_log_save
+    def share(self, share_decription):
+        assert (not self.__file.get('share_id')) and (self.__file['in_cdn'])# 保证还未被共享，并在cdn上
+
+        share_id = uuid4().hex
+        share_time = get_now_time()
+        share_url = self._cdn.share(self.__file['file_key'], self.__file['file_name'], share_id)
+
+        # 以下是数据库操作
+        db.files.update({'file_key': self._file_key},
+                {"$set": {'share_id': share_id}})
+
+        db.share.insert({'share_id': share_id, 'file_name': self.__file['file_name'], 
+            'share_decription': share_decription,
+            'share_time': share_time, 'share_url': share_url, 
+            'content_type': self.__file['content_type']})
+
+        self._request.write({'error': '', 'share_id': share_id}) # 需要修改
+
     def raise_error(self, err_mess):
         raise self.FileException(err_mess)
-
 
 def get_file(file_key = None, file_md5 = None):
     assert file_key or file_md5
@@ -157,7 +176,7 @@ def get_file(file_key = None, file_md5 = None):
     file_obj = db.files.find_one(condition, {'_id': 0})
     return file_obj
 
-def get_upload_time():
+def get_now_time():
     return long(time.time())
 
 def get_expired_time(new_create = True):

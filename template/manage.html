@@ -22,9 +22,16 @@
     <div class="file_operation">
         <form target='' method='GET'>
         <input type="hidden" name="file_key" id="file_key" value="" />
-        <a id="btn_file_down" style="float:left;background:green;" class="btn_file_operation" href="javascript:down_file()">下 载</a>
-        <a style="float:right;background:red;" class="btn_file_operation" href="javascript:del_file()" id="btn_file_del">删 除</a>
+        <a id="btn_file_down" class="c_g btn_file_operation" href="javascript:down_file()">下 载</a>
+        <a class="c_b btn_file_operation" href="javascript:show_share_msg()" id="btn_file_share">共 享</a>
+        <a  class="btn_file_operation c_r" href="javascript:del_file()" id="btn_file_del">删 除</a>
         </form>
+    </div>
+    <div class="msg" id="share_msg" style="display:none;">
+        <span>您正在共享 <strong></strong>,请为它添加一点介绍吧，简单点就行~</span>
+        <textarea id="share_description"></textarea>
+        <a class="m_btn c_r" href="javascript:close_share_msg()">取消</a>
+        <a class="m_btn c_b" href="javascript:share_file()">确定</a>
     </div>
     <div style="clear:both"></div>
 </div>
@@ -44,6 +51,7 @@ $(document).ready(function(){
                     return false;
                 }
                 $('#input_key_wrap').hide();
+                change_share_btn(data['share_id']);
                 $('#manage_wrap #file_name').html(data['file_name']);
                 $('#manage_wrap #upload_time').html(DateToString(data['upload_time']));
                 $('#manage_wrap #expired_time').html(DateToString(data['expired_time']));

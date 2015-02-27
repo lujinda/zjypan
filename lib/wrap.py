@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 15:24:42
-# Filename        : /home/ljd/py/zjypan/lib/wrap.py
+# Last modified   : 2015-02-26 19:57:28
+# Filename        : lib/wrap.py
 # Description     : 
 import functools
 from tornado import web, gen
@@ -35,7 +35,7 @@ def access_log_save(method):
     return wrap
 
 
-operation_map = {'download': '下载', 'show': '查看', 'delete': '删除', 'upload': '上传', 'expired': '过期', 'speed_upload': '极速上传'}
+operation_map = {'download': '下载', 'show': '查看', 'delete': '删除', 'upload': '上传', 'expired': '过期', 'speed_upload': '极速上传', 'share': '共享'}
 
 def file_log_save(func):
     @functools.wraps(func)

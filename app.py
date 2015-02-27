@@ -2,17 +2,18 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 14:39:01
-# Filename        : /home/ljd/py/zjypan/app.py
+# Last modified   : 2015-02-27 19:10:05
+# Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
 from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler, SpeedFileHandler # 用于处理秒传请求
 from page.old import OldIndexHandler
-from module import HeaderModule, FooterModule
+from module import HeaderModule, FooterModule, ShareHeaderModule, ShareFooterModule
 from os import path
 from public.handler import DefaultHandler
 from page.api import ApiPostHandler
+from page.share import ShareHandler, ShareSiteHandler
 
 from public.data import log_db, db, session_db
 
@@ -50,6 +51,9 @@ class PanApplication(Application):
                 (r'/code.py', CodeHandler),
                 (r'/monitor.py', MonitorHandler),
                 (r'/speed_file.py', SpeedFileHandler),
+                # 下面uri都不带.py结尾
+                (r'/share', ShareHandler),
+                (r'/share_site/?(.*?)', ShareSiteHandler),
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告
                 ]
@@ -63,6 +67,8 @@ class PanApplication(Application):
                # 'static_handler_class': QiniuFileHandler,
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule,
+                                'share_header': ShareHeaderModule,
+                                'share_footer': ShareFooterModule,
                                 },
                 'debug': True,
                 'gzip': False,

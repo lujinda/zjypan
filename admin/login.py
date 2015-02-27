@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-22 19:27:17
+# Last modified   : 2015-02-27 14:35:34
 # Filename        : admin/login.py
 # Description     : 
 
@@ -46,7 +46,7 @@ class LoginHandler(BaseHandler):
 
     def prepare(self):
         """
-        重勾它，因为BaseHandler的这个方法都做了用户认证，而登录的这个不需要的
+        重构它，因为BaseHandler的这个方法都做了用户认证，而登录的这个不需要的
         """
         pass
 

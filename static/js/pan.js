@@ -12,6 +12,49 @@ function del_file(){
         }
     });
 }
+
+function show_share_msg(){
+    $share_msg = $("#share_msg");
+    $share_msg.find('strong').html($('#file_name').html());
+    $share_msg.fadeIn(250);
+}
+function close_share_msg(){
+    $("#share_msg").hide();
+}
+function share_file(){
+    var file_key = $('#file_key').val();
+    if (!file_key)
+        return;
+    var description = $('#share_description').val();
+    $.ajax({
+        url: '/share',
+        dataType:'json',
+        data:{'file_key': file_key, 'description': description},
+        type:'POST',
+        error: function(){
+            alert('共享出错，请重试');
+        },
+        success: function(response){
+            if (response['error']){
+                alert(response['error']);
+            }else{
+                change_share_btn(response['share_id']);
+            }
+        }
+    });
+}
+
+function change_share_btn(share_id){
+    if (share_id){
+        $('#btn_file_share').attr('href', '/share?id=' + share_id)
+            .html('查看共享');
+        $("#share_msg").remove();
+    }else{
+        $('#btn_file_share').attr('href',"javascript:show_share_msg()")
+            .html('共 享');
+    }
+}
+
 function show_err_message(error){
     $('.file_percent').css({'background-color': 'red',
         'width':'100%'});

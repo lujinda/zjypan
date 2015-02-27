@@ -1,0 +1,26 @@
+<!Doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <link rel="stylesheet" href="{{ static_url("share/bootstrap/css/bootstrap.min.css") }}" />
+        <link rel="stylesheet" href="{{ static_url("share/css/style.css") }}" />
+        <script src="{{static_url("js/jquery.js")}}"></script>
+        <script src="{{static_url("share/bootstrap/js/bootstrap.min.js")}}"></script>
+    </head>
+    <body>
+        <div id="header">
+        {% block header %}
+        {% module share_header('share/header.html') %}
+        {% end %}
+        </div>
+        <div id="main">
+            {% block main %}
+            {% end %}
+        </div>
+        <div id="footer">
+            {% block footer %}
+            {% module footer('share/footer.html') %}
+            {% end %}
+        </div>
+    </body>
+</html>
