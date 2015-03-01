@@ -2,7 +2,7 @@ body{
     margin:0px auto;
     font-family: arial,helvetica,sans-serif;
     background-color:#fff;
-    width:900px;
+    width:950px;
     background-color: #eee;
 }
 a{
@@ -12,7 +12,7 @@ a{
 #main{
 }
 .share_box{
-    margin:10px;
+    margin:8px;
     border-right:1px solid #ccc;
     border-bottom:1px solid #ccc;
     border-top:2px solid #fff;
@@ -23,6 +23,8 @@ a{
     border-radius:12px;
     overflow:hidden;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    display:none;
+    float:left;
 }
 .share_box:hover{
     box-shadow:0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
@@ -32,17 +34,31 @@ a{
 .box_header{
     font-weight:bold;
     text-align:center;
+    overflow:hidden;
     color:#09c;
     border-bottom:1px solid #ccc;
     height:20px;
+    padding-bottom:5px;
     font-size: 16px;
 }
 .box_footer{
     height:20px;
     text-align:right;
+    overflow:hidden;
 }
 .box_main{
     overflow:hidden;
     padding:5px;
     height:100px;
+    color: #666;
+}
+#top_box{
+    z-index: 99;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    margin:0 auto;
+    width:800px;
+    display:none;
 }

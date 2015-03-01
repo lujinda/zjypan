@@ -1,6 +1,6 @@
 <div class="navbar">
     <div class="navbar-inner">
-        <a class="brand" href="#">资源广场</a>
+        <a class="brand" href="/share_site">资源广场</a>
         <ul class="nav">
             <li class="active"><a href="#">首页</a></li>
             <li><a href="#">留言</a></li>
@@ -8,13 +8,13 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">文件分类<b class="caret"></b></a>
             <ul class="dropdown-menu">
                 {% for share_file_type, share_count in share_file_type_list %}
-                <li><a href="#">{{share_file_type}} ({{share_count}})</a></li>
+                <li><a href="/share_site/sort/{{share_file_type}}">{{share_file_type}} ({{share_count}})</a></li>
                 {% end %}
             </ul>
             </li>
             <li>
-            <form class="navbar-form pull-left">
-                <input type="text" class="span2">
+            <form method="POST" action="/share_site/search" id="top_search_box" class="navbar-form pull-left">
+                <input type="text" name="search_keyword" class="span2">
                 <button type="submit" class="btn">搜索</button>
             </form>
             </li>

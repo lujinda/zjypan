@@ -1,18 +1,16 @@
 {% extends 'main.html' %}
-{% block title %}
-资源广场
-{% end %}
 {% block main %}
-<div class="share_box">
-    <div class="box_header">
-        标题
-    </div>
-    <div class="box_main">
-        介绍
-    </div>
-    <div class="box_footer">
-        总结
-    </div>
+<div id="share_box_wrap">
 </div>
+<div style="clear:both">
+</div>
+{% include "page.html" %}
 {% end %}
-
+{% block footer_js %}
+<script>
+    $(document).ready(function(){
+        var api_url = String.format('/api/share/{0}?{1}', document.location.pathname.split('share_site/')[1] || '' , document.location.href.split('?')[1] || '');
+        list_share_file(api_url);
+    });
+</script>
+{% end %}

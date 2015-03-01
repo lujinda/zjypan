@@ -2,16 +2,23 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <link rel="stylesheet" href="{{ static_url("share/bootstrap/css/bootstrap.min.css") }}" />
-        <link rel="stylesheet" href="{{ static_url("share/css/style.css") }}" />
+        <link rel="stylesheet" href="{{ static_url('share/bootstrap/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ static_url('share/css/style.css') }}" />
         <script src="{{static_url("js/jquery.js")}}"></script>
+        <script src="{{static_url("js/common.js")}}"></script>
+        <script src="{{static_url("share/js/share.js")}}"></script>
         <script src="{{static_url("share/bootstrap/js/bootstrap.min.js")}}"></script>
         <title>
         {% block title %}
+        {{title}}
         {% end %}
         </title>
     </head>
     <body>
+        <div class="alert" id="top_box">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <span><span>
+        </div>
         <div id="header">
         {% block header %}
         {% module share_header('share/header.html') %}
@@ -27,4 +34,7 @@
             {% end %}
         </div>
     </body>
+    {% block footer_js %}
+
+    {% end %}
 </html>

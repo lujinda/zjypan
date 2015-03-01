@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 18:35:03
+# Last modified   : 2015-03-01 21:16:21
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -56,7 +56,7 @@ class PanApplication(Application):
                 (r'/share_site/?(.*?)', ShareSiteHandler),
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告
-                (r'/api/share', ApiShareHandler), # 列出特定共享的文件
+                (r'/api/share/?(.*?)', ApiShareHandler), # 列出特定共享的文件
                 ]
 
         self.monitors_manager = monitors_manager or []
@@ -72,7 +72,7 @@ class PanApplication(Application):
                                 'share_footer': ShareFooterModule,
                                 },
                 'debug': True,
-                'gzip': False,
+                'gzip': True,
                 'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
                 'default_handler_class': DefaultHandler,
                 }
@@ -111,7 +111,7 @@ class PanAdminApplication(Application):
                                 'admin_footer': AdminFooterModule,
                                 'admin_left': AdminLeftModule},
                 'debug': True,
-                'gzip': False,
+                'gzip': True,
                 'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
                 'login_url': '/login.py',
                 }

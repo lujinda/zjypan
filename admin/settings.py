@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 18:07:08
-# Filename        : /home/ljd/py/zjypan/admin/settings.py
+# Last modified   : 2015-03-01 16:53:44
+# Filename        : admin/settings.py
 # Description     : 
 from .base import AdminHandler
 from public.do import get_settings, save_settings
@@ -57,7 +57,7 @@ class AdminSettingsHandler(AdminHandler):
     def share_save(self):
         page_limit = int(self.get_argument('page_limit'))
         
-        assert 5 <= page_limit <= 50
+        assert 4 <= page_limit <= 40
         save_settings('share', page_limit = page_limit)
         self.write(dict(mess='共享设置已保存', error = ''))
         return '保存共享设置'

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 18:58:14
+# Last modified   : 2015-03-01 21:47:06
 # Filename        : page/share/do.py
 # Description     : 
 
@@ -18,4 +18,6 @@ def share_file_type_group():
     return sorted([(x['_id'], x['count']) for x in _list], 
             key = lambda x:x[1], reverse = True)
 
+def get_share_file_count(conditon = {}):
+    return db.share.find(conditon).count()
 
