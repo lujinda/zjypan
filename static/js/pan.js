@@ -21,6 +21,23 @@ function show_share_msg(){
 function close_share_msg(){
     $("#share_msg").hide();
 }
+function unshare(){
+    var file_key = $('#file_key').val();
+    if (!file_key)
+        return;
+    $.ajax({
+        url: '/share',
+        dataType: 'json',
+        type: 'DELETE',
+        data: {'file_key': file_key},
+        error: function(){
+            alert('系统出错，请重试');
+        },
+        success: function(response){
+            change_share_btn();
+        },
+    });
+}
 function share_file(){
     var file_key = $('#file_key').val();
     if (!file_key)
@@ -48,10 +65,12 @@ function change_share_btn(share_id){
     if (share_id){
         $('#btn_file_share').attr('href', '/share?id=' + share_id)
             .html('查看共享');
-        $("#share_msg").remove();
+        $('#btn_file_unshare').show();
+        $("#share_msg").hide();
     }else{
         $('#btn_file_share').attr('href',"javascript:show_share_msg()")
             .html('共 享');
+        $('#btn_file_unshare').hide();
     }
 }
 

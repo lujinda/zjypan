@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-27 19:10:41
+# Last modified   : 2015-02-28 21:36:56
 # Filename        : page/share/handler.py
 # Description     : 
 
@@ -24,6 +24,12 @@ class ShareHandler(MyRequestHandler):
 
         file_manager = FileManager(share_file_key, request = self)
         file_manager.share(share_description) # 开始文件共享，并告诉浏览器share_id
+
+    @access_log_save
+    def delete(self):
+        share_file_key = self.get_argument('file_key')
+        file_manager = FileManager(share_file_key, request = self)
+        file_manager.unshare()
 
 class ShareSiteHandler(MyRequestHandler):
     def get(self, operation):

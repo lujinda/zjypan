@@ -3,8 +3,46 @@ body{
     font-family: arial,helvetica,sans-serif;
     background-color:#fff;
     width:900px;
+    background-color: #eee;
 }
 a{
     text-decoration:none;
     outline:0px none;
+}
+#main{
+}
+.share_box{
+    margin:10px;
+    border-right:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    border-top:2px solid #fff;
+    background-color:#fff;
+    width:200px;
+    height:150px;
+    padding:10px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+.share_box:hover{
+    box-shadow:0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+    border-top:2px solid #09c;
+}
+
+.box_header{
+    font-weight:bold;
+    text-align:center;
+    color:#09c;
+    border-bottom:1px solid #ccc;
+    height:20px;
+    font-size: 16px;
+}
+.box_footer{
+    height:20px;
+    text-align:right;
+}
+.box_main{
+    overflow:hidden;
+    padding:5px;
+    height:100px;
 }

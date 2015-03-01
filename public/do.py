@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-22 14:51:19
-# Filename        : /home/ljd/py/zjypan/public/do.py
+# Last modified   : 2015-02-28 18:11:53
+# Filename        : public/do.py
 # Description     : 
 from public.data import db, log_db_sync
 from uuid import uuid4

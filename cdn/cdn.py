@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-26 21:45:23
+# Last modified   : 2015-02-28 22:14:58
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -56,6 +56,16 @@ class CDN():
                 made_cdn_key(s_file_key, s_file_name), made_cdn_key(d_file_key, d_file_name))
         assert not error
 
+    @celery.task(filter=task_method)
+    def __unshare(self, share_id, file_name):
+        share_cdn_key = made_cdn_key(share_id, file_name)
+        ret, error = self._cattle.rm(self._share_bucket,
+                share_cdn_key)
+        assert not error
+
+    def unshare(self, *args, **kwargs):
+        self.__unshare(*args, **kwargs)
+
     def share(self, file_key, file_name, share_id):
         share_cdn_key = made_cdn_key(share_id, file_name)
         ret, error = self._cattle.cp(self._bucket_name,
@@ -102,4 +112,5 @@ class CDN():
 
     def del_file(self, *args, **kwargs):
         self.__del_file.delay(*args, **kwargs)
+
 

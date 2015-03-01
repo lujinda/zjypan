@@ -6,6 +6,10 @@
         <link rel="stylesheet" href="{{ static_url("share/css/style.css") }}" />
         <script src="{{static_url("js/jquery.js")}}"></script>
         <script src="{{static_url("share/bootstrap/js/bootstrap.min.js")}}"></script>
+        <title>
+        {% block title %}
+        {% end %}
+        </title>
     </head>
     <body>
         <div id="header">

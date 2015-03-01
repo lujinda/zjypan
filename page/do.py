@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-26 22:03:01
+# Last modified   : 2015-02-28 22:16:07
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -15,6 +15,7 @@ from storage.save import save_to_cdn
 from cdn import CDN
 import functools
 from lib.wrap import file_log_save
+from lib.mime import get_file_type
 from uuid import uuid4
 
 
@@ -72,6 +73,10 @@ class FileManager():
         del_local_file(self.__file['file_path'])
         if self.__file['in_cdn']:
             self._cdn.del_file(self.__file['file_key'], self.__file['file_name'])
+
+        if self.__file['share_id']:
+            self.unshare()
+
 
         db.files.remove({'file_key':self._file_key})
      
@@ -159,9 +164,20 @@ class FileManager():
         db.share.insert({'share_id': share_id, 'file_name': self.__file['file_name'], 
             'share_decription': share_decription,
             'share_time': share_time, 'share_url': share_url, 
-            'content_type': self.__file['content_type']})
+            'file_type': get_file_type(self.__file['content_type'])})
 
         self._request.write({'error': '', 'share_id': share_id}) # 需要修改
+
+    @file_log_save
+    def unshare(self):
+        """
+        成功删除也不返回东西
+        """
+        share_id = self.__file['share_id']
+        share_file_obj = db.share.find_and_modify({'share_id': share_id}, remove = True) # 返回共享信息时，同时删除
+        self._cdn.unshare(share_file_obj['share_id'], share_file_obj['file_name'])
+        db.files.update({'file_key': self._file_key}, 
+                {"$set": {'share_id': ''}})
 
     def raise_error(self, err_mess):
         raise self.FileException(err_mess)

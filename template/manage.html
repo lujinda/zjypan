@@ -23,8 +23,9 @@
         <form target='' method='GET'>
         <input type="hidden" name="file_key" id="file_key" value="" />
         <a id="btn_file_down" class="c_g btn_file_operation" href="javascript:down_file()">下 载</a>
-        <a class="c_b btn_file_operation" href="javascript:show_share_msg()" id="btn_file_share">共 享</a>
         <a  class="btn_file_operation c_r" href="javascript:del_file()" id="btn_file_del">删 除</a>
+        <a class="c_b btn_file_operation" href="javascript:show_share_msg()" id="btn_file_share">共 享</a>
+        <a  class="btn_file_operation c_b" href="javascript:unshare()" id="btn_file_unshare">取消共享</a>
         </form>
     </div>
     <div class="msg" id="share_msg" style="display:none;">

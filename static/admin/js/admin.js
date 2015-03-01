@@ -53,6 +53,10 @@ function _post_settings(obj){
         };
     }
 
+    if (obj == 'share'){
+        data = {'page_limit': $('#settings_page_limit').val()};
+    }
+
     data['mail_code'] = $('#mail_code').val();
 
     $.ajax({url: url,

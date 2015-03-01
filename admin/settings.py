@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-22 19:28:28
-# Filename        : admin/settings.py
+# Last modified   : 2015-02-28 18:07:08
+# Filename        : /home/ljd/py/zjypan/admin/settings.py
 # Description     : 
 from .base import AdminHandler
 from public.do import get_settings, save_settings
@@ -12,7 +12,7 @@ from lib.wrap import auth_log_save
 class AdminSettingsHandler(AdminHandler):
     def get(self, set_obj = None):
         set_obj = set_obj or 'global'
-        assert set_obj in ['global', 'file', 'account'] # account其实是修改用户名密码，里面的数据库会是空的。
+        assert set_obj in ['global', 'file', 'account', 'share'] # account其实是修改用户名密码，里面的数据库会是空的。
         settings = get_settings(set_obj)
 
         self.render('settings/settings_{set_obj}.html'.format(
@@ -53,6 +53,14 @@ class AdminSettingsHandler(AdminHandler):
 
         self.write(dict(mess='全局设置已保存～', error=''))
         return '保存全局设置'
+
+    def share_save(self):
+        page_limit = int(self.get_argument('page_limit'))
+        
+        assert 5 <= page_limit <= 50
+        save_settings('share', page_limit = page_limit)
+        self.write(dict(mess='共享设置已保存', error = ''))
+        return '保存共享设置'
 
     def file_save(self):
         """
