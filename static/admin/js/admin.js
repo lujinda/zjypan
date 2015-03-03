@@ -30,7 +30,6 @@ function append_operation_list(operation_list){
 }
 
 function _post_settings(obj){
-    url = '/tuxpy/settings/' + obj;
     if (obj == 'global'){
         data = {'up_time_interval': $('#settings_up_time_interval').val(),
         'up_num': $('#settings_up_num').val(), 
@@ -56,6 +55,19 @@ function _post_settings(obj){
     if (obj == 'share'){
         data = {'page_limit': $('#settings_page_limit').val()};
     }
+    if (obj == 'key_add' || obj == 'key_del'){
+        data = {'key': $('#settings_key').val(),
+        'operation': obj.split('_')[1]};
+        obj = 'key';
+    }
+
+    if (obj == 'key_madd'){
+        data = {'key_list': $('#settings_key_list').val(),
+        'operation': 'madd'};
+        obj = 'key';
+    }
+
+    url = '/tuxpy/settings/' + obj;
 
     data['mail_code'] = $('#mail_code').val();
 
@@ -70,7 +82,7 @@ function _post_settings(obj){
             }
         },
         error:function (){
-            $('#top_error_mess p').html('保存失败');
+            $('#top_error_mess p').html('操作失败');
             $('#top_error_mess').show().fadeOut(3000);
         },
         
@@ -358,4 +370,16 @@ function do_post(operation){
             return;
     }
     $('#list_post_form').attr('action', '?action=' + operation).submit();
+}
+
+function key_flush(){
+    $('#confirm_msg_wrap').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+            request_api('/tuxpy/settings/key', 'POST',{'operation': 'flush'});
+        },
+        onCancel: function() {
+            return false;
+        }
+    });
 }

@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 15:32:57
-# Filename        : /home/ljd/py/zjypan/lib/cattle/cattle.py
+# Last modified   : 2015-03-02 20:36:48
+# Filename        : lib/cattle/cattle.py
 # Description     : API地址：http://docs.qiniutek.com/v3/api/io/#upload
 
 from .token import UploadToken, AccessToken, DownloadToken
@@ -126,7 +126,7 @@ class Cattle():
 
     def api_call(self, url):
         rs_headers = self.get_rs_headers(url)
-        ret = post(url, headers = rs_headers)
+        ret = post(url, headers = rs_headers, timeout = 60)
         if ret.status_code == 200:
             return ret.text.strip() and ret.json(), ''
         else:

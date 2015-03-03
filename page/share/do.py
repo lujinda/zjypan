@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-01 21:47:06
+# Last modified   : 2015-03-02 19:54:27
 # Filename        : page/share/do.py
 # Description     : 
 
@@ -20,4 +20,13 @@ def share_file_type_group():
 
 def get_share_file_count(conditon = {}):
     return db.share.find(conditon).count()
+
+def get_share_file(share_id):
+    return db.share.find_one({'share_id': share_id})
+
+def add_share_up_num(share_id):
+    db.share.update({'share_id': share_id}, {"$inc": {'up_num': 1} })
+
+def add_share_down_num(share_id):
+    db.share.update({'share_id': share_id}, {'$inc': {'down_num': 1}} )
 

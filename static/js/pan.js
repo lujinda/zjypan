@@ -26,10 +26,9 @@ function unshare(){
     if (!file_key)
         return;
     $.ajax({
-        url: '/share',
+        url: '/share/' + file_key,
         dataType: 'json',
         type: 'DELETE',
-        data: {'file_key': file_key},
         error: function(){
             alert('系统出错，请重试');
         },
@@ -44,9 +43,9 @@ function share_file(){
         return;
     var description = $('#share_description').val();
     $.ajax({
-        url: '/share',
+        url: '/share/' + file_key,
         dataType:'json',
-        data:{'file_key': file_key, 'description': description},
+        data:{'description': description},
         type:'POST',
         error: function(){
             alert('共享出错，请重试');
@@ -63,8 +62,8 @@ function share_file(){
 
 function change_share_btn(share_id){
     if (share_id){
-        $('#btn_file_share').attr('href', '/share?id=' + share_id)
-            .html('查看共享');
+        $('#btn_file_share').attr('href', '/share_site')
+            .html('资源广场');
         $('#btn_file_unshare').show();
         $("#share_msg").hide();
     }else{

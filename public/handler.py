@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-26 21:12:39
+# Last modified   : 2015-03-03 19:26:44
 # Filename        : public/handler.py
 # Description     : 
 
@@ -18,6 +18,21 @@ from lib.wrap import access_log_save, auth_log_save
 class MyRequestHandler(RequestHandler):
     def initialize(self):
         self.acl = ACL(self.client_ip)
+        self.init_data()
+
+    def init_data(self):
+        """
+        另做一个勾子用于类被实例化时调用
+        """
+        pass
+
+    def send_result_json(self):
+        """
+        只要类属性中有result_json，并且为字典就可以以json方式发送
+        """
+        result_json = self.__dict__.get('result_json')
+        assert isinstance(result_json, dict) 
+        self.write(result_json)
 
     def write_json(self, data):
         json_data = json.dumps(data)

@@ -2,6 +2,7 @@ body{
     margin:0px;
     font-family: arial,helvetica,sans-serif;
     background-color:#fff;
+    word-break: break-all;
 }
 a{
     text-decoration:none;
@@ -313,15 +314,19 @@ a{
     display:block;
     margin:6px 4px;
 }
+.msg li{
+    list-style-type:none;
+}
 .msg strong{
     color:red;
 }
-.msg textarea{
-    width:98%;
+.msg textarea, .msg input{
+    width:95%;
     border:1px solid #ccc;
     resize: none;
+    padding: 5px;
 }
-.msg textarea:focus{
+.msg textarea:focus, .msg textarea:hover{
     border-color: #66AFE9;
     outline: 0px none;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);

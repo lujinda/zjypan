@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-01 21:16:21
+# Last modified   : 2015-03-02 19:38:06
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -13,7 +13,7 @@ from module import HeaderModule, FooterModule, ShareHeaderModule, ShareFooterMod
 from os import path
 from public.handler import DefaultHandler
 from page.api import ApiPostHandler, ApiShareHandler
-from page.share import ShareHandler, ShareSiteHandler
+from page.share import ShareHandler, ShareSiteHandler, ShareSiteFileHandler
 
 from public.data import log_db, db, session_db
 
@@ -52,7 +52,8 @@ class PanApplication(Application):
                 (r'/monitor.py', MonitorHandler),
                 (r'/speed_file.py', SpeedFileHandler),
                 # 下面uri都不带.py结尾
-                (r'/share', ShareHandler), # 只提供对共享文件的操作，如下载，共享，取消共享
+                (r'/share/(.+?)', ShareHandler), # 只提供对共享文件的操作，如共享，取消共享, 顶，踩等 
+                (r'/share_site/file/(.+?)', ShareSiteFileHandler), # 用于处理一个共享文件的详细页
                 (r'/share_site/?(.*?)', ShareSiteHandler),
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告

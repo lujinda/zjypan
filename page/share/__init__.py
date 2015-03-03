@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-27 18:17:10
+# Last modified   : 2015-03-02 15:58:44
 # Filename        : page/share/__init__.py
 # Description     : 
-from handler import ShareHandler, ShareSiteHandler
+from handler import ShareHandler, ShareSiteHandler, ShareSiteFileHandler
 

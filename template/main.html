@@ -13,6 +13,20 @@
         <title>{% block title %}{% end %}</title>
     </head>
     <body>
+    <!-- # 反馈框，有待开发
+    <div class="msg" id="feedback_box">
+        <strong>欢迎对此应用做出反馈</strong>
+        <li>
+        <span>内容:</span>
+        <textarea id="feedback_content">
+        </textarea>
+        </li>
+        <li>
+        <span>联系方式:</span>
+        <input id="feedback_contact" placeholder="手机/邮箱/QQ"/>
+        </li>
+    </div>
+    -->
         <div id="header">
             {% block header %}
             {% module header('header.html') %}

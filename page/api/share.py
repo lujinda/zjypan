@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-01 22:12:58
+# Last modified   : 2015-03-03 14:38:24
 # Filename        : page/api/share.py
 # Description     : 
 from public.handler import ApiHandler
@@ -28,6 +28,7 @@ class ApiShareHandler(ApiHandler):
         assert _type in ('sort', 'search' , 'all')
 
         func = getattr(self, 'list_' + _type)  # 这些函数返回查询条件
+
         return func(_value)
 
 

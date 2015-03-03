@@ -34,7 +34,7 @@
             
         {% end %}
 
-        {% if now_page != max_page %}
+        {% if now_page != max_page and max_page %}
         <li><a  href="?page={{now_page + 1}}">下页</a></li>
         {% end %}
     </ul>

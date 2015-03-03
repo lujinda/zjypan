@@ -4,22 +4,32 @@ body{
     background-color:#fff;
     width:950px;
     background-color: #eee;
+    word-break: break-all;
 }
-a{
+a, a:hover, a:focus{
     text-decoration:none;
     outline:0px none;
 }
 #main{
 }
+#footer{
+    text-align:center;
+    color:#777;
+    font-size:14px;
+}
+#footer a{
+    color:#777;
+}
+#footer a:hover{
+    color:#444;
+}
 .share_box{
-    margin:8px;
+    margin:18px;
     border-right:1px solid #ccc;
     border-bottom:1px solid #ccc;
     border-top:2px solid #fff;
     background-color:#fff;
     width:200px;
-    height:150px;
-    padding:10px;
     border-radius:12px;
     overflow:hidden;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
@@ -42,10 +52,23 @@ a{
     font-size: 16px;
 }
 .box_footer{
-    height:20px;
-    text-align:right;
     overflow:hidden;
+    text-align:center;
 }
+.share_file_h_c a{
+    display: inline-block;
+    text-decoration:none;
+    padding-top:2px;
+    padding-bottom:2px;
+    width:50%;
+}
+.share_up{
+    background-color:#eee;
+}
+.share_down{
+    background-color:#ccc;
+}
+
 .box_main{
     overflow:hidden;
     padding:5px;
@@ -61,4 +84,16 @@ a{
     margin:0 auto;
     width:800px;
     display:none;
+}
+.share_file_down{
+    display:block;
+    background-color:#09c;
+    color:#fff;
+    padding-top:4px;
+    padding-bottom:4px;
+    font-weight:bold;
+}
+.share_file_down:hover{
+    color:#fff;
+    background-color:rgba(0, 149, 198, 1);
 }

@@ -213,6 +213,7 @@
 		data.$dropper.removeClass("dropping");
 
 		_handleUpload(data, files);
+		e.preventDefault();
 	}
 
 	/**

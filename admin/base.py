@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 16:43:55
+# Last modified   : 2015-03-03 19:25:11
 # Filename        : admin/base.py
 # Description     : 
 
@@ -32,6 +32,8 @@ def valid_authenticated(method):
 class BaseHandler(MyRequestHandler):
     def initialize(self):
         self.session = Session(self.application.session_manager, self)
+        self.init_data()
+
 
     @property
     def home_page(self):

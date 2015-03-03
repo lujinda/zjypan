@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 22:16:07
+# Last modified   : 2015-03-03 19:58:47
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -134,8 +134,10 @@ class FileManager():
         file_info = self.get_file_info()
 
         # 有一些参数不允许被用户看到，就删除
+        file_info['can_share'] = file_info['in_cdn']
         for key in ['file_path', 'in_cdn', 'upload_ip']:
             del file_info[key]
+
 
         self._request.write_json(file_info)
 
@@ -164,9 +166,12 @@ class FileManager():
         db.share.insert({'share_id': share_id, 'file_name': self.__file['file_name'], 
             'share_decription': share_decription,
             'share_time': share_time, 'share_url': share_url, 
+            'up_num': 0, 'down_num': 0,
             'file_type': get_file_type(self.__file['content_type'])})
+        
+        self._request.result_json['share_id'] = share_id
 
-        self._request.write({'error': '', 'share_id': share_id}) # 需要修改
+        self._request.send_result_json() 
 
     @file_log_save
     def unshare(self):

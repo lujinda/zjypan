@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-26 19:51:12
-# Filename        : public/data.py
+# Last modified   : 2015-03-03 20:39:56
+# Filename        : /home/ljd/py/zjypan/public/data.py
 # Description     : 
 
 import pymongo
@@ -57,6 +57,17 @@ class RedisDb():
     def expire(self, name, expire):
         return self._db.expire(self._prefix + name, expire)
 
+    def sadd(self, name, *args):
+        return self._db.sadd(self._prefix + name, *args)
+
+    def srem(self, name, *args):
+        return self._db.srem(self._prefix + name, *args)
+
+    def srandmember(self, name, count = 0):
+        return self._db.srandmember(self._prefix + name, count)
+
+    def sismember(self, name, key):
+        return self._db.sismember(self._prefix + name, key)
 
 redis_db = RedisDb('zjypan_')
 session_db = redis_db

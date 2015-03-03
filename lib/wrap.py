@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-26 19:57:28
+# Last modified   : 2015-03-03 14:07:36
 # Filename        : lib/wrap.py
 # Description     : 
 import functools
@@ -21,6 +21,18 @@ def verify_code(method):
         
     return wrap
 
+def allow_add_share_num(func):
+    @functools.wraps(func)
+    def wrap(self, *args, **kwargs):
+        if not self.acl.allow_add_share_num(self._share_id):
+            self.result_json['error'] = '您已评论过该文件了'
+            self.send_result_json()
+            return
+        else:
+            self.acl.add_share_num_register(self._share_id)
+            return func(self, *args, **kwargs)
+
+    return wrap
 
 def access_log_save(method):
     @functools.wraps(method)

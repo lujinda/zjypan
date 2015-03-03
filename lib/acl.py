@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-04-26 14:42:58
+# Last modified   : 2015-03-02 22:19:55
 # Filename        : lib/acl.py
 # Description     : 
 from public.data import redis_db
@@ -37,6 +37,17 @@ class ACL():
 
     def ip_allow(self, allow_ip = '127.0.0.1'):
         return self._client_ip == allow_ip
+
+    def allow_add_share_num(self, share_id):
+        """
+        返回状态，是否允许评论
+        """
+        return (not redis_db.get('%s_share_num_%s' % (self._client_ip,
+            share_id), None))
+
+    def add_share_num_register(self, share_id):
+        redis_db.set("%s_share_num_%s" %(self._client_ip,
+            share_id), 1, ex = 86400)
 
     def add_up_register(self):
         """

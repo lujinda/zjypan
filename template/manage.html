@@ -52,6 +52,9 @@ $(document).ready(function(){
                     return false;
                 }
                 $('#input_key_wrap').hide();
+                if (!data['can_share']){ // 如果不可以共享，就不要那个按钮了
+                    $('#btn_file_share').remove();
+                }
                 change_share_btn(data['share_id']);
                 $('#manage_wrap #file_name').html(data['file_name']);
                 $('#manage_wrap #upload_time').html(DateToString(data['upload_time']));
