@@ -7,6 +7,20 @@ String.format = function(src){
     });
 };
 
+function get_cookie(name){
+    var c = document.cookie.match("\\b" + name + "=\"?([^;]*)\\b");
+    return c ? c[1] : '';
+}
+
+function del_cookie(name){
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1000);
+    var cookie = get_cookie(name);
+    if (cookie){
+        document.cookie = name + '=' + cookie + ";expires=" + exp.toGMTString();
+    }
+}
+
 function time_add_zero(time){
     return time < 10 ? '0' + time: time
 }
@@ -14,7 +28,7 @@ function time_add_zero(time){
 function DateToString(seconds){
     d = new Date(seconds * 1000);
     return String.format("{0}-{1}-{2} {3}:{4}:{5}", d.getFullYear(),
-            time_add_zero(d.getMonth()), time_add_zero(d.getDate()), 
+            time_add_zero(d.getMonth() + 1), time_add_zero(d.getDate()), 
             time_add_zero(d.getHours()), time_add_zero(d.getMinutes()), time_add_zero(d.getSeconds()));
 }
 
@@ -70,5 +84,43 @@ function show_all_post(){
         $('body').css('background-color', '#fff');
         $('#header, #main, #footer').fadeIn(200);
     });
+}
+
+function submit_feedback(){
+    var content = $('#feedback_content').val();
+    var contact = $('#feedback_contact').val();
+
+    if (! (content && contact)){
+        alert('请把相关信息输入完毕');
+        return;
+    }
+
+    $.ajax({
+        dataType:'json',
+        type:'POST',
+        url:'/api/feedback',
+       data:{'content': content,
+        'contact': contact},
+        success: function(response){
+            alert(response['result']);
+            $('.msg_wrap').fadeOut(250);
+        },
+        error: function(){
+            alert('不好意思，评论失败');
+        }
+    });
+}
+function show_last_upload(){
+    var last_upload = decodeURI(get_cookie('last_upload'));
+    if (!last_upload){
+        $('#footer_tips').hide().find('#last_upload_key').html('');
+        return;
+    }
+    $('#footer_tips').show().find('#last_upload_key').html(last_upload);
+}
+
+function del_last_upload(){
+    del_cookie('last_upload');
+    show_last_upload();
 }
 

@@ -2,72 +2,58 @@
 {% block title %}
 文件管理
 {% end %}
+{% block header_js %}
+    <script src="{{static_url("js/jquery.form.js")}}"></script>
+    <script src="{{static_url("js/spark-md5.min.js")}}"></script>
+{% end %}
 {% block body %}
 <div id="input_key_wrap">
-    <form action="" method="POST">
+    <form style="padding-top:50px" action="" method="POST">
     <div class="input_key_dir">
     <input type="text" class="input_key" name="file_key" placeholder="输入文件提取码" />
     <a class="btn_submit_key" href="javascript:void(0);">确 定</a>
     </div>
     </form>
 </div>
-<div id="manage_wrap" style="display:none">
-    <img id="pci_summary" src="{{static_url('images/filetype/default.png')}}" class="pci_summary" src=""></img>
-    <div id="file_name" class="file_name"> _</div>
+<div class="manage_wrap" style="display:none">
+    <img src="{{static_url('images/filetype/default.png')}}" class="pci_summary" src=""></img>
+    <div class="file_name">_</div>
     <div class="file_summary">
-        <span>上传时间: <span id="upload_time">_</span></span>
-        <span>过期时间: <span id="expired_time">_</span></span>
-        <span>文件大小: <span id="file_size">_</span></span>
+        <span>上传时间: <span class="upload_time">_</span></span>
+        <span>过期时间: <span class="expired_time">_</span></span>
+        <span>文件大小: <span class="file_size">_</span></span>
     </div>
     <div class="file_operation">
-        <form target='' method='GET'>
-        <input type="hidden" name="file_key" id="file_key" value="" />
-        <a id="btn_file_down" class="c_g btn_file_operation" href="javascript:down_file()">下 载</a>
-        <a  class="btn_file_operation c_r" href="javascript:del_file()" id="btn_file_del">删 除</a>
-        <a class="c_b btn_file_operation" href="javascript:show_share_msg()" id="btn_file_share">共 享</a>
-        <a  class="btn_file_operation c_b" href="javascript:unshare()" id="btn_file_unshare">取消共享</a>
+        <form target='_blank' method='GET'>
+        <input type="hidden" name="file_key" class="file_key" value="" />
+        <input type="hidden" name="file_name" class="file_name" value="" />
+        <a class="btn_file_down c_g btn_file_operation" onclick="down_file(this)">下 载</a>
+        <a  class="btn_file_del btn_file_operation c_r" onclick="del_file(this)">删 除</a>
+        <a class="btn_file_share c_b btn_file_operation" onclick="show_share_msg(this)">共 享</a>
+        <a  class="btn_file_unshare btn_file_operation c_b" onclick="unshare(this)" >取消共享</a>
         </form>
-    </div>
-    <div class="msg" id="share_msg" style="display:none;">
-        <span>您正在共享 <strong></strong>,请为它添加一点介绍吧，简单点就行~</span>
-        <textarea id="share_description"></textarea>
-        <a class="m_btn c_r" href="javascript:close_share_msg()">取消</a>
-        <a class="m_btn c_b" href="javascript:share_file()">确定</a>
+        <div class="msg share_msg"  style="display:none;">
+            <span>您正在共享 <strong></strong>,请为它添加一点介绍吧，简单点就行~</span>
+            <textarea class="share_description"></textarea>
+            <a class="m_btn c_r" onclick="close_share_msg(this)">取消</a>
+            <a class="m_btn c_b" onclick="share_file(this)">确定</a>
+        </div>
     </div>
     <div style="clear:both"></div>
+</div>
+    <form id="add_file_form" action="/file.py?operation=add" method="POST">
+    <a onclick="$(this).next().click()" id="btn_add_file" class="btn_file_operation c_b btn_b">在此代码下添加新文件</a>
+    <input name="file" style="display:none" id="add_file_input" type="file" >
+    <input name="file_key" id="file_key" style="display:none" />
+    </form>
+<div id="up_process">
 </div>
 <script>
     $('.input_key').focus();
 $(document).ready(function(){
+    show_last_upload();
     $('#input_key_wrap form').submit(function (event){
-        $.ajax({url: "/manage.py", 
-            dataType:'json',
-            type:'POST',
-            data:{'file_key':$('.input_key_dir .input_key').val()},
-            success:
-            function (data){
-                var error = data['error'];
-                if (error){
-                    alert(error);
-                    return false;
-                }
-                $('#input_key_wrap').hide();
-                if (!data['can_share']){ // 如果不可以共享，就不要那个按钮了
-                    $('#btn_file_share').remove();
-                }
-                change_share_btn(data['share_id']);
-                $('#manage_wrap #file_name').html(data['file_name']);
-                $('#manage_wrap #upload_time').html(DateToString(data['upload_time']));
-                $('#manage_wrap #expired_time').html(DateToString(data['expired_time']));
-                $('#manage_wrap #file_size').html(data['file_size']);
-                $('#manage_wrap #file_key').val(data['file_key']);
-
-                if (data['content_type'].split('/')[0] == 'image'){
-                    $('#pci_summary').attr('src', data['file_url']);
-                }
-                $('#manage_wrap').fadeIn();
-        },});
-
+        write_manager_wrap_all({'file_key':$('.input_key_dir .input_key').val()});
         // 禁止默认事件的发现
         event.preventDefault();
         return false;
@@ -76,6 +62,9 @@ $(document).ready(function(){
         $('#input_key_wrap form').submit();
         event.preventDefault();
     });
+});
+$('#add_file_input').change(function(){
+    add_new_file(this.files[0]);
 });
 
 </script>

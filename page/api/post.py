@@ -2,13 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 18:01:10
-# Filename        : /home/ljd/py/zjypan/page/api/post.py
+# Last modified   : 2015-03-09 12:34:50
+# Filename        : page/api/post.py
 # Description     : 
 from public.handler import ApiHandler
 from public.data import db_async
 from tornado.web import asynchronous
-from lib import cache
 
 class ApiPostHandler(ApiHandler):
     """

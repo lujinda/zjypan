@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-02 22:19:55
+# Last modified   : 2015-03-06 13:04:50
 # Filename        : lib/acl.py
 # Description     : 
 from public.data import redis_db
@@ -48,6 +48,13 @@ class ACL():
     def add_share_num_register(self, share_id):
         redis_db.set("%s_share_num_%s" %(self._client_ip,
             share_id), 1, ex = 86400)
+
+    def allow_feedback(self):
+        return not redis_db.get('%s_feedback' % self._client_ip)
+
+    def add_feedback_register(self):
+        redis_db.set('%s_feedback' % self._client_ip, 1, ex = 300) # 五分钟内只允许反馈一次
+
 
     def add_up_register(self):
         """

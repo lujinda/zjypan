@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-23 20:19:39
+# Last modified   : 2015-03-13 02:19:44
 # Filename        : page/manage.py
 # Description     : 
 
@@ -11,7 +11,8 @@ from public.handler import MyRequestHandler
 from lib.wrap import access_log_save
 
 class ManageHandler(MyRequestHandler):
-    result_json = {}
+    def init_data(self):
+        self.result_json = {'error': '', 'result': []}
 
     @access_log_save
     def get(self):
@@ -19,13 +20,17 @@ class ManageHandler(MyRequestHandler):
 
     @access_log_save
     def post(self):
-        file_key = self.get_argument('file_key', '')
         try:
-            file_manage = FileManager(file_key, self)    
+            self.file_manager.show()
         except FileManager.FileException, e:
             self.result_json['error'] = e.message
-            self.write_json(self.result_json)
+            self.send_result_json()
             return 
 
-        file_manage.show()
 
+    @property
+    def file_manager(self):
+        file_key = self.get_argument('file_key', '')
+        file_name = self.get_argument('file_name', None)
+        return FileManager(file_key, self, file_name = file_name)
+        

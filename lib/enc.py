@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-25 17:18:01
+# Last modified   : 2015-03-04 18:48:33
 # Filename        : lib/enc.py
 # Description     : 
 #from uuid import uuid4

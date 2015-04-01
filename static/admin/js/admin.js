@@ -358,10 +358,10 @@ function check_post(event){
 }
 
 function check_all(s){
-    $('.post_checkbox').attr('checked', s);
+    $('.checkbox').attr('checked', s);
 }
-function do_post(operation){
-    if ($('.post_checkbox:checked').length  == 0){
+function do_operation(operation, $form){
+    if ($('.checkbox:checked').length  == 0){
         alert('啥都没选中！');
         return;
     }
@@ -369,7 +369,14 @@ function do_post(operation){
         if (! confirm('确定要删除吗'))
             return;
     }
-    $('#list_post_form').attr('action', '?action=' + operation).submit();
+    $form.attr('action', '?action=' + operation).submit();
+}
+function do_post(operation){
+    do_operation(operation, $('#list_post_form'));
+}
+
+function do_feedback(operation){
+    do_operation(operation, $('#list_feedback_form'));
 }
 
 function key_flush(){

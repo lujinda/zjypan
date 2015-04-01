@@ -14,7 +14,7 @@ function list_share_file(api_url){
         }
 
         for (i in share_obj_list){
-            $box = $('<div class="share_box"><div class="box_header"><a target="_blank"></a></div><div class="box_main"></div><div class="box_footer"><span class="share_time"></span><div class="share_file_h_c"><a class="share_up"><i class="icon-thumbs-up"></i> <span class="up_num"></span></a><a class="share_down"><i class="icon-thumbs-down"></i> <span class="down_num"></span></a></div><a class="share_file_down" target="_self">下  载</a></div></div>');
+            $box = $('<div class="share_box"><div class="box_header"><a target="_blank"></a></div><div class="box_main"></div><div class="box_footer"><span class="share_time"></span><div class="share_file_h_c"><a class="share_up"><i class="icon-thumbs-up"></i> <span class="up_num"></span></a><a class="share_down"><i class="icon-thumbs-down"></i> <span class="down_num"></span></a></div><a class="share_file_down" target="_blank">下  载</a></div></div>');
             write_share_box($box, share_obj_list[i]);
             $box.appendTo('#share_box_wrap').fadeIn(250 * i);
         }
@@ -33,7 +33,7 @@ function write_share_box($box, share_obj){
     $box.find('.box_footer .share_up').attr('onclick', 'add_share_up_num("' + share_obj['share_id'] + '", this)');
     $box.find('.box_footer .down_num').html(share_obj['down_num']);
     $box.find('.box_footer .share_down').attr('onclick', 'add_share_down_num("' + share_obj['share_id'] + '", this)');
-    $box.find('.box_footer .share_file_down').attr('href', share_obj['share_url'] + '?attname=');
+    $box.find('.box_footer .share_file_down').attr('href', share_obj['share_url'] + '?attname=' + share_obj['file_name']);
 }
 function _show_top_mess(type, mess){
     mess_map = {'warn': 'alert', 'success': 'alert alert-success', 'error': 'alert alert-error'};
@@ -82,4 +82,3 @@ function add_share_down_num(share_id, obj){
     $(obj).attr('onclick', '').html('已踩');
     event.preventDefault();
 }
-

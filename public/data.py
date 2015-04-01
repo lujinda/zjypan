@@ -2,14 +2,15 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 20:39:56
-# Filename        : /home/ljd/py/zjypan/public/data.py
+# Last modified   : 2015-03-26 21:10:02
+# Filename        : public/data.py
 # Description     : 
 
 import pymongo
 import motor
 import redis
 import os
+from functools import partial
 
 motor_client = motor.MotorClient()
 mongo_client = pymongo.Connection()
@@ -23,6 +24,14 @@ class RedisDb():
         self._prefix = prefix
         self._db = redis.Redis(db = db)
         self.setex = self.set
+
+    def __getattr__(self, func_name):
+        if func_name.startswith('__'):
+            return getattr(self._db, func_name)
+        return partial(self.__prefix_func, func_name)
+
+    def __prefix_func(self, func_name,  name, *args, **kwargs):
+        return getattr(self._db, func_name)(self._prefix + name, *args, **kwargs)
 
     def set(self, name, value, ex = None):
         if ex:
@@ -39,35 +48,37 @@ class RedisDb():
                 amount))
 
 
-    def exists(self, name):
-        return self._db.exists(self._prefix + name)
-
-    def delete(self, name):
-        return self._db.delete(self._prefix + name)
-
-    def hset(self, name, key, value):
-        return self._db.hset(self._prefix + name, key, value)
-
-    def hgetall(self, name):
-        return self._db.hgetall(self._prefix + name)
-
     def keys(self, name='*'):
         return self._db.keys(self._prefix + name)
-
-    def expire(self, name, expire):
-        return self._db.expire(self._prefix + name, expire)
-
-    def sadd(self, name, *args):
-        return self._db.sadd(self._prefix + name, *args)
-
-    def srem(self, name, *args):
-        return self._db.srem(self._prefix + name, *args)
 
     def srandmember(self, name, count = 0):
         return self._db.srandmember(self._prefix + name, count)
 
-    def sismember(self, name, key):
-        return self._db.sismember(self._prefix + name, key)
+    def __srand_key(self, name):
+        """
+        非redis支持，主要用来强化随机，防止有重复的。每次执行后，会移动相应的key到一个备份中，等清空后，就从备份那里把key全复制过来
+        """
+        set_name = self._prefix + name
+        b_set_name = set_name + ':bak'
+        pipe = self._db.pipeline()
+        pipe.watch(set_name, b_set_name) # 同时监控这两个key，防止数据被中途修改
+        _key = pipe.srandmember(set_name)
+        if not _key: # 如果_key已经获取不到了，则将b_set_name里面的内容全给set_name, 并删除备份， 并同时再次调用函数本身
+            pipe.sunionstore(set_name, b_set_name, set_name)
+            pipe.delete(b_set_name)
+            pipe.execute()
+            return self.__srand_key(name)
+
+        pipe.smove(set_name, b_set_name, _key)
+        pipe.execute()
+
+        return _key
+
+    def srand_key(self, name):
+        try:
+            return self.__srand_key(name)
+        except redis.WatchError as e: # 如果是watch错误，就重新调用自己
+            return self.srand_key(name)
 
 redis_db = RedisDb('zjypan_')
 session_db = redis_db

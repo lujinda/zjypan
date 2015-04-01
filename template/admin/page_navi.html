@@ -1,0 +1,39 @@
+<ul class="am-pagination">
+    <li {{now_page == 1 and 'class=am-disabled'}}><a href="?page={{now_page - 1}}">上页</a></li>
+    {% if max_page <= 10 %}
+    {% for page in range(1, max_page + 1) %}
+    <li id="p{{page}}"><a href="?page={{page}}">{{page}}</a></li>
+    {% end %}
+    {% elif now_page < 4 %}
+    <li id="p1"><a href="?page=1">1</a></li>
+    {% for page in range(2, 6) %}
+    <li id="p{{page}}"><a href="?page={{page}}">{{page}}</a></li>
+    {% end %}
+    ...
+    <li id="p{{max_page}}"><a href="?page={{max_page}}">{{max_page}}</a></li>
+    {% elif (max_page - now_page) >= max_page/2 or 2 < (max_page - now_page) <= max_page / 2 %}
+    <li id="p1"><a href="?page=1">1</a></li>
+    {% for page in range(now_page - 2, now_page + 4) %}
+    {% if page == max_page %}
+    {% break %}
+    {% end %}
+    <li id="p{{page}}"><a href="?page={{page}}">{{page}}</a></li>
+    {% end %}
+    ...
+    <li id="p{{max_page}}"><a href="?page={{max_page}}">{{max_page}}</a></li>
+    {% else %}
+    <li id="p1"><a href="?page=1">1</a></li>
+    ...
+    {% for page in range(now_page - 4, max_page) %}
+    <li id="p{{page}}"><a href="?page={{page}}">{{page}}</a></li>
+
+    {% end %}
+
+    {% end %}
+
+    <li {{(now_page != max_page and max_page) or 'class=am-disabled'}}><a  href="?page={{now_page + 1}}">下页</a></li>
+</ul>
+<script>
+        $('#p{{now_page}}').addClass('am-active');
+    </script>
+</div>

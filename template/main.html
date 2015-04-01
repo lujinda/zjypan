@@ -1,6 +1,11 @@
 <!Doctype html>
 <html>
     <head>
+        {% block header_meta %}
+    <!--[if lte IE 9]>
+    <meta http-equiv="refresh" content="0; url=/old" />
+    <![endif]--> 
+        {% end %}
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <link rel="stylesheet" href="{{ static_url("css/style.css") }}" />
         <link rel="stylesheet" href="{{ static_url("css/jquery.fs.dropper.css")}}" />
@@ -13,26 +18,30 @@
         <title>{% block title %}{% end %}</title>
     </head>
     <body>
-    <!-- # 反馈框，有待开发
-    <div class="msg" id="feedback_box">
-        <strong>欢迎对此应用做出反馈</strong>
-        <li>
-        <span>内容:</span>
-        <textarea id="feedback_content">
-        </textarea>
-        </li>
-        <li>
-        <span>联系方式:</span>
-        <input id="feedback_contact" placeholder="手机/邮箱/QQ"/>
-        </li>
-    </div>
-    -->
+        <div class="msg_wrap">
+            <div class="msg" id="feedback_box">
+                <strong>欢迎对此应用做出反馈</strong>
+                <li>
+                <span>内容:</span>
+                <textarea id="feedback_content">
+                </textarea>
+                </li>
+                <li>
+                <span>联系方式:</span>
+                <input id="feedback_contact" placeholder="手机/邮箱/QQ"/>
+                </li>
+                <li>
+                <a onclick="submit_feedback()" class="m_btn c_b">提交</a>
+                <a class="m_btn c_r" onclick="$('.msg_wrap').fadeOut(250)">关闭</a>
+                </li>
+            </div>
+        </div>
         <div id="header">
             {% block header %}
             {% module header('header.html') %}
             {% end %}
         </div>
-        <div id="main">
+        <div id="main" class="b_bg">
             {% block body %}{% end %}
         </div>
         <div id="footer">

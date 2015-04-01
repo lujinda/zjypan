@@ -2,13 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-14 21:12:56
-# Filename        : admin/api/resources.py
+# Last modified   : 2015-03-06 16:40:06
+# Filename        : /home/ljd/py/zjypan/admin/api/resources.py
 # Description     : 
 from .base import ApiAdminHandler, api_admin_authenticated
 from public.log import get_range_log
 from datetime import date, timedelta
 from page.do import get_save_total_num, get_up_total_num
+from lib import cache
 
 class ApiResourcesHandler(ApiAdminHandler):
     """
@@ -29,6 +30,7 @@ class ApiResourcesHandler(ApiAdminHandler):
         return get_range_log(date.today().timetuple(), 
                 condition = self._condition).count()
         
+    @cache.cache(expired = 86400000)
     def get_yesterday_num(self):
         return get_range_log((date.today() - timedelta(days = 1)).timetuple(), 
                 condition = self._condition).count()

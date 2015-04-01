@@ -1,0 +1,42 @@
+{%extends 'main.html'%}
+{% block title %}
+意见反馈
+{% end %}
+{% block body %}
+
+<form id="list_feedback_form" method="POST">
+<div id="list_feedback_wrap">
+    <table class="am-table am-table-striped am-table-hover">
+        <thead>
+            <tr>
+                <th>选中</th>
+                <th width="40%">反馈内容</th>
+                <th>联系方式</th>
+                <th>反馈时间</th>
+                <th>反馈ip</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedback_list %}
+            <tr id={{"f_%s" % feedback['uuid']}}>
+            <td><input name="uuid" class='checkbox' value="{{feedback['uuid']}}" type="checkbox" /></td>
+            <td {{ feedback['view'] or 'style=font-weight:bold'}}>{{feedback['content']}}</td>
+            <td>{{feedback['contact']}}</td>
+            <td>{{swith_time(feedback['time'])}}</td>
+            <td>{{feedback['ip']}}</td>
+            </tr>
+            {{set_feedback_view(feedback)}}
+            {% end %}
+        </tbody>
+    </table>
+    <div id="list_post_operation">
+        <a href="javascript:check_all(true)">全选</a>
+        <a href="javascript:check_all(false)">全不选</a>
+        <a href="javascript:do_feedback('del')">删除</a>
+    </div>
+    {% include "page_navi.html" %}
+
+</div>
+</form>
+
+{% end %}

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-02 19:38:06
+# Last modified   : 2015-03-18 19:52:17
 # Filename        : app.py
 # Description     : 
 from tornado.web import Application, StaticFileHandler, RedirectHandler
@@ -12,10 +12,11 @@ from page.old import OldIndexHandler
 from module import HeaderModule, FooterModule, ShareHeaderModule, ShareFooterModule
 from os import path
 from public.handler import DefaultHandler
-from page.api import ApiPostHandler, ApiShareHandler
-from page.share import ShareHandler, ShareSiteHandler, ShareSiteFileHandler
+from page.api import ApiPostHandler, ApiShareHandler, ApiFeedbackHandler
+from page.share import ShareHandler, ShareSiteHandler
 
 from public.data import log_db, db, session_db
+
 
 class QiniuFileHandler(StaticFileHandler):
     @classmethod
@@ -36,10 +37,10 @@ from admin.api import ApiLogHandler
 from admin import AdminSettingsHandler
 from admin import AdminResourcesHandler
 from admin import LogHandler, LogMonitorHandler # 只是用来查看，流量会被打到其他地方
+from admin import AdminFeedbackHandler
 from admin.post import AdminListPostHandler, AdminWritePostHandler
 
 from public.handler import MonitorHandler
-
 
 class PanApplication(Application):
     def __init__(self, monitors_manager= None):
@@ -53,10 +54,10 @@ class PanApplication(Application):
                 (r'/speed_file.py', SpeedFileHandler),
                 # 下面uri都不带.py结尾
                 (r'/share/(.+?)', ShareHandler), # 只提供对共享文件的操作，如共享，取消共享, 顶，踩等 
-                (r'/share_site/file/(.+?)', ShareSiteFileHandler), # 用于处理一个共享文件的详细页
                 (r'/share_site/?(.*?)', ShareSiteHandler),
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告
+                (r'/api/feedback', ApiFeedbackHandler), # 提交返回
                 (r'/api/share/?(.*?)', ApiShareHandler), # 列出特定共享的文件
                 ]
 
@@ -65,8 +66,8 @@ class PanApplication(Application):
         settings = {
                 'template_path': path.join(path.dirname(__file__), 'template'),
                 'static_path': path.join(path.dirname(__file__), 'static'),
-               # 'static_path': 'http://7qnb6g.com1.z0.glb.clouddn.com',
-               # 'static_handler_class': QiniuFileHandler,
+                'static_path': 'http://7u2ph0.com1.z0.glb.clouddn.com',
+                'static_handler_class': QiniuFileHandler,
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule,
                                 'share_header': ShareHeaderModule,
@@ -97,6 +98,7 @@ class PanAdminApplication(Application):
                 (r'/tuxpy/monitor.py', LogMonitorHandler),
                 (r'/tuxpy/post/list', AdminListPostHandler),
                 (r'/tuxpy/post/write', AdminWritePostHandler),
+                (r'/tuxpy/feedback.py', AdminFeedbackHandler),
                 (r'/api/mailcode', ApiMailCodeHandler),
                 (r'/api/operation', ApiOperationHandler),
                 (r'/api/resources', ApiResourcesHandler),

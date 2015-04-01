@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 19:58:47
+# Last modified   : 2015-03-25 21:34:13
 # Filename        : page/do.py
 # Description     : 
 import time
@@ -17,6 +17,7 @@ import functools
 from lib.wrap import file_log_save
 from lib.mime import get_file_type
 from uuid import uuid4
+from tornado.web import HTTPError
 
 
 class FException(Exception):
@@ -27,23 +28,28 @@ class FileManager():
         这是文件管理器
     """
     FileException = FException
-    def __init__(self, file_key = None, request = '', file_obj = None):
+    def __init__(self, file_key = None, request = '', file_name = None, file_obj = None):
         assert file_key or file_obj # 两者必要有一
         self._file_key = file_key or file_obj['file_key']
+        self._file_name = file_name  # 供get_file方法使用，如果给定了file_name则会获取具体的文件信息，如果没给定，默认获取第一个
+        self.__file = file_obj or self.get_file() # 如果未指定file_name,则获取的是文件中的第一个，指定了就是指定那个
+        self.__file_list = file_name == None and self.get_file_list() or [self.__file] # 如果具体指定了某一个文件，则不获取列表了
         self._request = request
-        self.__file = file_obj or self.get_file()
         self._cdn = CDN()
+
+
+        while self.__file and self.__file['expired_time'] < long(time.time()):
+            self.expired()
+            self.__file = file_obj  or self.get_file()
+
         if (not self.__file):
             self.raise_error('文件已不存在')
             return
 
-        if self.__file['expired_time'] < long(time.time()):
-            self.expired()
-            self.raise_error('文件已过期')
-            return
-
         # 如果这个文件是存在的话，每一次对它的访问，都会增加日期
         self._add_expired_time()
+
+        self._file_name = self._file_name or self.__file['file_name'] # 如果没有设定file_name的话就根据获取的__file来获取名字，此时__fille已有设定
 
     def _add_expired_time(self):
         """
@@ -62,9 +68,12 @@ class FileManager():
 
     def get_file(self):
         """
-        返回一个与当前file_key匹配的document
+        返回一个与当前file_key和当前file_name匹配的document
         """
-        return get_file(file_key = self._file_key)
+        return get_file(file_key = self._file_key, file_name = self._file_name)
+
+    def get_file_list(self):
+        return get_file_list(file_key = self._file_key)
 
     def __delete(self):
         """
@@ -72,13 +81,12 @@ class FileManager():
         """
         del_local_file(self.__file['file_path'])
         if self.__file['in_cdn']:
-            self._cdn.del_file(self.__file['file_key'], self.__file['file_name'])
+            self._cdn.del_file(self._file_key, self._file_name)
 
         if self.__file['share_id']:
             self.unshare()
 
-
-        db.files.remove({'file_key':self._file_key})
+        db.files.remove({'file_key':self._file_key, 'file_name': self.__file['file_name']})
      
     @file_log_save
     def delete(self):
@@ -125,10 +133,22 @@ class FileManager():
         self.__file['file_size'] = switch_unit(self.__file['file_size'])
         return self.__file
 
+
     @file_log_save
     def show(self):
+        for __file in self.__file_list:
+            self.__file = __file
+            file_info = self.show_file()
+            if file_info:
+                self._request.result_json['result'].append(file_info)
+        self._request.send_result_json()
+
+    def show_file(self):
+        """
+        返回单个文件的信息
+        """
         if self.__file['expired_time'] < long(time.time()):
-            self.raise_error('文件已过期')
+            self.expired()
             return
 
         file_info = self.get_file_info()
@@ -136,20 +156,19 @@ class FileManager():
         # 有一些参数不允许被用户看到，就删除
         file_info['can_share'] = file_info['in_cdn']
         for key in ['file_path', 'in_cdn', 'upload_ip']:
-            del file_info[key]
+            file_info.pop(key, None)
 
-
-        self._request.write_json(file_info)
+        return file_info
 
 
     @file_log_save
     def upload(self):
-        save_to_cdn(self.__file['file_key'], self.__file['file_name'], self.__file['file_path'])
+        save_to_cdn(self._file_key, self._file_name, self.__file['file_path'])
         add_up_total_num()
 
     @file_log_save
     def speed_upload(self, s_file_key, s_file_name):
-        self._cdn.cp(s_file_key, s_file_name, self.__file['file_key'], self.__file['file_name'])
+        self._cdn.cp(s_file_key, s_file_name, self._file_key, self._file_name)
 
     @file_log_save
     def share(self, share_decription):
@@ -157,13 +176,13 @@ class FileManager():
 
         share_id = uuid4().hex
         share_time = get_now_time()
-        share_url = self._cdn.share(self.__file['file_key'], self.__file['file_name'], share_id)
+        share_url = self._cdn.share(self._file_key, self._file_name, share_id)
 
         # 以下是数据库操作
-        db.files.update({'file_key': self._file_key},
+        db.files.update({'file_key': self._file_key, 'file_name': self._file_name},
                 {"$set": {'share_id': share_id}})
 
-        db.share.insert({'share_id': share_id, 'file_name': self.__file['file_name'], 
+        db.share.insert({'share_id': share_id, 'file_name': self._file_name, 
             'share_decription': share_decription,
             'share_time': share_time, 'share_url': share_url, 
             'up_num': 0, 'down_num': 0,
@@ -181,21 +200,29 @@ class FileManager():
         share_id = self.__file['share_id']
         share_file_obj = db.share.find_and_modify({'share_id': share_id}, remove = True) # 返回共享信息时，同时删除
         self._cdn.unshare(share_file_obj['share_id'], share_file_obj['file_name'])
-        db.files.update({'file_key': self._file_key}, 
+        db.files.update({'file_key': self._file_key, 'file_name': self._file_name}, 
                 {"$set": {'share_id': ''}})
 
     def raise_error(self, err_mess):
         raise self.FileException(err_mess)
 
-def get_file(file_key = None, file_md5 = None):
+def get_file(file_key = None, file_md5 = None, file_name = None):
     assert file_key or file_md5
+    condition  = {}
     if file_key:
-        condition = {'file_key': file_key}
+        condition.update({'file_key': file_key})
+    if file_name:
+        condition.update({'file_name': file_name})
+
     if file_md5:
-        condition = {'file_md5': file_md5}
+        condition.update({'file_md5': file_md5})
 
     file_obj = db.files.find_one(condition, {'_id': 0})
+
     return file_obj
+
+def get_file_list(file_key = None):
+    return db.files.find({'file_key': file_key}, {'_id': 0}) or []
 
 def get_now_time():
     return long(time.time())
@@ -210,8 +237,8 @@ def get_expired_time(new_create = True):
 def made_file_key():
     localtime = time.localtime()
     while True:
-        file_key = "%02d%s%s%s"%(localtime.tm_mday , localtime.tm_wday + 1 , \
-                random.choice(string.ascii_letters) , random.choice(string.ascii_letters))
+        file_key = "%02d%s"%(localtime.tm_mday , 
+                redis_db.srand_key('key_lib'))
         if not db.files.find_one({'file_key': file_key}):
             break
 

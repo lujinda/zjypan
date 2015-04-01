@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-28 22:14:58
+# Last modified   : 2015-03-15 21:13:55
 # Filename        : cdn/cdn.py
 # Description     : 
 from celery import Celery
@@ -15,6 +15,7 @@ from lib.enc import get_file_md5
 import urllib
 import os
 from .conf import get_rand_cdn_conf
+from base64 import b64encode
 
 
 BROKER_URL = 'mongodb://127.0.0.1:27017/celery'
@@ -32,9 +33,10 @@ def made_cdn_key(file_key, file_name, quote = False):
     if isinstance(file_name, unicode):
         file_name = file_name.encode('utf-8')
 
-    if quote:
-        file_name = urllib.quote(file_name)
+    file_key = b64encode(file_key) # 对key做一个b64encode方便获取文件临时下载地址
 
+    if quote:
+        file_name = urllib.quote(file_name).replace('%7E', '~')
         
     return '%s/%s' %(file_key, file_name)
 
@@ -54,6 +56,7 @@ class CDN():
     def cp(self, s_file_key, s_file_name, d_file_key, d_file_name):
         ret, error = self._cattle.cp(self._bucket_name,
                 made_cdn_key(s_file_key, s_file_name), made_cdn_key(d_file_key, d_file_name))
+        print error
         assert not error
 
     @celery.task(filter=task_method)
@@ -95,7 +98,7 @@ class CDN():
             return
 
          #当上传成功后，把信息修改一下
-        db.files.update({'file_key': file_key}, {"$set": {'in_cdn': True, 
+        db.files.update({'file_key': file_key, 'file_name': file_name}, {"$set": {'in_cdn': True, 
             'file_md5': file_md5}})
         
         # 然后把本地文件删除

@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 14:06:41
+# Last modified   : 2015-03-15 20:32:44
 # Filename        : page/share/handler.py
 # Description     : 
 
@@ -13,6 +13,7 @@ from lib import cache
 from page.share.do import get_share_file_count, get_share_file, add_share_up_num, add_share_down_num
 from page.api.share import ApiShareHandler
 from public.do import get_settings
+import urllib
 
 class ShareHandler(MyRequestHandler):
     """
@@ -47,17 +48,21 @@ class ShareHandler(MyRequestHandler):
         处理添加新共享请求
         """
         share_description = self.get_argument('description')
-        share_file_key = file_key
+        self.share_file_key = file_key
 
-        file_manager = FileManager(share_file_key, request = self)
-        file_manager.share(share_description) # 开始文件共享，并告诉浏览器share_id
+        self.file_manager.share(share_description) # 开始文件共享，并告诉浏览器share_id
 
     @access_log_save
     def delete(self, file_key):
-        share_file_key = file_key
-        file_manager = FileManager(share_file_key, request = self)
-        file_manager.unshare()
+        self.share_file_key = file_key
+        self.file_manager.unshare()
 
+    @property
+    def file_manager(self):
+        share_file_key = self.share_file_key
+        share_file_name = self.get_argument('file_name', None)
+        file_manager = FileManager(share_file_key, request = self, file_name = share_file_name)
+        return file_manager
 
 class ShareSiteHandler(ApiShareHandler):
     def get(self, operation = None):
@@ -81,8 +86,9 @@ class ShareSiteHandler(ApiShareHandler):
         用于搜索的
         """
         assert operation.startswith('search')
+        keyword = self.get_argument('search_keyword').encode('utf-8')
 
-        self.redirect('/share_site/search/' + self.get_argument('search_keyword'));
+        self.redirect('/share_site/search/' + urllib.quote(keyword))
 
 class ShareSiteFileHandler(MyRequestHandler):
     def get(self, share_id):

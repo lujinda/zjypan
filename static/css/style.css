@@ -6,17 +6,19 @@ body{
 }
 a{
     text-decoration:none;
+    cursor:pointer;
 }
 #main{
-    height:300px;
-    background-image:url('../images/bg_upload.jpg');
     overflow:hidden;
+}
+.b_bg{
+    background-image:url('../images/bg_upload.jpg');
 }
 #wrap_content{
     width:900px;
     background-image: url(../images/bg_file.jpg);
     margin:0px auto;
-    height:100%;
+    height:300px;
 }
 #header{
     background-image: url(../images/header_bg.gif);
@@ -87,7 +89,7 @@ a{
 #footer{
     padding-top:20px;
     border-top:1px solid #eee;
-    color:#ccc;
+    color:#888;
     text-align:center;
 }
 #footer .footer_copy{
@@ -120,13 +122,15 @@ a{
 /*下面是关于文件文件管理界面的*/
 #input_key_wrap{
     width:700px;
-    margin:40px auto;
+    height:300px;
+    margin:auto;
 }
 .input_key_dir{
     width:200px;
     margin:auto;
 }
 .input_key{
+    margin-top:50px;
     height:30px;
     display:block;
     width:100%;
@@ -158,22 +162,28 @@ a{
 .btn_submit_key:hover{
     background-color:#1986E3;
 }
-#manage_wrap{
+.manage_wrap{
     width:700px;
     overflow:hidden;
     margin:20px auto;
+    background-color:#fff;
+    padding:10px;
+    border-radius:15px;
+    box-shadow:4px 4px 4px #CCC;
 }
-#manage_wrap .pci_summary{
+.manage_wrap .pci_summary{
     display:block;
     width:130px;
     margin:auto;
+    margin-right:10px;
     height:130px;
+    float:left;
     background-color:#fff;
     border-radius:15px;
     box-shadow:4px 4px 4px rgba(0, 0, 0, 0.4);
 
 }
-#manage_wrap .file_name{
+.manage_wrap .file_name{
     text-decoration:underline;
     text-align:center;
     margin:15px auto;
@@ -181,23 +191,24 @@ a{
     color:#444;
     font-weight:bold;
 }
-#manage_wrap .file_summary{
+.manage_wrap .file_summary{
     text-align:center;
     color:#666;
 }
-#upload_time, #expired_time, #file_size{
-    margin:10px 0px;
-    margin-right:10px;
+.upload_time, .expired_time, .file_size{
+    margin:2px 0px;
+    margin-right:2px;
     font-weight:bold;
-    font-size:15px;
+    font-size:14px;
 }
-#manage_wrap .file_operation{
+.manage_wrap .file_operation{
     overflow:hidden;
     margin:20px auto;
+    margin-bottom:10px;
     text-align:center;
 
 }
-#manage_wrap .btn_file_operation{
+.btn_file_operation{
     display:inline-block;
     text-align:center;
     width:70px;
@@ -209,7 +220,7 @@ a{
     font-size:14px;
     border-radius:15px;
 }
-#manage_wrap .btn_file_operation:hover{
+.manage_wrap .btn_file_operation:hover{
     color:#ff0;
 }
 #code_wrap{
@@ -326,7 +337,7 @@ a{
     resize: none;
     padding: 5px;
 }
-.msg textarea:focus, .msg textarea:hover{
+.msg textarea:focus, .msg textarea:hover, .msg input:focus, .msg input:hover{
     border-color: #66AFE9;
     outline: 0px none;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
@@ -360,3 +371,43 @@ a{
     background-color:rgba(0, 117, 0, 1);
 }
 
+.msg_wrap{
+    top:0px;
+    position:fixed;
+    display:none;
+    width:100%;
+    height:100%;
+    z-index:1px;
+    background:none repeat scroll 0% 0% rgba(0, 0, 0, 0.52);
+    left:0px;
+}
+#btn_add_file{
+    position:fixed;
+    top:10%;
+    right:10%;
+    z-index:99;
+}
+.btn_b{
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.4);
+}
+#up_process{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:0%;
+    height:10px;
+    background-color:#08CF08;
+}
+#add_file_form{
+    display:none;
+}
+#footer_tips{
+    margin-top: 4px;
+    font-size:14px;
+    font-weight:bold;
+    display:none;
+}
+#footer_tips a{
+    color:red;
+    margin-left:10px;
+}

@@ -2,13 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 21:19:18
-# Filename        : /home/ljd/py/zjypan/admin/settings.py
+# Last modified   : 2015-03-04 18:44:53
+# Filename        : admin/settings.py
 # Description     : 
 from .base import AdminHandler
 from public.do import get_settings, save_settings
 from public.data import redis_db
 from lib.wrap import auth_log_save
+import time
 
 class AdminSettingsHandler(AdminHandler):
     def init_data(self):
@@ -103,9 +104,23 @@ class AdminSettingsHandler(AdminHandler):
         维护返回值库
         """
         operation = self.get_argument('operation')
-        assert operation in ('add', 'madd', 'del', 'flush')
+        assert operation in ('add', 'madd', 'del', 'flush', 'down')
         key_func= getattr(self, 'key_' + operation)
         return key_func() # 操作返回码的数据库
+
+
+    def key_down(self):
+        key_list = redis_db.smembers('key_lib')
+
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename="%s_%s"' %
+                (time.strftime('%Y-%m-%dT%H:%M:%S'), len(key_list)))
+        for key in key_list:
+            self.write(key + '\n')
+
+        self.finish()
+
+        return '下载key库'
 
     def key_flush(self):
         redis_db.delete('key_lib')

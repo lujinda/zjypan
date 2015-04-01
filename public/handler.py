@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 19:26:44
+# Last modified   : 2015-03-15 10:18:28
 # Filename        : public/handler.py
 # Description     : 
 
@@ -30,6 +30,8 @@ class MyRequestHandler(RequestHandler):
         """
         只要类属性中有result_json，并且为字典就可以以json方式发送
         """
+        if self._finished:
+            return
         result_json = self.__dict__.get('result_json')
         assert isinstance(result_json, dict) 
         self.write(result_json)
@@ -98,7 +100,7 @@ class MyRequestHandler(RequestHandler):
         return self.request.headers.get('Referer', '')
 
 class ApiHandler(MyRequestHandler):
-    def prepare(self):
+    def init_data(self):
         self.result_json = {'error': '',
                 'status_code': 200, 'result': []}
 

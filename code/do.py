@@ -7,7 +7,7 @@ from public.data import redis_db
 import sys
     
 try:
-    from cStringIo import StringIO
+    from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
  

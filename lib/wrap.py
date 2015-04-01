@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 14:07:36
+# Last modified   : 2015-03-14 15:40:57
 # Filename        : lib/wrap.py
 # Description     : 
 import functools
@@ -14,8 +14,12 @@ import urllib
 def verify_code(method):
     @functools.wraps(method)
     def wrap(self, *args, **kwargs):
+
         if self.need_code():
-            self.redirect('/verify.py?v=' + self.request.uri)
+            if self.referer.split('/')[-1] == 'manage.py': # 如果是从manage.py页面过来的话，需要验证码不重定向，而是返回消息
+                self.write({'error': '请不要上传这么频繁'})
+            else:
+                self.redirect('/verify.py?v=' + self.request.uri)
         else:
             result = method(self, *args, **kwargs)
         
@@ -34,6 +38,19 @@ def allow_add_share_num(func):
 
     return wrap
 
+def allow_feedback(method):
+    @functools.wraps(method)
+    def wrap(self, *args, **kwargs):
+        if self.acl.allow_feedback():
+            self.acl.add_feedback_register()
+            return method(self, *args, **kwargs)
+        else:
+            self.result_json['error'] = 1
+            self.result_json['result'] = '请不要这么频繁提交反馈，谢谢您对我们的关注'
+            self.send_result_json()
+
+    return wrap
+
 def access_log_save(method):
     @functools.wraps(method)
     @web.asynchronous
@@ -47,7 +64,8 @@ def access_log_save(method):
     return wrap
 
 
-operation_map = {'download': '下载', 'show': '查看', 'delete': '删除', 'upload': '上传', 'expired': '过期', 'speed_upload': '极速上传', 'share': '共享'}
+operation_map = {'download': '下载', 'show': '查看', 'delete': '删除', 'upload': '上传', 'expired': '过期', 
+        'speed_upload': '极速上传', 'share': '共享', 'unshare': '取消共享'}
 
 def file_log_save(func):
     @functools.wraps(func)

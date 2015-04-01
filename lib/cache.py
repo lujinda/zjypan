@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-02-15 22:00:51
+# Last modified   : 2015-03-09 12:32:33
 # Filename        : lib/cache.py
 # Description     : 
 from public.caches import Page, Cache
@@ -46,6 +46,8 @@ def page(expired = 7200):
 
         else:
             method(self, *args, **kwargs)
+            if not self._finished:
+                self.finish()
             cache.key = key
             cache.status = self._status_code
             cache.headers = self._headers

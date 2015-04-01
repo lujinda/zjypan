@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 14:38:24
+# Last modified   : 2015-03-15 20:14:08
 # Filename        : page/api/share.py
 # Description     : 
 from public.handler import ApiHandler
@@ -10,6 +10,7 @@ from public.data import db_async
 from tornado.web import asynchronous
 from public.do import get_settings
 from lib import cache
+import re
 
 class ApiShareHandler(ApiHandler):
     @asynchronous
@@ -18,7 +19,6 @@ class ApiShareHandler(ApiHandler):
         返回共享文件列表
         """
         condition = self.get_condition(operation)
-
         limit, skip = self.made_limit_skip()
         db_async.share.find(condition, {'_id': 0}).sort([('share_time', -1)]).skip(skip).limit(limit).each(self._send_result)
 
@@ -42,8 +42,10 @@ class ApiShareHandler(ApiHandler):
 
     def list_search(self, _value):
         self._title = _value + u' 搜索结果'
+        _value = re.sub(r'(?P<char>[^\w|\.])', 
+                lambda m: '\\' + m.group('char'), _value) # 把除了英语字母下划线还有小数点外的所有字符转义
         return {'file_name': {'$regex': r".*%s.*" % _value}}
-        
+
     def made_limit_skip(self):
         """
         根据当前页和每页显示的文件数来计算出数据库的limit和skip

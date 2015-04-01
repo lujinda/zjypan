@@ -17,7 +17,7 @@
         <tbody>
             {% for post in post_list %}
             <tr>
-                <td><input name="checked_post" value={{post['post_uuid']}} type='checkbox' class="post_checkbox" /></td>
+                <td><input name="checked_post" value={{post['post_uuid']}} type='checkbox' class="checkbox" /></td>
                 <td><a style="display:block" href="write?post_uuid={{post['post_uuid']}}">{{post['post_important'] and '[急]' or ' '}}{{post['post_title']}}</a></td>
                 <td>{{swith_time(post['post_time'])}}</td>
             </tr>

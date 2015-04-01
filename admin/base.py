@@ -2,8 +2,8 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-03 19:25:11
-# Filename        : admin/base.py
+# Last modified   : 2015-03-06 16:31:26
+# Filename        : /home/ljd/py/zjypan/admin/base.py
 # Description     : 
 
 from public.handler import MyRequestHandler

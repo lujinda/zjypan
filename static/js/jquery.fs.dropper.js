@@ -23,7 +23,7 @@
 
 	var options = {
 		action: "",
-		label: " 把文件拖到这，或点击此处上传文件",
+		label: " 把文件拖到这，或点击此处上传文件,上传成功后会返回一个'id'，您可以自定义",
 		maxQueue: 1,
 		maxSize: 5242880, // 5 mb
 		postData: {},
@@ -377,15 +377,15 @@
             var chunks = Math.ceil(file.file.size / chunk_size);
             var current_chunk = 0;
 
-            var spark = new SparkMD5();
+            var spark = new SparkMD5.ArrayBuffer();
 
             file_reader.onload = function(e){
-                spark.appendBinary(e.target.result);
+                spark.append(e.target.result);
                 current_chunk++;
 
                 if (current_chunk < chunks){
                     var start = current_chunk * chunk_size, end = start + chunk_size >= file.size ? file.size : start + chunk_size;
-                    file_reader.readAsBinaryString(blob_slice.call(file.file, start, end));
+                    file_reader.readAsArrayBuffer(blob_slice.call(file.file, start, end));
                 }else{
                     // 在这里已经计算出md5了，发送md5值
                     var md5 = spark.end();
@@ -393,7 +393,7 @@
                         url: '/speed_file.py',
                         dataType: 'json',
                         type: 'POST',
-                        data: {'md5': md5, 'filename': file['name']},
+                        data: {'md5': md5, 'file_name': file['name']},
                         success: function (response){
                             file.complete = true;
                             data.$dropper.trigger("fileComplete.dropper", [ file, response ]);
@@ -407,7 +407,7 @@
                 }
             };
             var start = current_chunk * chunk_size, end = start + chunk_size >= file.size ? file.size : start + chunk_size;
-            file_reader.readAsBinaryString(blob_slice.call(file.file, start, end));
+            file_reader.readAsArrayBuffer(blob_slice.call(file.file, start, end));
             return;
 
 		}

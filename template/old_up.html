@@ -1,10 +1,12 @@
 {% extends "main.html" %}
 {% block header_js %}
+{% block header_meta %}
 <!--[if lte IE 9]>
 <script type="text/javascript">
     var unsupport = true;
     </script>
 <![endif]-->
+{% end %}
 
     <script type="text/javascript">     
         if(typeof unsupport == "undefined"){
@@ -103,6 +105,6 @@
             Safari
         </a>
     </div>
-    <span>您的浏览器有点老了，使用体验不佳，快升级，体验一拖即上传的快感吧。</h2>
+    <span>您的浏览器有点老了，使用体验不佳，快升级，体验一拖即上传和极速上传的快感吧。<p>以使用新浏览器为荣，以使用旧浏览器为耻, 抵制旧浏览器人人有责</p></h2>
 </div>
 {% end %}

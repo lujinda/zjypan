@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-03-02 20:36:48
+# Last modified   : 2015-03-15 21:13:58
 # Filename        : lib/cattle/cattle.py
 # Description     : API地址：http://docs.qiniutek.com/v3/api/io/#upload
 
