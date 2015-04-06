@@ -1,0 +1,11 @@
+<div id="vip_list">
+<ul class="am-list am-list-static am-list-border am-list-striped">
+    <li style="font-weight:bold;text-align:center;border-bottom:2px solid #aaa;">vip 列表(共计<span id="vip_counts">{{vip_counts}}</span>枚)</li>
+    {% for vip in vip_list  %}
+    <li id={{ "vip_%s" % vip }}>
+    <span>{{vip}}</span>
+    <span onclick="del_vip('{{vip}}')" class="am-badge am-badge-danger">DEL</span></li>
+    
+    {% end %}
+</ul>
+</div>

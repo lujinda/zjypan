@@ -29,7 +29,7 @@ function append_operation_list(operation_list){
     }
 }
 
-function _post_settings(obj){
+function post_settings_before(obj){ // 收集post数据
     if (obj == 'global'){
         data = {'up_time_interval': $('#settings_up_time_interval').val(),
         'up_num': $('#settings_up_num').val(), 
@@ -58,19 +58,31 @@ function _post_settings(obj){
     if (obj == 'key_add' || obj == 'key_del'){
         data = {'key': $('#settings_key').val(),
         'operation': obj.split('_')[1]};
-        obj = 'key';
     }
 
     if (obj == 'key_madd'){
         data = {'key_list': $('#settings_key_list').val(),
         'operation': 'madd'};
-        obj = 'key';
+    }
+
+    if (obj == "vip_add" || obj == "vip_del"){
+        data = {'vip': $('#settings_vip').val(),
+        'operation': obj.split('_')[1]};
+    }
+
+
+    if (obj.indexOf('_') > 0){  //  如果obj带有了_，则将_前的第一个作为url请求对象
+        obj = obj.split('_')[0];
     }
 
     url = '/tuxpy/settings/' + obj;
 
     data['mail_code'] = $('#mail_code').val();
+    post_settings_ing(url, data);
+}
 
+
+function post_settings_ing(url, data){
     $.ajax({url: url,
         type:'POST',
         data:data,
@@ -79,6 +91,10 @@ function _post_settings(obj){
                 show_error(data['mess']);
             }else{
                 show_success(data['mess']);
+                // 每次处理完请求后，再做一些界面上的设定
+                if (data['set_obj'] == 'vip'){
+                    opera_vip_list(data);
+                }
             }
         },
         error:function (){
@@ -87,6 +103,38 @@ function _post_settings(obj){
         },
         
     });
+}
+function del_vip(vip){
+    $('#settings_vip').val(vip);
+    settings_save('vip_del');
+}
+
+function opera_vip_list(data){ // 在完成vip账号添加或删除完后调用的
+    $('#settings_vip').val('');
+    vip_func_map = {'add': append_vip_list, 'del': remove_vip_list}
+    vip_func = vip_func_map[data['operation']];
+    vip_func(data['vip']);
+}
+
+function append_vip_list(vip){
+    $('#vip_list ul').append(String.format('<li id="vip_{0}"><span>{1}</span><span onclick="del_vip(\'{2}\')" class="am-badge am-badge-danger">DEL</span></li>', vip, vip, vip)); // 添加一个vip用户
+    incr_vip_counts(1);
+}
+
+function remove_vip_list(vip){
+    $('#vip_list #vip_' + vip).fadeOut(200).remove();
+    incr_vip_counts(-1);
+}
+
+function incr_vip_counts(amount){
+    var amount = amount || 1;
+    var vip_counts_obj = $('#vip_list #vip_counts');
+    vip_counts_obj.html(incr(vip_counts_obj.html(), amount));
+}
+
+function incr(i, amount){
+    var amount = amount || 1;
+    return parseInt(i) + amount;
 }
 
 function show_error(mess){
@@ -109,14 +157,14 @@ function settings_save(obj){
     $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
         type:'GET',success:function (data){
             if (data){
-                _post_settings(obj);
+                post_settings_before(obj);
             }else{
                 $('#send_mail_code_wrap #mail_code').val('');
                 $('#send_mail_code_wrap').modal({
                     relatedTarget: this,
                     closeViaDimmer:false,
                     onConfirm: function(e) {
-                        _post_settings(obj);
+                        post_settings_before(obj);
                     },
                     onCancel: function(e) {
                         return false;
@@ -233,14 +281,14 @@ function settings_save(obj){
     $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
         type:'GET',success:function (data){
             if (data){
-                _post_settings(obj);
+                post_settings_before(obj);
             }else{
                 $('#send_mail_code_wrap #mail_code').val('');
                 $('#send_mail_code_wrap').modal({
                     relatedTarget: this,
                     closeViaDimmer:false,
                     onConfirm: function(e) {
-                        _post_settings(obj);
+                        post_settings_before(obj);
                     },
                     onCancel: function(e) {
                         return false;

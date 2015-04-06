@@ -11,12 +11,15 @@ from cdn import CDN
 
 def save_to_disk(file_key, file_name, file_body):
     file_path = '/var/tfile/%s/%s' % (file_key, file_name)
+    dir_path = os.path.dirname(file_path)
     try:
-        os.makedirs(os.path.dirname(file_path))
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
         fd = open(file_path, 'wb')
         fd.write(file_body)
         fd.close()
-    except OSError:
+    except OSError as e:
+        print(e)
         return '目录权限不足', ''
 
     return '', file_path

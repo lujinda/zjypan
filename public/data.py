@@ -63,6 +63,7 @@ class RedisDb():
         pipe = self._db.pipeline()
         pipe.watch(set_name, b_set_name) # 同时监控这两个key，防止数据被中途修改
         _key = pipe.srandmember(set_name)
+        pipe.multi()
         if not _key: # 如果_key已经获取不到了，则将b_set_name里面的内容全给set_name, 并删除备份， 并同时再次调用函数本身
             pipe.sunionstore(set_name, b_set_name, set_name)
             pipe.delete(b_set_name)
@@ -88,6 +89,7 @@ def del_local_file(file_path):
     dir_name = os.path.dirname(file_path)
     if os.path.exists(file_path):
         os.remove(file_path)
-        os.removedirs(dir_name)
-
-
+        try:
+            os.removedirs(dir_name)
+        except OSError:
+            pass
