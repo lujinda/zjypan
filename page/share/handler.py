@@ -55,6 +55,7 @@ class ShareHandler(MyRequestHandler):
     @access_log_save
     def delete(self, file_key):
         self.share_file_key = file_key
+        assert file_key == self.get_argument('file_key') # url中的一定要跟 请求数据中的file_key一致
         self.file_manager.unshare()
 
     @property

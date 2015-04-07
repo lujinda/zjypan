@@ -7,12 +7,10 @@
 # Description     : 
 from .base import AdminHandler
 from public.do import get_settings, save_settings
-from public.data import redis_db
+from public.data import redis_db, KEY_LIB, VIP_LIB
 from lib.wrap import auth_log_save
 import time
 
-VIP_LIB = 'vip_lib'
-KEY_LIB = 'key_lib'
 
 class AdminSettingsHandler(AdminHandler):
     def init_data(self):

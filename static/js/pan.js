@@ -36,12 +36,14 @@ function close_share_msg(obj){
 function unshare(obj){
     $wrap = $get_manage_wrap(obj);
     var file_key = $wrap.find('.file_key').val();
+    var file_name = $wrap.find('.file_name').val();
     if (!file_key)
         return;
     $.ajax({
         url: '/share/' + file_key,
         dataType: 'json',
         type: 'DELETE',
+        data:{'file_key': file_key, 'file_name': file_name},
         error: function(){
             alert('系统出错，请重试');
         },
@@ -236,6 +238,10 @@ function __up_new_file(){
 }
 
 function write_manager_wrap_all(data){
+    $input_key = $('#input_key_wrap');
+    if (! $input_key.find('.input_key').val().trim()){
+        return;
+    }
     $.ajax({url: "/manage.py", 
         dataType:'json',
     type:'POST',
@@ -247,7 +253,7 @@ function write_manager_wrap_all(data){
                 alert(error);
                 return false;
             }
-            $('#input_key_wrap').hide();
+            $input_key.hide();
 
             var result = data['result'];
             $main = $('#main');
@@ -258,6 +264,7 @@ function write_manager_wrap_all(data){
                 $wrap.fadeIn(i * 200 + 200);
                 $main.append($wrap);
             }
+            $('#file_key').val($input_key.find('.input_key').val());
             $('#add_file_form').fadeIn();
             $('#main').removeClass('b_bg');
             $('body').css('background-image', "url('http://7u2ph0.com1.z0.glb.clouddn.com/images/bg_manage.jpg')");
@@ -279,6 +286,9 @@ function write_manager_wrap($wrap, data){
 
                 if (data['content_type'].split('/')[0] == 'image'){
                     $wrap.find('.pci_summary').attr('src', data['file_url']);
+                }
+                if (data['is_vip']){
+                    $wrap.addClass('vip_bg');
                 }
 }
 

@@ -9,7 +9,7 @@ import time
 import string
 import random
 import os
-from public.data import db, del_local_file, redis_db
+from public.data import db, del_local_file, redis_db, KEY_LIB, VIP_LIB
 from public.do import get_settings, made_uuid
 from storage.save import save_to_cdn
 from cdn import CDN
@@ -37,6 +37,8 @@ class FileManager():
         self._request = request
         self._cdn = CDN()
 
+        if is_vip(self._file_key):
+            return
 
         while self.__file and self.__file['expired_time'] < long(time.time()):
             self.expired()
@@ -131,6 +133,7 @@ class FileManager():
 
     def get_file_info(self):
         self.__file['file_size'] = switch_unit(self.__file['file_size'])
+        self.__file['is_vip'] = is_vip(self.__file['file_key'])
         return self.__file
 
 
@@ -199,7 +202,8 @@ class FileManager():
         """
         share_id = self.__file['share_id']
         share_file_obj = db.share.find_and_modify({'share_id': share_id}, remove = True) # 返回共享信息时，同时删除
-        self._cdn.unshare(share_file_obj['share_id'], share_file_obj['file_name'])
+        self._file_name = share_file_obj['file_name'] or self.__file['file_name']
+        self._cdn.unshare(share_file_obj['share_id'], self._file_name)
         db.files.update({'file_key': self._file_key, 'file_name': self._file_name}, 
                 {"$set": {'share_id': ''}})
 
@@ -227,7 +231,9 @@ def get_file_list(file_key = None):
 def get_now_time():
     return long(time.time())
 
-def get_expired_time(new_create = True):
+def get_expired_time(new_create = True, vip = False): # 如果是vip的话，则返回一个夸张的日期
+    if vip:
+        return long(253370736000.0) # 这是9999年
     file_settings = get_settings('file')
     days = new_create and file_settings.get('expired_day', 7) or file_settings.get('add_expired_day', 3)
 
@@ -296,4 +302,8 @@ def get_post(post_uuid):
 
 def del_post(post_uuid):
     return db.page.post.remove({'post_uuid': post_uuid})
+
+
+def is_vip(key):
+    return redis_db.sismember(VIP_LIB, key)
 

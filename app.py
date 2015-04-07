@@ -66,8 +66,8 @@ class PanApplication(Application):
         settings = {
                 'template_path': path.join(path.dirname(__file__), 'template'),
                 'static_path': path.join(path.dirname(__file__), 'static'),
-                'static_path': 'http://7u2ph0.com1.z0.glb.clouddn.com',
-                'static_handler_class': QiniuFileHandler,
+#                'static_path': 'http://7u2ph0.com1.z0.glb.clouddn.com',
+ #               'static_handler_class': QiniuFileHandler,
                 'ui_modules': {'header': HeaderModule,
                                 'footer': FooterModule,
                                 'share_header': ShareHeaderModule,

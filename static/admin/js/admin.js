@@ -105,8 +105,16 @@ function post_settings_ing(url, data){
     });
 }
 function del_vip(vip){
-    $('#settings_vip').val(vip);
-    settings_save('vip_del');
+    $('#confirm_msg_wrap').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+            $('#settings_vip').val(vip);
+            settings_save('vip_del');
+        },
+        onCancel: function() {
+            return false;
+        }
+    });
 }
 
 function opera_vip_list(data){ // 在完成vip账号添加或删除完后调用的

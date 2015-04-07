@@ -162,6 +162,11 @@ a{
 .btn_submit_key:hover{
     background-color:#1986E3;
 }
+.vip_bg{
+    background-image: url(../images/vip.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+}
 .manage_wrap{
     width:700px;
     overflow:hidden;

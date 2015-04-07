@@ -6,7 +6,7 @@
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import HTTPError
-from .do import made_file_key, get_expired_time, get_now_time, FileManager, get_file # 通过file_key或md5都可以获得文件
+from .do import made_file_key, get_expired_time, get_now_time, is_vip, FileManager, get_file # 通过file_key或md5都可以获得文件
 from lib.wrap import verify_code
 from storage.save import save_to_disk, save_to_db
 
@@ -106,12 +106,11 @@ class FileHandler(BaseFileHandler):
         self.return_json['file_key'] = file_key
         self.return_json['file_name'] = file_name
 
-
         # 当文件都没问题后，就需要把文件信息记录到数据库里了，然后交给celery去上传到云上, 计算文件 md5值交给celery去完成
         save_to_db(file_key = file_key, file_name = file_name, file_path = file_path,
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_now_time(),
-                expired_time = get_expired_time(), file_size = file_size, 
+                expired_time = get_expired_time(vip = is_vip(file_key)), file_size = file_size, 
                 file_url = '/file.py?file_key=' + file_key + '&file_name=' + file_name)
         self.set_cookie('last_upload', urllib.quote(self.return_json['file_key']))
         file_manager = FileManager(file_key, request = self, file_name = file_name)
@@ -145,12 +144,13 @@ class SpeedFileHandler(BaseFileHandler):
 
         file_key = self.get_file_key() or made_file_key() # 如果上传中带有file_key，则表示是新加的
         self.file_key = file_key
+
         file_name = self.rename(self.get_file_name())
 
         save_to_db(in_cdn = True, file_key = file_key, file_name = file_name, file_path = '',
                 content_type = exists_file_obj['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_now_time(), file_md5 = file_md5, 
-                expired_time = get_expired_time(), file_size = exists_file_obj['file_size'], 
+                expired_time = get_expired_time(vip = is_vip(file_key)), file_size = exists_file_obj['file_size'], 
                 file_url = '/file.py?file_key=' + file_key + '&file_name=' + file_name)
 
         file_manage = FileManager(file_key, self, file_name = file_name)

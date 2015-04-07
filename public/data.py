@@ -19,6 +19,9 @@ db_async = motor_client.zjypan
 log_db = motor_client.log
 log_db_sync = mongo_client.log
 
+VIP_LIB = 'vip_lib'
+KEY_LIB = 'key_lib'
+
 class RedisDb():
     def __init__(self, prefix, db = 0):
         self._prefix = prefix
