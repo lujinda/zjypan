@@ -6,17 +6,14 @@
 # Filename        : page/files.py
 # Description     : 
 from tornado.web import HTTPError
-from .do import made_file_key, get_expired_time, get_now_time, is_vip, FileManager, get_file # 通过file_key或md5都可以获得文件
+from .do import made_file_key, get_expired_time, get_now_time,  FileManager, FileSessionHandler, valid_login_email_authenticated, get_file # 通过file_key或md5都可以获得文件
 from lib.wrap import verify_code
+from lib.session import Session
 from storage.save import save_to_disk, save_to_db
-
-from public.handler import MyRequestHandler 
 from lib.wrap import access_log_save
 import urllib
 
-class BaseFileHandler(MyRequestHandler):
-    def get_file_key(self):
-        return self.get_argument('file_key', '').encode('utf-8')
+class BaseFileHandler(FileSessionHandler):
 
     def get_file_name(self):
         return self.get_argument('file_name', '').encode('utf-8')
@@ -84,6 +81,7 @@ class FileHandler(BaseFileHandler):
             'error':err_message,
             })
 
+    @valid_login_email_authenticated
     def save_file(self, f):
         """
         作用：对用户上传的文件做出判断，并将相关信息保存到数据库中
@@ -91,13 +89,14 @@ class FileHandler(BaseFileHandler):
         """
         file_size = len(f['body'])
         # 服务器也对文件大小做出判断
-        if file_size > 5243380 or file_size == 0:
+        if file_size > 20971520 or file_size == 0:
             self.return_json['error'] = '文件容量异常'
             return
 
         file_key = self.get_file_key() or made_file_key() # 如果上传中带有file_key，则表示是新加的
         self.file_key = file_key
-        file_name = self.rename(f['filename'].encode('utf-8'))
+        file_name = f['filename'].encode('utf-8')
+        file_name = self.rename(file_name)
         error, file_path = save_to_disk(file_key, file_name, f['body'])
         if error:
             self.return_json['error'] = error
@@ -110,19 +109,22 @@ class FileHandler(BaseFileHandler):
         save_to_db(file_key = file_key, file_name = file_name, file_path = file_path,
                 content_type = f['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_now_time(),
-                expired_time = get_expired_time(vip = is_vip(file_key)), file_size = file_size, 
+                expired_time = get_expired_time(file_key), file_size = file_size, 
                 file_url = '/file.py?file_key=' + file_key + '&file_name=' + file_name)
         self.set_cookie('last_upload', urllib.quote(self.return_json['file_key']))
         file_manager = FileManager(file_key, request = self, file_name = file_name)
         file_manager.upload()
 
+        self.notify_group_item('upload', file_manager)
 
     ######################
     # 下面是删除文件相关的
     @access_log_save
     def delete(self):
         try:
-            self.file_manager.delete()
+            file_manager = self.file_manager
+            file_manager.delete()
+            self.notify_group_item('delete', file_manager)
         except FileManager.FileException, e:
             self.write({'error': e.message})
 
@@ -136,6 +138,7 @@ class SpeedFileHandler(BaseFileHandler):
     采用md5进行校验
     """
     @verify_code
+    @valid_login_email_authenticated
     def post(self):
         file_md5 = self.get_argument('md5', None)
         exists_file_obj = get_file(file_md5 = file_md5) # 查看是否已存在
@@ -150,7 +153,7 @@ class SpeedFileHandler(BaseFileHandler):
         save_to_db(in_cdn = True, file_key = file_key, file_name = file_name, file_path = '',
                 content_type = exists_file_obj['content_type'],
                 upload_ip = self.request.remote_ip, upload_time = get_now_time(), file_md5 = file_md5, 
-                expired_time = get_expired_time(vip = is_vip(file_key)), file_size = exists_file_obj['file_size'], 
+                expired_time = get_expired_time(file_key), file_size = exists_file_obj['file_size'], 
                 file_url = '/file.py?file_key=' + file_key + '&file_name=' + file_name)
 
         file_manage = FileManager(file_key, self, file_name = file_name)
@@ -161,4 +164,5 @@ class SpeedFileHandler(BaseFileHandler):
         self.set_cookie('last_upload', urllib.quote(file_key))
         self.write({'error': '', 'file_key' : file_key, 
             'file_name': file_name})
+        self.notify_group_item('upload', file_manage)
 

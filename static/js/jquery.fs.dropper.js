@@ -25,7 +25,7 @@
 		action: "",
 		label: " 把文件拖到这，或点击此处上传文件,上传成功后会返回一个'id'，您可以自定义",
 		maxQueue: 1,
-		maxSize: 5242880, // 5 mb
+		maxSize: 20971520, // 20 mb
 		postData: {},
 		postKey: "file",
 	};

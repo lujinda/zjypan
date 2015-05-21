@@ -1,0 +1,32 @@
+body{
+    background-image: url('../images/fullbody.png');
+    background-postion: fixed;
+}
+#login_wrap{
+    width: 500px;
+    padding: 20px;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    margin-left: -250px;
+    background-color:#eee;
+    border-radius: 10px;
+}
+#login_wrap form{
+    width: 350px;
+    padding-right: 20px;
+    border-right: 1px #ccc solid;
+    float: left;
+    margin-right:10px;
+}
+#login_wrap .login_right{
+    float:right;
+    padding-top: 20px;
+}
+#login_wrap .login_right button{
+    margin: auto;
+    display: block;
+    margin-bottom: 50px;
+}
+
+

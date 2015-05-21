@@ -16,8 +16,68 @@ from cdn import CDN
 import functools
 from lib.wrap import file_log_save
 from lib.mime import get_file_type
+from lib.mail import send_mail
+from lib.session import Session
 from uuid import uuid4
 from tornado.web import HTTPError
+from public.handler import MyRequestHandler
+from page.group.base import group_is_enabled, item_email_is_exist
+from functools import wraps
+
+def valid_login_email_authenticated(func):
+    """用来验证已开启小组功能的是否有登录邮箱,应用于FileSessionHandler类"""
+    @wraps(func)
+    def wrap(self, *args, **kwargs):
+        file_key = self.get_file_key()
+        if is_vip(file_key) and group_is_enabled(file_key): 
+            if not item_email_is_exist(self.current_login_email, file_key):
+                raise HTTPError(403)
+                return
+        return func(self, *args, **kwargs)
+
+    return wrap
+
+class FileSessionHandler(MyRequestHandler):
+    """文件类和管理类共有的方法和属性"""
+    def init_data(self):
+        self.session = Session(self.application.session_manager, self)
+        self.result_json = {'error': '', 'result': [], 'error_code': 0}
+
+    @property
+    def current_login_email(self):
+        return self.session.get(u'{file_key}_login_email'.format(
+            file_key = self.get_file_key().decode('utf-8')), u'').lower()
+
+    def get_file_key(self):
+        return self.get_argument('file_key', '').encode('utf-8')
+
+    def notify_group_item(self, event_type, file_manage):
+        assert event_type in ('download', 'upload', 'delete')
+        if not group_is_enabled(self.get_file_key()): # 如果没有开启小组功能的话，就不要通知了
+            return
+        assert self.current_login_email # 通知必须要有登录的邮箱
+
+        file_info = file_manage.get_file_info() # 获取文件的属性
+        file_info['file_url'] = u'%s%s' % (self.full_host(), file_info['file_url'])
+
+        items = list(db.groups.find({'$and': [{'item_email': {'$ne': self.current_login_email}}, 
+            {'follow_events': event_type}]}, {'_id': 0})) # 根据不同的事件来选出有监听的成员
+
+        if not items: # 如果没有符合条件的话，就直接返回
+            return
+
+        current_item = db.groups.find_one({'file_key': self.get_file_key(), 
+            'item_email': self.current_login_email}, {'_id': 0})
+
+        notify_template = 'group/{event}_event_template.html'.format( 
+                event = event_type) # 根据不同的事件类型，来指定不同的模块
+
+        notify_content = self.render_string(notify_template,
+                current_item = current_item, file_info = file_info)
+        mail_addr = map(lambda item: item['item_email'], items)
+
+        send_mail('%s 小组协作有更新了' % (self.get_file_key()),
+                notify_content, mail_addr)
 
 
 class FException(Exception):
@@ -37,7 +97,9 @@ class FileManager():
         self._request = request
         self._cdn = CDN()
 
-        if is_vip(self._file_key):
+        self.is_vip = is_vip(self._file_key)
+
+        if self.is_vip:
             return
 
         while self.__file and self.__file['expired_time'] < long(time.time()):
@@ -102,6 +164,9 @@ class FileManager():
         """
         过期删除调用，同delete,只是日志记录不同而已
         """
+        if self.is_vip:
+            return
+
         self.__delete()
 
     @file_log_save
@@ -133,9 +198,8 @@ class FileManager():
 
     def get_file_info(self):
         self.__file['file_size'] = switch_unit(self.__file['file_size'])
-        self.__file['is_vip'] = is_vip(self.__file['file_key'])
+        self.__file['is_vip'] = self.is_vip
         return self.__file
-
 
     @file_log_save
     def show(self):
@@ -202,6 +266,8 @@ class FileManager():
         """
         share_id = self.__file['share_id']
         share_file_obj = db.share.find_and_modify({'share_id': share_id}, remove = True) # 返回共享信息时，同时删除
+        if not share_file_obj: # 如果没有获取到对象的话，表示可能数据库已经被删除了
+            return 
         self._file_name = share_file_obj['file_name'] or self.__file['file_name']
         self._cdn.unshare(share_file_obj['share_id'], self._file_name)
         db.files.update({'file_key': self._file_key, 'file_name': self._file_name}, 
@@ -231,9 +297,7 @@ def get_file_list(file_key = None):
 def get_now_time():
     return long(time.time())
 
-def get_expired_time(new_create = True, vip = False): # 如果是vip的话，则返回一个夸张的日期
-    if vip:
-        return long(253370736000.0) # 这是9999年
+def get_expired_time(new_create = True): # 如果是vip的话，则返回一个夸张的日期
     file_settings = get_settings('file')
     days = new_create and file_settings.get('expired_day', 7) or file_settings.get('add_expired_day', 3)
 

@@ -7,4 +7,5 @@
 # Description     : 
 
 FILE_VOLUME_ERROR = '文件容量被禁止'
+NEED_LOGIN_EMAIL = 1
 

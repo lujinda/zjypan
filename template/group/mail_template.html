@@ -1,0 +1,30 @@
+<!Doctype html>
+<html>
+    <head>
+        <style>
+            .btn{
+                display:inline-block;
+                padding:4px;
+                width: 100px;
+                text-align:center;
+                color:#fff;
+                background-color:#f00;
+                font-weight:bold;
+                text-decoration: none;
+                border-radius: 10px;
+                margin-top:10px;
+                margin-left:30px;
+            }
+        </style>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+    <body>
+        <div style="font-size:16px">
+            欢迎您加入<span style="color:red;background-color:#ccc;padding:4px;">{{current_login_key}}</span>小组, 您的成员名是 <strong>{{item_data['item_name']}}</strong><br/>
+            <a class="btn" href="{% raw verify_url %}">点击加入</a>
+            <p style="color:#666; font-size:14px">
+            如果上面的按钮无法使用，请在浏览器中手动打开 {{verify_url}}
+            </p>
+        </div>
+    </body>
+</html>

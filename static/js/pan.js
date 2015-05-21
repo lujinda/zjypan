@@ -11,7 +11,7 @@ function del_file(obj){
         success:function(data){
             if ($('.manage_wrap').length > 1){
                 $wrap.fadeOut(250);
-                setTimeOut($wrap.remove, 400);
+                setTimeout($wrap.remove, 400);
             }else{
                 window.location.read();
             }
@@ -25,15 +25,19 @@ function del_file(obj){
 
 function show_share_msg(obj){
     $wrap = $get_manage_wrap(obj);
+    $wrap.find('.btn_file_share').addClass('disable');
     $share_msg = $wrap.find(".share_msg");
     $share_msg.find('strong').html($wrap.find('.file_name').html());
+    $share_msg.find('.disable').removeClass('disable');
     $share_msg.fadeIn(250);
 }
 function close_share_msg(obj){
     $wrap = $get_manage_wrap(obj);
     $wrap.find(".share_msg").hide();
+    $wrap.find('.disable').removeClass('disable');
 }
 function unshare(obj){
+    disable_obj($(obj));
     $wrap = $get_manage_wrap(obj);
     var file_key = $wrap.find('.file_key').val();
     var file_name = $wrap.find('.file_name').val();
@@ -41,18 +45,19 @@ function unshare(obj){
         return;
     $.ajax({
         url: '/share/' + file_key,
-        dataType: 'json',
+        dataType: 'text',
         type: 'DELETE',
         data:{'file_key': file_key, 'file_name': file_name},
-        error: function(){
+        error: function(a1, a2, a3){
             alert('系统出错，请重试');
         },
         success: function(response){
             change_share_btn($wrap);
-        },
+        }
     });
 }
 function share_file(obj){
+    disable_obj($(obj));
     var $wrap = $get_manage_wrap(obj);
     var file_key = $wrap.find('.file_key').val();
     if (!file_key)
@@ -81,13 +86,14 @@ function change_share_btn($wrap, share_id){
     if (share_id){
         $wrap.find('.btn_file_share').attr({'href': '/share_site', 'target': '_blank'}).removeAttr('onclick')
             .html('资源广场');
-        $wrap.find('.btn_file_unshare').show();
+        $wrap.find('.btn_file_unshare').show().removeClass('disable');
         $wrap.find(".share_msg").hide();
     }else{
         $wrap.find('.btn_file_share').attr('onclick',"show_share_msg(this)").removeAttr('href')
             .html('共 享');
         $wrap.find('.btn_file_unshare').hide();
     }
+    $wrap.find('.disable').removeClass('disable');
 }
 
 function show_err_message(error){
@@ -107,7 +113,7 @@ function start_file_upload(){
         
         $(".file_form .dropped").dropper({
             action: "/file.py",
-            maxSize: 5242880, // 5 mb
+            maxSize: 20971520, // 20 mb
             maxQueue: 1
         }).on("start.dropper", onStart)
         .on("complete.dropper", onComplete)
@@ -161,7 +167,7 @@ function $get_manage_wrap(obj){
 }
 
 function add_new_file(file){
-    if (file.size > 5242880){
+    if (file.size > 20971520){
         alert('文件大小超过限制');
         return false;
     }
@@ -237,9 +243,33 @@ function __up_new_file(){
     });
 }
 
-function write_manager_wrap_all(data){
+function login_email($form){
+    if (!$form.find('input').val().trim()){
+        return false;
+    }
+    $form.ajaxSubmit({
+        dataType: 'json',
+        success: function(response){
+            var error = response['error'];
+            if (error){
+                alert(error);
+                return false;
+            }else{
+                $('#input_key_wrap .submit_key_form').submit();
+                return false;
+            }
+        },
+        error: function(){
+            alert('出现未知错误，请重试');
+        }
+    });
+}
+
+function write_manager_wrap_all(data, first){
+    var first = first || false; // first 是用来表示是否是第一次提交获取
     $input_key = $('#input_key_wrap');
-    if (! $input_key.find('.input_key').val().trim()){
+    var _file_key = $input_key.find('.input_key').val().trim();
+    if (! _file_key){
         return;
     }
     $.ajax({url: "/manage.py", 
@@ -251,9 +281,22 @@ function write_manager_wrap_all(data){
             var error = data['error'];
             if (error){
                 alert(error);
+                var error_code = data['error_code'];
+                if (error_code == 1){ // 表示需要登录邮箱
+                    $input_key.find('.submit_key_form').addClass('disable').find('.input_key').prop('readonly', true);
+                    $('#login_email_wrap')
+                    .show().find('.login_email_form').submit(function (event){
+                        login_email($(this));
+                        event.preventDefault();
+                        return false;
+                    })
+                    .find('#login_email_input').focus().next().val(_file_key);
+                }
                 return false;
             }
-            $input_key.hide();
+            if (first){
+                $input_key.hide();
+            }
 
             var result = data['result'];
             $main = $('#main');
@@ -266,11 +309,21 @@ function write_manager_wrap_all(data){
             }
             $('#file_key').val($input_key.find('.input_key').val());
             $('#add_file_form').fadeIn();
-            $('#main').removeClass('b_bg');
-            $('body').css('background-image', "url('http://7u2ph0.com1.z0.glb.clouddn.com/images/bg_manage.jpg')");
+            if (first){
+                $('#main').removeClass('b_bg');
+                $('body').css('background-image', "url('http://7u2ph0.com1.z0.glb.clouddn.com/images/bg_manage.jpg')");
+                var _login_email = data['login_email'];
+                if (_login_email){
+                    var $btn_logout_email = $('#btn_logout_email');
+                    $btn_logout_email.attr('href', 
+                            $btn_logout_email.attr('href') + '&file_key=' + $('#file_key').val())
+                        .html(String.format('已登录: {0},点击退出', _login_email)).fadeIn(250);
+                }
+            }
         },});
 
 }
+
 
 function write_manager_wrap($wrap, data){
                 if (!data['can_share']){ // 如果不可以共享，就不要那个按钮了
@@ -279,7 +332,7 @@ function write_manager_wrap($wrap, data){
                 change_share_btn($wrap, data['share_id']);
                 $wrap.find('.file_name').html(data['file_name']).val(data['file_name']);
                 $wrap.find('.upload_time').html(DateToString(data['upload_time']));
-                $wrap.find('.expired_time').html(DateToString(data['expired_time']));
+                $wrap.find('.expired_time').html(data['is_vip'] && '????-??-?? ??:??:??' || DateToString(data['expired_time']));
                 $wrap.find('.file_size').html(data['file_size']);
                 $wrap.find('.file_key').val(data['file_key']);
                 $('#file_key').val(data['file_key']);
@@ -290,5 +343,18 @@ function write_manager_wrap($wrap, data){
                 if (data['is_vip']){
                     $wrap.addClass('vip_bg');
                 }
+
+                $wrap.find('.btn_file_down').mouseover(function(){
+                    var $ercode_img = $('#file_ercode');
+                    var $obj = $(this);
+                    var $p_node = $(this.parentNode);
+                    var file_name = $p_node.find('.file_name').val();
+                    var file_key = $p_node.find('.file_key').val();
+                    $ercode_img.attr('src', '/file_qrcode?file_key=' + file_key + '&file_name=' + file_name);
+                    $ercode_img.show();
+                }).mouseout(function(){
+                    var $ercode_img = $('#file_ercode');
+                    $ercode_img.hide();
+                });
 }
 

@@ -49,6 +49,9 @@ class MyRequestHandler(RequestHandler):
     def UA(self):
         return self.request.headers.get('User-Agent', '')
 
+    def full_host(self):
+        return '%s://%s' %(self.request.protocol, self.request.host)
+
     @property
     def token(self):
         token = self.get_secure_cookie('token') or ''
@@ -130,6 +133,7 @@ class DefaultHandler(MyRequestHandler):
     """处理404"""
     def prepare(self):
         self.set_status(404)
+        self.write('The server may be lost')
         self.finish()
 
     @access_log_save

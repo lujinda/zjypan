@@ -7,6 +7,9 @@ String.format = function(src){
     });
 };
 
+function disable_obj($obj){
+    $obj.addClass('disable');
+}
 function get_cookie(name){
     var c = document.cookie.match("\\b" + name + "=\"?([^;]*)\\b");
     return c ? c[1] : '';

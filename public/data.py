@@ -21,6 +21,7 @@ log_db_sync = mongo_client.log
 
 VIP_LIB = 'vip_lib'
 KEY_LIB = 'key_lib'
+GROUP_LIB = 'group_lib'
 
 class RedisDb():
     def __init__(self, prefix, db = 0):

@@ -29,11 +29,11 @@ def save_to_db(**kwargs):
     作用：一般用于用户文件上传时，把相关信息写到数据库中，待celery将文件上传到云
         必须要保证传入的数据无错
     """
+
     kwargs['in_cdn'] = kwargs.get('in_cdn') or False
     kwargs['share_id'] = ''
 
     db.files.insert(kwargs)
-
 
 # 用于即时同步上传
 def save_to_cdn(file_key, file_name, file_path):

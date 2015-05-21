@@ -1,6 +1,7 @@
 <span id="top_post_index">
     最新通知: <span></span>
 </span>
+<a target="_blank" onclick="group_login_by_url(this)" href="/group/index.py">协同工作</a>
 <a href="javascript:show_all_post()">显示所有通知</a>
 <a target="_blank" href="/share_site">资源广场</a>
 <a onclick="$('.msg_wrap').fadeIn(250)">反馈</a>
@@ -26,5 +27,16 @@
             });
         });
     });
+    function group_login_by_url(obj){
+        var $obj = $(obj);
+        var login_url = $obj.attr('href');
+        var file_key = $('#file_key').val() || '';
+        if (file_key){
+            $(obj).attr('href', login_url.split('?')[0] + '?file_key=' + file_key);
+        }else{
+            $(obj).attr('href', login_url.split('?')[0]);
+
+        }
+    }
 </script>
 

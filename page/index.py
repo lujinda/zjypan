@@ -12,7 +12,7 @@ from lib import cache
 class IndexHandler(MyRequestHandler):
     @access_log_save
     @verify_code
-    @cache.page(expired = 86400)
+#    @cache.page(expired = 86400)
     def get(self):
         self.render('up.html')
 

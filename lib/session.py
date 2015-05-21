@@ -86,7 +86,7 @@ class SessionManager(object):
         self.redis.delete(session.session_id)
 
     def _generate_id(self):
-        new_id = hashlib.sha256(self.session_secret + str(uuid.uuid4))
+        new_id = hashlib.sha256(self.session_secret + str(uuid.uuid4()))
         return new_id.hexdigest()
 
     def _generate_hmac(self, session_id):

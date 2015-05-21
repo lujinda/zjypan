@@ -35,7 +35,7 @@ function post_settings_before(obj){ // 收集post数据
         'up_num': $('#settings_up_num').val(), 
         'stop': $('#settings_stop').attr('checked') ? 'on': 'off',
         'stop_info': $('#settings_stop_info').val(),
-        'verify': $('#settings_verify').attr('checked') ? 'on': 'off',
+        'verify': $('#settings_verify').prop('checked') ? 'on': 'off',
         };
     }
 
@@ -414,7 +414,11 @@ function check_post(event){
 }
 
 function check_all(s){
-    $('.checkbox').attr('checked', s);
+    if (s){
+        $('.checkbox').prop('checked', true);
+    }else{
+        $('.checkbox').removeProp('checked');
+    }
 }
 function do_operation(operation, $form){
     if ($('.checkbox:checked').length  == 0){

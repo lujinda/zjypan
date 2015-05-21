@@ -1,0 +1,6 @@
+{% extends 'main_event_template.html' %}
+{% block main %}
+<span class="stress">{{current_item['item_name']}}</span> 在 <span class="stress">{{file_info['file_key']}} </span>中上传了 <span class="stress">{{file_info['file_name']}} </span> <a href="{{file_info['file_url']}}" target='_blank'>点击下载</a><br>
+或下载地址{{file_info['file_url']}}
+</br>
+{% end %}

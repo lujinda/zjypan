@@ -1,0 +1,31 @@
+body{
+    background-color: #eee;
+}
+#main, #header{
+    width: 750px;
+    margin: auto;
+}
+#group_list_wrap{
+    background-color:#fff;
+}
+.top_message{
+    position: fixed;
+    top:0px;
+    width:750px;
+    left:0;
+    z-index:10000;
+    padding:10px;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
+.disable{
+    pointer-events:none;
+    color:#afafaf;
+    cursor:default;
+}
+#btn_status_group{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}

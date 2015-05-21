@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <link rel="stylesheet" href="{{ static_url('group/bootstrap/css/bootstrap.min.css') }}" />
+    <script src="{{static_url("js/jquery.js")}}"></script>
+    <script src="{{static_url("group/bootstrap/js/bootstrap.min.js")}}"></script>
+    <script src="{{static_url("js/common.js")}}"></script>
+        {% block header_js_css %}
+        {% end %}
+        <title>
+            {% block title %}{% end %}
+        </title>
+    </head>
+    <body>
+        {% block body %}
+        {% end %}
+    </body>
+    {% block footer_js_css %}
+    {% end %}
+</html>

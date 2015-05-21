@@ -7,13 +7,21 @@
     <script src="{{static_url("js/spark-md5.min.js")}}"></script>
 {% end %}
 {% block body %}
+{% include "file_ercode.html" %}
 <div id="input_key_wrap">
-    <form style="padding-top:50px" action="" method="POST">
     <div class="input_key_dir">
-    <input type="text" class="input_key" name="file_key" placeholder="输入文件提取码" />
-    <a class="btn_submit_key" href="javascript:void(0);">确 定</a>
+        <form class="submit_key_form" style="padding-top:50px" action="" method="POST">
+            <input type="text" class="input_key" name="file_key" placeholder="输入文件提取码" />
+            <a  class="btn_submit_key" href="javascript:void(0);">确 定</a>
+        </form>
+        <div id="login_email_wrap">
+            <form class="login_email_form" action="/group/manager?opera=join" method="POST">
+                <input id="login_email_input" name="item_email" placeholder='登录自己邮箱' type="text">
+                <input name="file_key" style="display:none" value="">
+                <button type="submit" id="btn_login_email">登录邮箱</button>
+            </form>
+        </div>
     </div>
-    </form>
 </div>
 <div class="manage_wrap" style="display:none">
     <img src="{{static_url('images/filetype/default.png')}}" class="pci_summary" src=""></img>
@@ -41,26 +49,28 @@
     </div>
     <div style="clear:both"></div>
 </div>
-    <form id="add_file_form" action="/file.py?operation=add" method="POST">
+    <form enctype="multipart/form-data" id="add_file_form" action="/file.py?operation=add" method="POST">
     <a onclick="$(this).next().click()" id="btn_add_file" class="btn_file_operation c_b btn_b">在此代码下添加新文件</a>
     <input name="file" style="display:none" id="add_file_input" type="file" >
     <input name="file_key" id="file_key" style="display:none" />
     </form>
 <div id="up_process">
 </div>
+    <a class="btn_logout_email c_r" id="btn_logout_email" href="/group/manager?opera=leave"></a>
 <script>
     $('.input_key').focus();
 $(document).ready(function(){
     show_last_upload();
-    $('#input_key_wrap form').submit(function (event){
-        write_manager_wrap_all({'file_key':$('.input_key_dir .input_key').val()});
-        // 禁止默认事件的发现
+    $('#input_key_wrap .submit_key_form').submit(function (event){
         event.preventDefault();
+        write_manager_wrap_all({'file_key':$('.input_key_dir .input_key').val()}, true);
+        // 禁止默认事件的发现
         return false;
     });
     $('#input_key_wrap .btn_submit_key').click(function (event){
-        $('#input_key_wrap form').submit();
+        $('#input_key_wrap .submit_key_form').submit();
         event.preventDefault();
+        return false;
     });
 });
 $('#add_file_input').change(function(){

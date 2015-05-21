@@ -39,6 +39,10 @@ from admin import AdminResourcesHandler
 from admin import LogHandler, LogMonitorHandler # 只是用来查看，流量会被打到其他地方
 from admin import AdminFeedbackHandler
 from admin.post import AdminListPostHandler, AdminWritePostHandler
+from page.group import GroupLoginHandler, GroupLogoutHandler
+from page.group import GroupIndexHandler
+from page.group import GroupManagerHandler
+from page.qr_code import QrcodeHandler
 
 from public.handler import MonitorHandler
 
@@ -52,13 +56,19 @@ class PanApplication(Application):
                 (r'/code.py', CodeHandler),
                 (r'/monitor.py', MonitorHandler),
                 (r'/speed_file.py', SpeedFileHandler),
+                (r'/group/?', GroupIndexHandler),
+                (r'/group/index.py', GroupIndexHandler),
+                (r'/group/login.py', GroupLoginHandler),
+                (r'/group/logout.py', GroupLogoutHandler),
                 # 下面uri都不带.py结尾
+                (r'/group/manager', GroupManagerHandler),
                 (r'/share/(.+?)', ShareHandler), # 只提供对共享文件的操作，如共享，取消共享, 顶，踩等 
                 (r'/share_site/?(.*?)', ShareSiteHandler),
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告
                 (r'/api/feedback', ApiFeedbackHandler), # 提交返回
                 (r'/api/share/?(.*?)', ApiShareHandler), # 列出特定共享的文件
+                (r'/file_qrcode', QrcodeHandler),
                 ]
 
         self.monitors_manager = monitors_manager or []
@@ -78,9 +88,14 @@ class PanApplication(Application):
                 'cookie_secret': '0a18b23b50ad427d93f7d1d562a446ea',
                 'default_handler_class': DefaultHandler,
                 }
-
+        session_settings = {
+                'session_secret': '0aa48e39-51cf-44c7-b0f2-7b2e1d8277a2',
+                'session_timeout': 60 * 500,
+                'store_db': session_db,
+                }
 
         self.log_db = log_db
+        self.session_manager = SessionManager(**session_settings)
         Application.__init__(self, handlers, **settings)
 
 class PanAdminApplication(Application):
