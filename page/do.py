@@ -102,7 +102,7 @@ class FileManager():
         if self.is_vip:
             return
 
-        while self.__file and self.__file['expired_time'] < long(time.time()):
+        while self.__file and self.__file['expired_time'] < long(time.time()) and self.is_vip == False:
             self.expired()
             self.__file = file_obj  or self.get_file()
 
@@ -369,5 +369,5 @@ def del_post(post_uuid):
 
 
 def is_vip(key):
-    return redis_db.sismember(VIP_LIB, key)
+    return bool(redis_db.sismember(VIP_LIB, key))
 
