@@ -8,4 +8,6 @@
 from .post import ApiPostHandler
 from .share import ApiShareHandler
 from .feedback import ApiFeedbackHandler
+from .oauth import QQOAuthCallbackHandler, QQUserInfoHandler
+from .key import KeyManagerHandler
 

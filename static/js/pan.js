@@ -67,7 +67,8 @@ function share_file(obj){
         url: '/share/' + file_key,
         dataType:'json',
         data:{'description': description, 
-            'file_name': $wrap.find('.file_name').val()},
+            'file_name': $wrap.find('.file_name').val(),
+            'share_to_weibo':$wrap.find('.share_to_weibo').prop('checked') && 1 || ''},
         type:'POST',
         error: function(){
             alert('共享出错，请重试');

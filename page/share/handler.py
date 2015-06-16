@@ -6,22 +6,21 @@
 # Filename        : page/share/handler.py
 # Description     : 
 
+from tornado.web import HTTPError
 from public.handler import MyRequestHandler
 from page.do import FileManager
 from lib.wrap import access_log_save, allow_add_share_num
+from lib.oauth import QQLoginOpenApi
 from lib import cache
 from page.share.do import get_share_file_count, get_share_file, add_share_up_num, add_share_down_num
 from page.api.share import ApiShareHandler
 from public.do import get_settings
 import urllib
 
-class ShareHandler(MyRequestHandler):
+class ShareHandler(ApiShareHandler):
     """
     用来处理与单个共享文件有关的东西
     """
-    def init_data(self):
-        self.result_json = {'error': ''}
-
     def get(self, operation = None):
         assert operation
         self._share_id = self.get_query_argument('share_id')
@@ -41,6 +40,14 @@ class ShareHandler(MyRequestHandler):
         add_share_down_num(self._share_id)
         self.send_result_json()
 
+    def share_download(self):
+        share_file = get_share_file(self._share_id)
+        if not share_file:
+            raise HTTPError(404)
+        
+        share_url = share_file.get('share_url')
+        assert share_url
+        self.redirect(share_url)
 
     @access_log_save
     def post(self, file_key):
@@ -48,9 +55,33 @@ class ShareHandler(MyRequestHandler):
         处理添加新共享请求
         """
         share_description = self.get_argument('description')
+        share_to_weibo = bool(self.get_argument('share_to_weibo', None))
         self.share_file_key = file_key
+        if share_to_weibo and (not self.session.get('openid')):
+            self.result_json['error'] = '您还没账号登录，共享到微博失败'
+            return
 
-        self.file_manager.share(share_description) # 开始文件共享，并告诉浏览器share_id
+        self.file_manager.share(share_description) # 开始文件共享，会返回share_url
+        self.send_result_json()
+        if share_to_weibo:
+            self.share_to_weibo()
+
+    def share_to_weibo(self):
+        openid = self.session.get('openid')
+        assert openid
+
+        open_api = QQLoginOpenApi(self.session['access_token'],
+                openid)
+
+        file_info = self.file_manager.show_file()
+        share_url = "http://{host}/share/download?share_id={share_id}".format(
+                host = self.request.headers.get('Host', 'www.zjycloud.com'), share_id = file_info.get('share_id'))
+
+        weibo_content = u"我在资源广场分享了: {file_name} {share_url}".format(
+            file_name = file_info['file_name'],
+            share_url = share_url,
+            )
+        open_api.send_weibo(weibo_content)
 
     @access_log_save
     def delete(self, file_key):
@@ -66,9 +97,9 @@ class ShareHandler(MyRequestHandler):
         file_manager = FileManager(share_file_key, request = self, file_name = share_file_name)
         return file_manager
 
-class ShareSiteHandler(ApiShareHandler):
+class ShareSiteHandler(MyRequestHandler):
     def get(self, operation = None):
-        condition = self.get_condition(operation)
+        condition = ApiShareHandler.get_condition(operation)
 
         share_file_count = get_share_file_count(condition)
         share_page_limit = self.share_settings.get('page_limit', 16)
@@ -79,7 +110,7 @@ class ShareSiteHandler(ApiShareHandler):
 
         self.render('share/index.html', 
                 max_page = max_page, now_page = now_page,
-                title = self._title)
+                title = ApiShareHandler._title)
         # self._title 在父类中进行定义
 
 
@@ -91,6 +122,12 @@ class ShareSiteHandler(ApiShareHandler):
         keyword = self.get_argument('search_keyword').encode('utf-8')
 
         self.redirect('/share_site/search/' + urllib.quote(keyword))
+
+    @property
+    @cache.cache(expired = 7200)
+    def share_settings(self):
+        return get_settings('share')
+
 
 class ShareSiteFileHandler(MyRequestHandler):
     def get(self, share_id):

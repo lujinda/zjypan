@@ -9,7 +9,7 @@ from tornado.web import Application, StaticFileHandler, RedirectHandler
 from code import CodeHandler
 from page import FileHandler, IndexHandler, ManageHandler, VerifyHandler, SpeedFileHandler # 用于处理秒传请求
 from page.old import OldIndexHandler
-from module import HeaderModule, FooterModule, ShareHeaderModule, ShareFooterModule
+from module import HeaderModule, FooterModule, ShareHeaderModule, ShareFooterModule, QQLoginModule
 from os import path
 from public.handler import DefaultHandler
 from page.api import ApiPostHandler, ApiShareHandler, ApiFeedbackHandler
@@ -43,6 +43,8 @@ from page.group import GroupLoginHandler, GroupLogoutHandler
 from page.group import GroupIndexHandler
 from page.group import GroupManagerHandler
 from page.qr_code import QrcodeHandler
+from page.api import QQOAuthCallbackHandler, QQUserInfoHandler
+from page.api import KeyManagerHandler
 
 from public.handler import MonitorHandler
 
@@ -67,7 +69,11 @@ class PanApplication(Application):
                 (r'/old/?', OldIndexHandler), # 针对老的浏览器
                 (r'/api/post', ApiPostHandler), # 列出特定公告
                 (r'/api/feedback', ApiFeedbackHandler), # 提交返回
+                (r'/api/feedback', ApiFeedbackHandler), # 提交返回
                 (r'/api/share/?(.*?)', ApiShareHandler), # 列出特定共享的文件
+                (r'/api/oauth/callback', QQOAuthCallbackHandler), # 处理qq登录服务器的回调
+                (r'/api/oauth/user_info', QQUserInfoHandler), # 获取qq消息
+                (r'/api/key/(.+)', KeyManagerHandler), # 处理跟key管理有关的
                 (r'/file_qrcode', QrcodeHandler),
                 ]
 
@@ -82,6 +88,7 @@ class PanApplication(Application):
                                 'footer': FooterModule,
                                 'share_header': ShareHeaderModule,
                                 'share_footer': ShareFooterModule,
+                                'qq_login': QQLoginModule,
                                 },
                 'debug': True,
                 'gzip': True,

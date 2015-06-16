@@ -45,6 +45,7 @@
             <textarea class="share_description"></textarea>
             <a class="m_btn c_r" onclick="close_share_msg(this)">取消</a>
             <a class="m_btn c_b" onclick="share_file(this)">确定</a>
+            <label><input class="share_to_weibo" name="share_to_weibo" type="checkbox"/>共享到微博</label>
         </div>
     </div>
     <div style="clear:both"></div>
@@ -60,6 +61,11 @@
 <script>
     $('.input_key').focus();
 $(document).ready(function(){
+    var auto_login_file_key = get_query_args()['file_key'];
+    if (auto_login_file_key){
+        $('#input_key_wrap .input_key').val(auto_login_file_key);
+        write_manager_wrap_all({'file_key':$('.input_key_dir .input_key').val()}, true);
+    }
     show_last_upload();
     $('#input_key_wrap .submit_key_form').submit(function (event){
         event.preventDefault();

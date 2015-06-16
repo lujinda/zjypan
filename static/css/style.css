@@ -8,6 +8,10 @@ a{
     text-decoration:none;
     cursor:pointer;
 }
+input[type="checkbox"]{
+    display:inline-block;
+    border: 1px solid #ccc;
+}
 #main{
     overflow:hidden;
 }
@@ -336,7 +340,7 @@ a{
 .msg strong{
     color:red;
 }
-.msg textarea, .msg input{
+.msg textarea, .msg input[type="text"]{
     width:95%;
     border:1px solid #ccc;
     resize: none;
@@ -456,4 +460,15 @@ a{
     display:none;
     bottom: 10%;
     right: 10%;
+}
+#qq_login_a div{
+    width: 76px;
+    height: 18px;
+    display:inline-block;
+    background-image: url(../images/qq_login.png);
+    background-position: 0px -2px;
+    background-repeat: no-repeat;
+}
+#qq_user_info_a{
+    display:none;
 }

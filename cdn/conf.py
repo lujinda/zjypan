@@ -21,8 +21,7 @@ class CDNConf():
 
     def __getattr__(self, option):
         return cfg.get(self._section, option)
-
-    def __setattr__(self, option, value):
+def __setattr__(self, option, value):
         """
         不允许修改
         """

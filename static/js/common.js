@@ -7,6 +7,22 @@ String.format = function(src){
     });
 };
 
+function get_query_args(){
+    var args = {};
+    var query_str = location.search.split('?')[1];
+    if (!query_str)
+        return {};
+    var parts = query_str.split('&');
+    for (var i = 0; i<parts.length; i++){
+        var pos = parts[i].indexOf('=');
+        if (pos != -1){
+            var arg_name = parts[i].substring(0, pos);
+            var arg_value = parts[i].substring(pos + 1);
+            args[arg_name] = arg_value;
+        }
+    }
+    return args;
+}
 function disable_obj($obj){
     $obj.addClass('disable');
 }
@@ -127,3 +143,31 @@ function del_last_upload(){
     show_last_upload();
 }
 
+function get_qq_user_info(){
+    $.ajax({
+        url:'/api/oauth/user_info',
+        type:'GET',
+        success: function(response){
+            var result = response['result'];
+            if (result.length > 0){
+                var data = result[0];
+                var nickname = data['nickname'];
+                var figureurl = data['figureurl'];
+                $('#qq_login_a').hide();
+                $('#qq_user_info_a').html(nickname)
+                .show();
+            }
+        },
+    });
+}
+function del_qq_user_info(){
+    $.ajax({
+        url:'/api/oauth/user_info',
+        type:'DELETE',
+        success: function(response){
+                $('#qq_user_info_a').hide();
+                $('#qq_login_a').show();
+            },
+        }
+    );
+}

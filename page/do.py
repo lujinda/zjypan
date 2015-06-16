@@ -256,9 +256,7 @@ class FileManager():
             'file_type': get_file_type(self.__file['content_type'])})
         
         self._request.result_json['share_id'] = share_id
-
-        self._request.send_result_json() 
-
+            
     @file_log_save
     def unshare(self):
         """

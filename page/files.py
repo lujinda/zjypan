@@ -12,9 +12,9 @@ from lib.session import Session
 from storage.save import save_to_disk, save_to_db
 from lib.wrap import access_log_save
 import urllib
+from page.api.key import append_key_to_set
 
 class BaseFileHandler(FileSessionHandler):
-
     def get_file_name(self):
         return self.get_argument('file_name', '').encode('utf-8')
 
@@ -43,6 +43,14 @@ class BaseFileHandler(FileSessionHandler):
             else:
                 return self.__rename(file_name, No + 1)
 
+    def append_key_to_set(self, file_key):
+        """如果当前有qq登录，则把key加入到qq号当中去"""
+        openid = self.session.get('openid', None)
+        if not openid:
+            return
+
+        append_key_to_set(openid, file_key)
+
 class FileHandler(BaseFileHandler):
     """下载的相关代码"""
     @access_log_save
@@ -52,7 +60,6 @@ class FileHandler(BaseFileHandler):
         except FileManager.FileException, e:
             print e
             raise HTTPError(404, log_message = e.message)
-
 
     ######################
 
@@ -116,6 +123,7 @@ class FileHandler(BaseFileHandler):
         file_manager.upload()
 
         self.notify_group_item('upload', file_manager)
+        self.append_key_to_set(file_key)
 
     ######################
     # 下面是删除文件相关的
@@ -165,4 +173,5 @@ class SpeedFileHandler(BaseFileHandler):
         self.write({'error': '', 'file_key' : file_key, 
             'file_name': file_name})
         self.notify_group_item('upload', file_manage)
+        self.append_key_to_set(file_key)
 

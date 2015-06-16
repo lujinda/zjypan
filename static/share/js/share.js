@@ -74,7 +74,7 @@ function __add_up_num(type, share_id){
 function add_share_up_num(share_id, obj){
     __add_up_num('up', share_id);
     $(obj).attr('onclick', '').html('已顶');
-    event.preventDefault();
+    return false;
 }
 
 function add_share_down_num(share_id, obj){

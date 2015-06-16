@@ -6,7 +6,7 @@
 # Filename        : public/handler.py
 # Description     : 
 
-from tornado.web import RequestHandler
+from tornado.web import RequestHandler, asynchronous
 from tornado.websocket import WebSocketHandler
 from uuid import uuid4
 from lib.acl import ACL
@@ -14,10 +14,18 @@ from copy import deepcopy
 import json
 import time
 from lib.wrap import access_log_save, auth_log_save
+try:
+    from tornado.curl_httpclient import AsyncHTTPClient
+except ImportError:
+    from tornado.simple_httpclient import AsyncHTTPClient
+
+from tornado.httpclient import HTTPRequest
+from lib.session import Session
 
 class MyRequestHandler(RequestHandler):
     def initialize(self):
         self.acl = ACL(self.client_ip)
+        self.session = Session(self.application.session_manager, self)
         self.init_data()
 
     def init_data(self):
@@ -105,7 +113,8 @@ class MyRequestHandler(RequestHandler):
 class ApiHandler(MyRequestHandler):
     def init_data(self):
         self.result_json = {'error': '',
-                'status_code': 200, 'result': []}
+                 'result': []}
+        self.__is_send_result = False # 标记是否执行了_send_result
 
     def write_error(self, status_code, **kwargs):
         self.set_status(status_code)
@@ -117,15 +126,31 @@ class ApiHandler(MyRequestHandler):
         self.result_json['status_code'] = status_code
         self.write(self.result_json)
 
-    def _send_result(self, data, error):
+    def _send_result(self, data=None, error=None):
         if error:
             raise HTTPError(500, error)
         elif data:
             self.result_json['result'].append(data)
         else:
             self.write(self.result_json)
+            self.__is_send_result = True
             self.finish()
 
+    def send_result_json(self, *args, **kwargs):
+        return self._send_result(*args, **kwargs)
+
+    @asynchronous
+    def async_request(self, url, callback, method = None, headers = None, body = None):
+        headers = headers or {}
+        method = method or "GET"
+        http_client = AsyncHTTPClient()
+        http_request = HTTPRequest(url = url, method = method, headers = headers, body = body, validate_cert = False)
+        http_client.fetch(http_request, callback)
+
+    def finish(self, *args, **kwargs):
+        if (not self.__is_send_result) and self._status_code == 200:
+            self.write(self.result_json)
+        super(ApiHandler, self).finish(*args, **kwargs)
 
 from tornado.web import HTTPError
 
@@ -169,3 +194,5 @@ class MonitorHandler(WebSocketHandler):
     @property
     def log_db(self):
         return self.application.log_db
+
+
