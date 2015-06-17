@@ -69,6 +69,7 @@ class RedisDb():
         _key = pipe.srandmember(set_name)
         pipe.multi()
         if not _key: # 如果_key已经获取不到了，则将b_set_name里面的内容全给set_name, 并删除备份， 并同时再次调用函数本身
+            self._db.incr(set_name + ':loop_counts') # 循环一次，就将循环计数加一
             pipe.sunionstore(set_name, b_set_name, set_name)
             pipe.delete(b_set_name)
             pipe.execute()

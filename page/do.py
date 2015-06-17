@@ -61,7 +61,7 @@ class FileSessionHandler(MyRequestHandler):
         file_info['file_url'] = u'%s%s' % (self.full_host(), file_info['file_url'])
 
         items = list(db.groups.find({'$and': [{'item_email': {'$ne': self.current_login_email}}, 
-            {'follow_events': event_type}]}, {'_id': 0})) # 根据不同的事件来选出有监听的成员
+            {'follow_events': event_type}, {'file_key':self.get_file_key()}]}, {'_id': 0})) # 根据不同的事件来选出有监听的成员
 
         if not items: # 如果没有符合条件的话，就直接返回
             return
@@ -341,8 +341,12 @@ def add_up_total_num():
     redis_db.incr('up_total_num', 1)
 
 def get_up_total_num():
-    return redis_db.get('up_total_num', 0)
-    
+    return int(redis_db.get('up_total_num', 0))
+
+def get_key_lib_num():
+    """获取当前的key lib使用情况"""
+    return redis_db.scard(KEY_LIB), redis_db.scard(KEY_LIB + ':bak'), redis_db.get(KEY_LIB + ':loop_counts') or 0
+
 def write_post(**kwargs):
     """
     用于更新或写新通知

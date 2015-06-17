@@ -74,8 +74,8 @@ class ShareHandler(ApiShareHandler):
                 openid)
 
         file_info = self.file_manager.show_file()
-        share_url = "http://{host}/share/download?share_id={share_id}".format(
-                host = self.request.headers.get('Host', 'www.zjycloud.com'), share_id = file_info.get('share_id'))
+        share_url = "{full_host}/share/download?share_id={share_id}".format(
+                full_hsot = self.full_host, share_id = file_info.get('share_id'))
 
         weibo_content = u"我在资源广场分享了: {file_name} {share_url}".format(
             file_name = file_info['file_name'],

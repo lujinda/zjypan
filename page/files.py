@@ -56,7 +56,9 @@ class FileHandler(BaseFileHandler):
     @access_log_save
     def get(self):
         try:
-            self.file_manager.download()
+            file_manager = self.file_manager
+            self.notify_group_item('download', file_manager)
+            file_manager.download()
         except FileManager.FileException, e:
             print e
             raise HTTPError(404, log_message = e.message)
@@ -164,14 +166,14 @@ class SpeedFileHandler(BaseFileHandler):
                 expired_time = get_expired_time(file_key), file_size = exists_file_obj['file_size'], 
                 file_url = '/file.py?file_key=' + file_key + '&file_name=' + file_name)
 
-        file_manage = FileManager(file_key, self, file_name = file_name)
-        file_manage.speed_upload(exists_file_obj['file_key'], exists_file_obj['file_name']) # 极速上传，其实就是从已有的进行复制 
+        file_manager = FileManager(file_key, self, file_name = file_name)
+        file_manager.speed_upload(exists_file_obj['file_key'], exists_file_obj['file_name']) # 极速上传，其实就是从已有的进行复制 
 
         self.acl.add_up_register()
 
         self.set_cookie('last_upload', urllib.quote(file_key))
         self.write({'error': '', 'file_key' : file_key, 
             'file_name': file_name})
-        self.notify_group_item('upload', file_manage)
         self.append_key_to_set(file_key)
+        self.notify_group_item('upload', file_manager)
 

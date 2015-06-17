@@ -69,7 +69,7 @@ $(document).ready(function(){
     show_last_upload();
     $('#input_key_wrap .submit_key_form').submit(function (event){
         event.preventDefault();
-        write_manager_wrap_all({'file_key':$('.input_key_dir .input_key').val()}, true);
+        location.href = location.pathname + '?file_key=' + $('.input_key_dir .input_key').val();
         // 禁止默认事件的发现
         return false;
     });

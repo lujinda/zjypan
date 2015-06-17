@@ -22,6 +22,5 @@ class ApiOperationHandler(ApiAdminHandler):
     @auth_log_save
     def delete(self):
         self.log_db.operation.drop()
-        self.write(self.result_json)
         return '清空动作日志'
 

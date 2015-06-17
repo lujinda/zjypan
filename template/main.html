@@ -12,6 +12,7 @@
         <script src="{{static_url("js/jquery.js")}}"></script>
         <script src="{{ static_url("js/common.js") }}"></script>
         <script src="{{ static_url("js/pan.js") }}"></script>
+        <script src="{{ static_url("js/key.js") }}"></script>
         {% block header_js %}
         {% end %}
         <meta name="renderer" content="webkit">
@@ -28,7 +29,7 @@
                 </li>
                 <li>
                 <span>联系方式:</span>
-                <input id="feedback_contact" placeholder="手机/邮箱/QQ"/>
+                <input type="text" id="feedback_contact" placeholder="手机/邮箱/QQ"/>
                 </li>
                 <li>
                 <a onclick="submit_feedback()" class="m_btn c_b">提交</a>

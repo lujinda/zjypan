@@ -15,7 +15,7 @@ class ApiMailCodeHandler(ApiAdminHandler):
     发现邮件验证码到作者中去
     """
     @property
-    def mail_addr(self): # 用来获取用户的email，目录定是我自己的，为以后开发账号认证机制打算
+    def mail_addr(self): # 用来获取用户的email，目前定是我自己的，为以后开发账号认证机制打算
         return 'q8886888@qq.com'
 
     @property
@@ -34,8 +34,9 @@ class ApiMailCodeHandler(ApiAdminHandler):
     def get(self):
         settings = get_settings('global')
         if not settings.get('verify', True):
-            self.write('not need code')
             return
+        else:
+            self.set_status(403)
 
         if self.session.get('mail_code'): # 如果验证码已经发了，就不要去理了
             return

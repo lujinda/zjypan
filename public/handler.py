@@ -77,7 +77,7 @@ class MyRequestHandler(RequestHandler):
         判断是否服务器进入维护状态了
         """
         stop, stop_info = self.acl.need_stop()
-        if stop:
+        if stop and self.session.get('uid') != 0: # 如果已经登录了后台管理员，则维护状态不会起效果
             self.render('stop.html', stop_info = stop_info)
             self.save_access_log() # 在同步的情况下，也把访问日志插入
 
@@ -148,7 +148,7 @@ class ApiHandler(MyRequestHandler):
         http_client.fetch(http_request, callback)
 
     def finish(self, *args, **kwargs):
-        if (not self.__is_send_result) and self._status_code == 200:
+        if (not self.__is_send_result) and self._status_code in (200, 304):
             self.write(self.result_json)
         super(ApiHandler, self).finish(*args, **kwargs)
 

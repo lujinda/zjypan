@@ -6,21 +6,27 @@
     <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-file-text"></span><br>累计上传<br><span id='up_total_num'>_</span></a></li>
     <li><a href="#" class="am-text-secondary"><span class="am-icon-btn am-icon-file-text"></span><br>当前数量<br><span id='save_total_num'>_</span></a></li>
 </ul>
+<ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
+    <li><a href="#" class="am-text-success"><span class="am-icon-btn am-icon-file-text"></span><br>key库存<br><span id="key_lib_num">_</span></a></li>
+    <li><a href="#" class="am-text-warning"><span class="am-icon-btn am-icon-file-text"></span><br>使用情况<br><span id='key_lib_bak_num'>_</span></a></li>
+    <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-file-text"></span><br>重复次数<br><span id='key_lib_loop_num'>_</span></a></li>
+</ul>
 {% end %}
 {% block footer_js %}
 <script>
-    $(document).ready(function(){$.ajax({url:'/api/resources', type:'GET',
-        success:function(data){
-            if (data['error']){
-                show_error('获取失败');
-            }else{
-            var result = data['result'];
-            for (key in result){
-                $('#' + key).html(result[key]);
-            }
-        }
-        },
-        error:function(){
+    $(document).ready(function(){
+        $.ajax({url:'/api/resources', type:'GET',
+            success:function(data){
+                if (data['error']){
+                    show_error('获取失败');
+                    }else{
+                    var result = data['result'];
+                    for (key in result){
+                        $('#' + key).html(result[key]);
+                    }
+                }
+            },
+            error:function(){
                 show_error('获取失败');
     },});});
 </script>

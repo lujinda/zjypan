@@ -8,6 +8,7 @@
 from public.handler import ApiHandler
 from tornado.web import HTTPError
 from public.data import redis_db
+from page.do import FileManager
 
 def get_set_key(openid):
     """根据openid生成"""
@@ -31,8 +32,13 @@ class KeyManagerHandler(ApiHandler):
         """列出所有"""
         if not self.openid:
             return
-        key_list = list(redis_db.smembers(get_set_key(self.openid)))
-        self.result_json['result'] = key_list
+
+        if file_key:
+            file_manager = FileManager(file_key)
+            self.result_json['result'] = list(file_manager.get_file_list())
+        else:
+            key_list = list(redis_db.smembers(get_set_key(self.openid)))
+            self.result_json['result'] = key_list
 
     def post(self, file_key):
         """添加一个key"""

@@ -34,7 +34,6 @@ class BaseHandler(MyRequestHandler):
         self.session = Session(self.application.session_manager, self)
         self.init_data()
 
-
     @property
     def home_page(self):
         """
@@ -49,7 +48,8 @@ class BaseHandler(MyRequestHandler):
         raise # 留空
 
     def set_secure_cookie(self, *args, **kwargs):
-        super(BaseHandler, self).set_secure_cookie(httponly=True, secure=True,*args, **kwargs)
+        super(BaseHandler, self).set_secure_cookie(domain = self.request.host[self.request.host.find('.'):],
+                httponly=True,*args, **kwargs)
 
     def change_user_pass(self, username, password):
         # 会根据session中的id值来确定用户的uid

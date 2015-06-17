@@ -18,7 +18,7 @@ function get_query_args(){
         if (pos != -1){
             var arg_name = parts[i].substring(0, pos);
             var arg_value = parts[i].substring(pos + 1);
-            args[arg_name] = arg_value;
+            args[arg_name] = decodeURIComponent(arg_value);
         }
     }
     return args;

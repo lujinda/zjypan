@@ -1,0 +1,130 @@
+<a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id={{client_id}}&redirect_uri={{redirect_uri}}&state={{state}}&scope={{scope}}" id="qq_login_a"><div></div></a>
+<a id="qq_user_info_a" onclick="del_qq_user_info()" title="点击注销" style="color: red"></a>
+
+<div id="key_list">
+				<ul class="head_QQ_ul">
+					<li><a href="#">key</a><span>×</span>
+						<div class="divBtn">
+							<button></button>
+						</div>
+					</li>
+					<li><a href="#">key</a><span>×</span>
+						<div class="divBtn">
+							<button></button>
+						</div>
+					</li>
+					<li><a href="#">key</a><span>×</span>
+						<div class="divBtn">
+							<button></button>
+						</div>
+					</li>
+					<li><a href="#">key</a><span>×</span>
+						<div class="divBtn">
+							<button></button>
+						</div>	
+					</li>
+				</ul>
+			</div>	
+			<div id="key_list_child">
+				<ul class="head_QQ_ul">
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>
+					<li><a href="#">2015年6月17日存的小电影</a><span>×</span>
+						<div class="divBtn">
+							<button class="btn_key_down"></button>
+							<button class="btn_key_del"></button>
+						</div>
+					</li>					
+				</ul>				
+			</div>
+<script>
+    get_qq_user_info();
+	$(document).ready(function(){
+			
+			var time_id = null;
+			var tiem_two=null;
+			$("#qq_user_info_a").mouseover(function(){
+				clearTimeout(time_id);
+				$("#key_list").slideDown(100);
+			});
+			
+			$("#qq_user_info_a").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+			});			
+			
+			$("#key_list").mouseover(function(){clearTimeout(time_id);});
+			$("#key_list").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+				$(".divBtn").hide();
+				if(tiem_two)clearTimeout(tiem_two);
+				tiem_two=setTimeout("$('#key_list_child').slideUp(100);", 400);
+			});
+			
+			$(".head_QQ_ul a").click(function(e){
+				$(".divBtn").hide();
+				e = window.event || e;
+				var obj = e.srcElement || e.target;
+				if($(obj).is("#key_list a")) {
+					$("#key_list_child").slideUp();
+				}
+				
+				$(this).parent().find("div").slideToggle(200);
+			})
+			
+			$(" #key_list .divBtn").click(function(){
+				var step=$(this).offset().top;
+				$("#key_list_child").css({"top":step+"px","position":"absolute"}).slideToggle(200);
+			
+			});
+			
+			$("#key_list_child").mouseover(function(){
+				clearTimeout(time_id);
+				clearTimeout(tiem_two);
+			});
+			$("#key_list_child").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+				$("#key_list_child").slideUp();
+			});	
+			
+			$(".head_QQ_ul  span").click(function(){
+				var p_node = $(this).parent();
+				var n_node = p_node.find("div");
+				p_node.fadeOut(250);
+				setTimeout(p_node.remove, 250);
+				n_node.remove
+				
+			});
+		});
+</script>
+

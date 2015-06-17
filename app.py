@@ -73,7 +73,7 @@ class PanApplication(Application):
                 (r'/api/share/?(.*?)', ApiShareHandler), # 列出特定共享的文件
                 (r'/api/oauth/callback', QQOAuthCallbackHandler), # 处理qq登录服务器的回调
                 (r'/api/oauth/user_info', QQUserInfoHandler), # 获取qq消息
-                (r'/api/key/(.+)', KeyManagerHandler), # 处理跟key管理有关的
+                (r'/api/key/?(.+)?', KeyManagerHandler), # 处理跟key管理有关的
                 (r'/file_qrcode', QrcodeHandler),
                 ]
 

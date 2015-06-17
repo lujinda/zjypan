@@ -1,6 +1,79 @@
 <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id={{client_id}}&redirect_uri={{redirect_uri}}&state={{state}}&scope={{scope}}" id="qq_login_a"><div></div></a>
 <a id="qq_user_info_a" onclick="del_qq_user_info()" title="点击注销" style="color: red"></a>
+
+<div id="key_list">
+				<ul class="head_QQ_ul">
+                    <li><span>_</span>
+						<div class="divBtn">
+							<button class="btn_list_child">列出</button>
+							<button class="btn_remove_key">移除</button>
+							<a class="btn_key_manager">管理</a>
+						</div>
+					</li>
+				</ul>
+			</div>	
+			<div id="key_list_child">
+				<ul class="head_QQ_ul">
+                    <li><span>_</span>
+						<div class="divBtn">
+							<a class="btn_key_down"></a>
+							<a class="btn_key_del"></a>
+						</div>
+					</li>
+				</ul>				
+			</div>
 <script>
     get_qq_user_info();
+	$(document).ready(function(){
+			
+			var time_id = null;
+			var time_two=null;
+			$("#qq_user_info_a").mouseover(function(){
+				clearTimeout(time_id);
+				$("#key_list").slideDown(100);
+			});
+			
+			$("#qq_user_info_a").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+			});			
+			
+			$("#key_list").mouseover(function(){clearTimeout(time_id);});
+			$("#key_list").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+				$(".divBtn").hide();
+				if(time_two)clearTimeout(time_two);
+				time_two=setTimeout("$('#key_list_child').slideUp(100);", 400);
+			});
+			
+			$(".head_QQ_ul span").click(function(e){
+                toggle_btn(e, this);
+			})
+			
+			$(" #key_list .divBtn .btn_list_child").click(function(){
+                list_child(this);
+			});
+			
+			$("#key_list_child").mouseover(function(){
+				clearTimeout(time_id);
+				clearTimeout(time_two);
+			});
+			$("#key_list_child").mouseleave(function(){
+				if(time_id)clearTimeout(time_id);
+				if(time_two)clearTimeout(time_two);
+				time_id = setTimeout("$('#key_list').slideUp(100);", 600);
+				time_two = setTimeout("$('#key_list_child').slideUp();", 600);
+			});	
+			
+			$(".head_QQ_ul  .btn_del").click(function(){
+				var p_node = $(this).parent();
+				var n_node = p_node.find("div");
+				p_node.fadeOut(250);
+				setTimeout(p_node.remove, 250);
+				n_node.remove
+				
+			});
+		});
 </script>
 

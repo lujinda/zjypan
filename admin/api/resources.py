@@ -8,7 +8,7 @@
 from .base import ApiAdminHandler, api_admin_authenticated
 from public.log import get_range_log
 from datetime import date, timedelta
-from page.do import get_save_total_num, get_up_total_num
+from page.do import get_save_total_num, get_up_total_num, get_key_lib_num
 from lib import cache
 
 class ApiResourcesHandler(ApiAdminHandler):
@@ -22,15 +22,17 @@ class ApiResourcesHandler(ApiAdminHandler):
         yesterday_num = self.get_yesterday_num()
         up_total_num = self.get_up_total_num()
         save_total_num = self.get_save_total_num()
+        key_lib_num, key_lib_bak_num, key_lib_loop_num = get_key_lib_num()
         self.result_json['result'] = dict(today_num = today_num, yesterday_num = yesterday_num,
-            up_total_num = up_total_num, save_total_num = save_total_num)
-        self.write(self.result_json)
+            up_total_num = up_total_num, save_total_num = save_total_num,
+            key_lib_num = key_lib_num, key_lib_bak_num = key_lib_bak_num,
+            key_lib_loop_num = key_lib_loop_num)
 
     def get_today_num(self):
         return get_range_log(date.today().timetuple(), 
                 condition = self._condition).count()
         
-    @cache.cache(expired = 86400000)
+    @cache.cache(expired = 600)
     def get_yesterday_num(self):
         return get_range_log((date.today() - timedelta(days = 1)).timetuple(), 
                 condition = self._condition).count()

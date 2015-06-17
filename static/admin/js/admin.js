@@ -33,7 +33,7 @@ function post_settings_before(obj){ // 收集post数据
     if (obj == 'global'){
         data = {'up_time_interval': $('#settings_up_time_interval').val(),
         'up_num': $('#settings_up_num').val(), 
-        'stop': $('#settings_stop').attr('checked') ? 'on': 'off',
+        'stop': $('#settings_stop').prop('checked') ? 'on': 'off',
         'stop_info': $('#settings_stop_info').val(),
         'verify': $('#settings_verify').prop('checked') ? 'on': 'off',
         };
@@ -161,27 +161,28 @@ function show_warning(mess){
 
 
 function settings_save(obj){
-    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
-    $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
-        type:'GET',success:function (data){
-            if (data){
-                post_settings_before(obj);
-            }else{
-                $('#send_mail_code_wrap #mail_code').val('');
-                $('#send_mail_code_wrap').modal({
-                    relatedTarget: this,
-                    closeViaDimmer:false,
-                    onConfirm: function(e) {
-                        post_settings_before(obj);
-                    },
-                    onCancel: function(e) {
-                        return false;
-                    }
-                });
+    // $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
+    $.ajax({
+        url: '/api/mailcode?t=' + (new Date().valueOf()),
+        type:'GET',
+        success:function (data){
+            post_settings_before(obj);
 
-            }
-        }});
-
+        },
+        error: function(){
+            $('#send_mail_code_wrap #mail_code').val('');
+            $('#send_mail_code_wrap').modal({
+                relatedTarget: this,
+                closeViaDimmer:false,
+                onConfirm: function(e) {
+                    post_settings_before(obj);
+                },
+                onCancel: function(e) {
+                    return false;
+                }
+            });
+        }
+    });
 }
 function check_settings_account_input(){
     $('#btn_settings_save').attr('disabled', true);
@@ -284,29 +285,6 @@ $(document).ready(function(){
 
 
 
-function settings_save(obj){
-    $.get('/api/mailcode?t=' + (new Date().valueOf())); // 加一个时间，防止浏览器缓存
-    $.ajax({url: '/api/mailcode?t=' + (new Date().valueOf()),
-        type:'GET',success:function (data){
-            if (data){
-                post_settings_before(obj);
-            }else{
-                $('#send_mail_code_wrap #mail_code').val('');
-                $('#send_mail_code_wrap').modal({
-                    relatedTarget: this,
-                    closeViaDimmer:false,
-                    onConfirm: function(e) {
-                        post_settings_before(obj);
-                    },
-                    onCancel: function(e) {
-                        return false;
-                    }
-                });
-
-            }
-        }});
-
-}
 function check_settings_account_input(){
     $('#btn_settings_save').attr('disabled', true);
     if ($('#settings_username').val().trim() == '' || $('#settings_password_o').val().trim() == '' || $('#settings_password').val().trim() == '')

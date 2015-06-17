@@ -16,7 +16,6 @@ class ApiCacheHandler(ApiAdminHandler):
         c = Cache()
         c.flush()
         self.result_json['result'] = '缓存已刷新'
-        self.write(self.result_json)
 
         return '缓存已刷新'
 
