@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 #coding:utf-8
 # Author        : tuxpy
 # Email         : q8886888@qq.com.com
@@ -18,6 +18,9 @@ def append_key_to_set(openid, file_key):
     """如果当前有qq登录，则把key加入到qq号当中去"""
     redis_db.sadd(get_set_key(openid), file_key)
 
+def key_is_exist(openid, file_key):
+    return redis_db.sismember(get_set_key(openid), file_key)
+
 def remove_key_from_set(openid, file_key):
     redis_db.srem(get_set_key(openid), file_key)
 
@@ -34,8 +37,11 @@ class KeyManagerHandler(ApiHandler):
             return
 
         if file_key:
-            file_manager = FileManager(file_key)
-            self.result_json['result'] = list(file_manager.get_file_list())
+            try:
+                file_manager = FileManager(file_key)
+                self.result_json['result'] = list(file_manager.get_file_list())
+            except FileManager.FileException, e:
+                self.result_json['error'] = e.message
         else:
             key_list = list(redis_db.smembers(get_set_key(self.openid)))
             self.result_json['result'] = key_list
@@ -44,7 +50,10 @@ class KeyManagerHandler(ApiHandler):
         """添加一个key"""
         if not self.openid:
             return
-        append_key_to_set(self.openid, file_key)
+        if key_is_exist(self.openid, file_key):
+            self.result_json['error'] = 'key已存在'
+        else:
+            append_key_to_set(self.openid, file_key)
 
     def delete(self, file_key):
         """添加一个key"""

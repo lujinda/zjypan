@@ -136,12 +136,14 @@ class FileHandler(BaseFileHandler):
             file_manager.delete()
             self.notify_group_item('delete', file_manager)
         except FileManager.FileException, e:
-            self.write({'error': e.message})
+            print(e)
+            self.send_result_error(e.message)
 
     @property
     def file_manager(self):
         file_manager = FileManager(self.get_file_key(), self, file_name = self.get_file_name())
         return file_manager
+
 
 class SpeedFileHandler(BaseFileHandler):
     """

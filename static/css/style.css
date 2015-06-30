@@ -473,7 +473,7 @@ input[type="checkbox"]{
     display:none;
 }
 
-#key_list{ overflow:auto;padding:10px;display: none; width: 200px; max-height: 200px; background-color:#0e90d2;text-align:left;text-index:0px;z-index: 999999;
+#key_list{ overflow:auto;padding:10px;display: none; width: 200px; max-height: 400px; background-color:#0e90d2;text-align:left;text-index:0px;z-index: 999999;
 position: absolute;top: 30px;right: 0;border-radius:4px;box-shadow: 3px 3px 4px #6C6C6C;}
 #key_list span{
     color: #444;
@@ -492,7 +492,7 @@ position: absolute;top: 30px;right: 0;border-radius:4px;box-shadow: 3px 3px 4px 
 #closeBtn{position: absolute;bottom: 5px;right: 5px;}
 .divBtn{display:none;position: relative; top: 4px;}
 .btn_key_manager, .divBtn button{outline:0px none;border: 1px solid #eee;background-color:white;color: #333;border-radius: 10px;}
-#key_list_child{overflow:auto;width:300px;font-size:14px;padding:10px;max-width: 400px; max-height: 500px;  background-color:#0e90d2;
+#key_list_child{overflow:auto;width:300px;font-size:14px;padding:10px;max-width: 400px; max-height: 500px;  background-color:#0e90d2;z-index:999999;
 position: absolute;top: 70px;right: 230px;border-radius:4px;box-shadow: 3px 3px 4px #6C6C6C;display: none;}
 #key_list_child .divBtn a{width: 30px;height: 30px;display:inline-block;}
 #key_list_child span{
@@ -510,4 +510,14 @@ position: absolute;top: 70px;right: 230px;border-radius:4px;box-shadow: 3px 3px 
 ::-webkit-scrollbar-thumb:window-inactive { background: rgba(255,0,0,0.4);}	
 .btn_key_manager{
     padding: 2px 5px;
+}
+#key_tools{
+    text-align:left;
+    text-indent: 0;
+}
+#key_tools input{
+    width: 35%;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 4px;
 }

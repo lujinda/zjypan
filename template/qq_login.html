@@ -1,23 +1,29 @@
 <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id={{client_id}}&redirect_uri={{redirect_uri}}&state={{state}}&scope={{scope}}" id="qq_login_a"><div></div></a>
-<a id="qq_user_info_a" onclick="del_qq_user_info()" title="点击注销" style="color: red"></a>
+<a id="qq_user_info_a" style="color: red"></a>
 
 <div id="key_list">
-				<ul class="head_QQ_ul">
-                    <li><span>_</span>
-						<div class="divBtn">
-							<button class="btn_list_child">列出</button>
-							<button class="btn_remove_key">移除</button>
-							<a class="btn_key_manager">管理</a>
-						</div>
-					</li>
-				</ul>
-			</div>	
+    <ul class="head_QQ_ul">
+        <li><span>_</span>
+        <div class="divBtn">
+            <button onclick="list_child(this)" class="btn_list_child">列出</button>
+            <button onclick="remove_key(this)" class="btn_remove_key">移除</button>
+            <a class="btn_key_manager">管理</a>
+        </div>
+        </li>
+    </ul>
+    <div id="key_tools">
+        <input type="text" placeholder="添加key" />
+        <a class="btn_key_manager" onclick="add_key_item(this)">添加</a>
+        <a class="btn_key_manager" onclick="del_qq_user_info()">注销</a>
+    </div>
+</div>	
 			<div id="key_list_child">
+                <input id="now_list_file_key" style="display:none">
 				<ul class="head_QQ_ul">
                     <li><span>_</span>
 						<div class="divBtn">
 							<a class="btn_key_down"></a>
-							<a class="btn_key_del"></a>
+							<a onclick="remove_file(this)" class="btn_key_del"></a>
 						</div>
 					</li>
 				</ul>				

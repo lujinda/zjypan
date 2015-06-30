@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 #coding:utf-8
 # Author        : tuxpy
 # Email         : q8886888@qq.com.com
@@ -31,7 +31,7 @@ class QQOAuthCallbackHandler(ApiHandler):
 
     def start_oauth_login(self, code):
         """根据不同的Referer，来判断是哪家服务商并开始oauth登录"""
-        referer = self.request.headers.get('Referer')
+        referer = self.request.headers.get('Referer', 'http://openapi.qzone.qq.com/')
         if not referer:
             raise HTTPError(403)
         server_host = urlsplit(referer).netloc
@@ -45,6 +45,7 @@ class QQUserInfoHandler(ApiHandler):
     def get(self):
         nickname = self.session.get('nickname')
         figureurl = self.session.get('figureurl')
+        self.set_header('Cache-Control', 'no-cache')
         if not (nickname and figureurl):
             self.result_json['status_code'] = 404
             self._send_result()
