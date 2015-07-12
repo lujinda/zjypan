@@ -246,14 +246,15 @@ class FileManager():
         share_url = self._cdn.share(self._file_key, self._file_name, share_id)
 
         # 以下是数据库操作
-        db.files.update({'file_key': self._file_key, 'file_name': self._file_name},
-                {"$set": {'share_id': share_id}})
+        with db:
+            db.files.update({'file_key': self._file_key, 'file_name': self._file_name},
+                    {"$set": {'share_id': share_id}})
 
-        db.share.insert({'share_id': share_id, 'file_name': self._file_name, 
-            'share_decription': share_decription,
-            'share_time': share_time, 'share_url': share_url, 
-            'up_num': 0, 'down_num': 0,
-            'file_type': get_file_type(self.__file['content_type'])})
+            db.share.insert({'share_id': share_id, 'file_name': self._file_name, 
+                'share_decription': share_decription,
+                'share_time': share_time, 'share_url': share_url, 
+                'up_num': 0, 'down_num': 0,
+                'file_type': get_file_type(self.__file['content_type'])})
         
         self._request.result_json['share_id'] = share_id
             

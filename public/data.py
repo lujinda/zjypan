@@ -11,10 +11,11 @@ import motor
 import redis
 import os
 from functools import partial
+from lib.tmongo import TMongo
 
 motor_client = motor.MotorClient()
 mongo_client = pymongo.Connection()
-db = mongo_client.zjypan
+db = TMongo(mongo_client.zjypan)
 db_async = motor_client.zjypan
 log_db = motor_client.log
 log_db_sync = mongo_client.log

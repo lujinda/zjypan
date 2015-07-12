@@ -8,7 +8,6 @@
 
 from .do import FileManager, FileSessionHandler
 from public.handler import MyRequestHandler
-from public.data import db
 from public.error import NEED_LOGIN_EMAIL
 from lib.wrap import access_log_save
 from page.group.base import group_is_enabled, item_email_is_exist
